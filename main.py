@@ -110,8 +110,8 @@ def signup():
     mail.send_mail(sender=mail_from,
                    to=mail_to,
                    subject=mail_subject,
-                   body=mail_body)
-                   #,html=mail_html_body)
+                   body='Поздравляем!',
+                   html=mail_html_body)
     # msg = Message(
     #     'Пройдите по ссылке для завершения регистрации: <a>%s</a>' % a,
     #     sender='dmax.dev@gmail.com',
