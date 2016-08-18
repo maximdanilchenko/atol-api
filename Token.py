@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Генерация/подтверждение токена
 from itsdangerous import URLSafeTimedSerializer as urlsave

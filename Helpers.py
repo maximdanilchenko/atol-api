@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Вспомогательные скрипты для функций REST-API
 import re

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # REST-API сервер, сайт личного кабинета, старт flask-приложения
 import os
@@ -193,6 +192,6 @@ def home():
     return env.get_template("Home.html").render()
 
 
-if __name__ == "__main__":
-    # app.run(host='0.0.0.0', port=80)
-    app.run()
+# if __name__ == "__main__":
+#     # app.run(host='0.0.0.0', port=80)
+#     app.run()

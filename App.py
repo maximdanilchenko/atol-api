@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Создание flask приложения
 from flask_sqlalchemy import SQLAlchemy
