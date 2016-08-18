@@ -21,5 +21,4 @@ env_variables:
       mysql+mysqldb://ROOT@/cloudbd?unix_socket=/cloudsql/atol-test:us-east1:cloudbd
 
 skip_files:
- - server/lib/flask/ext/setuptools/script\ \(dev\).tmpl
- 
+ - env/lib/python2.7/site-packages/setuptools/script\ \(dev\).tmpl
