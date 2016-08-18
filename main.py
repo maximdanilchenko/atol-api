@@ -97,17 +97,16 @@ def signup():
             abort(400)
         # выслать на почту пользователя следующую ссылку для подтверждение принадлежности почты:
         a = url_for('confirm', token=token, _external=True)
-    print a
+    # print a
     # SMTP не работает в нашей сети с компа в офисе, нужен корпоративный почтовый сервер
     # настроим на серваке уже
-
-    # msg = Message(
-    #     'Hello',
-    #     sender='dmax.dev@gmail.com',
-    #     recipients=
-    #     ['maxalexdanilchenko@gmail.com'])
-    # msg.body = "This is the email body"
-    # mail.send(msg)
+    msg = Message(
+        'Пройдите по ссылке для завершения регистрации: <a>%s</a>' % a,
+        sender='dmax.dev@gmail.com',
+        recipients=
+        [email])
+    msg.body = "This is the email body"
+    mail.send(msg)
     return jsonify({'success': True})
 
 
