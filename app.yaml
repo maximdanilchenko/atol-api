@@ -19,4 +19,4 @@ env_variables:
     # Replace user, password, database, project, and instance with the values obtained
     # when configuring your Cloud SQL instance.
     SQLALCHEMY_DATABASE_URI: >-
-      mysql+pymysql://ROOT@/cloudbd?unix_socket=/cloudsql/atol-test:us-east1:cloudbd
+      mysql+pymysql://ROOT@/cloudsql?unix_socket=/cloudsql/atol-test:us-east1:cloudbd
