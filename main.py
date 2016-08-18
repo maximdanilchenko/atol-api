@@ -106,12 +106,12 @@ def signup():
     mail_to = email
     mail_from = 'dmax.dev@gmail.com'
     mail_subject = 'регистрация'
-    mail_body = ''
-    mail.send_mail(mail_from,
-                   mail_to,
-                   mail_subject,
-                   mail_body,
-                   html=mail_html_body)
+    mail_body = '<h1>Пройдите по ссылке для завершения регистрации: </h1><a>%s</a>' % a
+    mail.send_mail(sender=mail_from,
+                   to=mail_to,
+                   subject=mail_subject,
+                   body=mail_body)
+                   #,html=mail_html_body)
     # msg = Message(
     #     'Пройдите по ссылке для завершения регистрации: <a>%s</a>' % a,
     #     sender='dmax.dev@gmail.com',
