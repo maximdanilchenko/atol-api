@@ -19,3 +19,7 @@ env_variables:
     # when configuring your Cloud SQL instance.
     SQLALCHEMY_DATABASE_URI: >-
       mysql+mysqldb://ROOT@/cloudbd?unix_socket=/cloudsql/atol-test:us-east1:cloudbd
+
+skip_files:
+ - server/lib/flask/ext/setuptools/script\ \(dev\).tmpl
+ 
