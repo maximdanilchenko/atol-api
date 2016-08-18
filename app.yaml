@@ -22,3 +22,4 @@ env_variables:
 
 skip_files:
  - env/lib/python2.7/site-packages/setuptools/script\ \(dev\).tmpl
+ - env/local/lib/python2.7/site-packages/setuptools/script\ \(dev\).tmpl
