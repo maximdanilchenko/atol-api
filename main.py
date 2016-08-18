@@ -10,7 +10,7 @@ from werkzeug.contrib.cache import SimpleCache
 # http://flask.pocoo.org/docs/0.11/patterns/caching/
 from Helpers import *
 import Token
-from Models import User
+# from Models import User
 from App import app, db
 
 work_dir = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.path.dirname(
@@ -24,7 +24,7 @@ work_dir = "%s/%s" % (work_dir.replace("\\", "/"), 'html')
 """
 mail = Mail(app)
 # db.drop_all() # раскомментить, чтобы удалить все таблицы из БД при старте приложения
-db.create_all()
+# db.create_all()
 cache = SimpleCache()
 
 """
@@ -79,22 +79,22 @@ def signup():
         abort(400)
     # зарегестрировать пользователя в базе, если не получается, то возвращаем ошибку
     if recovery:
-        try:
-            user = User.query.filter_by(email=email).first()
-            if not user:
-                abort(401)
-        except:
-            abort(401)
+        # try:
+        #     user = User.query.filter_by(email=email).first()
+        #     if not user:
+        #         abort(401)
+        # except:
+        #     abort(401)
         token = Token.generate_token(password, app.config['SECRET_KEY'])
         a = url_for('recovery', token=token, email=email, _external=True)
     else:
         token = Token.generate_token(email, app.config['SECRET_KEY'])
-        user = User('', email, Token.generate_token(password, app.config['SECRET_KEY']))
-        db.session.add(user)
-        try:
-            db.session.commit()
-        except:
-            abort(400)
+        # user = User('', email, Token.generate_token(password, app.config['SECRET_KEY']))
+        # db.session.add(user)
+        # try:
+        #     db.session.commit()
+        # except:
+        #     abort(400)
         # выслать на почту пользователя следующую ссылку для подтверждение принадлежности почты:
         a = url_for('confirm', token=token, _external=True)
     print a
@@ -116,13 +116,13 @@ def signin():
     email, password = validate_post(('email', 'password',), (str,) * 2, ('',) * 2)
     if not (email and password):
         abort(400)
-    user = User.query.filter_by(email=email).first()
-    if not user or Token.confirm_token(user.password, app.config['SECRET_KEY'], None) != password or not user.confirmed:
-        abort(401)
-    token = Token.generate_token(user.id, app.config['SECRET_KEY'])
+    # user = User.query.filter_by(email=email).first()
+    # if not user or Token.confirm_token(user.password, app.config['SECRET_KEY'], None) != password or not user.confirmed:
+    #     abort(401)
+    # token = Token.generate_token(user.id, app.config['SECRET_KEY'])
     # Получить обратно: user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
-    cache.set(token, user_info(request), app.config['MAX_CACHE_TIME'])
-    return jsonify({'success': True, 'access_token': token})
+    # cache.set(token, user_info(request), app.config['MAX_CACHE_TIME'])
+    # return jsonify({'success': True, 'access_token': token})
 
 
 @app.route("/confirm/<string:token>", methods=['GET'])
@@ -133,11 +133,11 @@ def confirm(token):
         # проверить пользователя по почте в базе и пометить, что он подтвердил email
         if not email:
             abort(400)
-        user = User.query.filter_by(email=email).first()
-        if not user:
-            abort(401)
-        user.confirmed = True
-        db.session.commit()
+        # user = User.query.filter_by(email=email).first()
+        # if not user:
+        #     abort(401)
+        # user.confirmed = True
+        # db.session.commit()
         return redirect(url_for('success'))
         # return jsonify({'success': True, 'email': email})
 
@@ -150,12 +150,12 @@ def recovery():
         # проверить пользователя по почте в базе и пометить, что он подтвердил email
         if not password:
             abort(400)
-        user = User.query.filter_by(email=email).first()
-        if not user:
-            abort(401)
-        user.password = Token.generate_token(password, app.config['SECRET_KEY'])
-        user.confirmed = True
-        db.session.commit()
+        # user = User.query.filter_by(email=email).first()
+        # if not user:
+        #     abort(401)
+        # user.password = Token.generate_token(password, app.config['SECRET_KEY'])
+        # user.confirmed = True
+        # db.session.commit()
         return redirect(url_for('success'))
         # return jsonify({'success': True, 'email': email})
 
