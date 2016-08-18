@@ -22,7 +22,8 @@ work_dir = "%s/%s" % (work_dir.replace("\\", "/"), 'html')
     -----Настройка приложения-----
     Объекты: mail, db, cache
 """
-mail = Mail(app)
+from google.appengine.api import mail
+# mail = Mail(app)
 # db.drop_all() # раскомментить, чтобы удалить все таблицы из БД при старте приложения
 db.create_all()
 cache = SimpleCache()
@@ -100,13 +101,24 @@ def signup():
     # print a
     # SMTP не работает в нашей сети с компа в офисе, нужен корпоративный почтовый сервер
     # настроим на серваке уже
-    msg = Message(
-        'Пройдите по ссылке для завершения регистрации: <a>%s</a>' % a,
-        sender='dmax.dev@gmail.com',
-        recipients=
-        [email])
-    msg.body = "This is the email body"
-    mail.send(msg)
+
+    mail_html_body = '<h1>Пройдите по ссылке для завершения регистрации: </h1><a>%s</a>' % a
+    mail_to = email
+    mail_from = 'dmax.dev@gmail.com'
+    mail_subject = 'регистрация'
+    mail_body = ''
+    mail.send_mail(mail_from,
+                   mail_to,
+                   mail_subject,
+                   mail_body,
+                   html=mail_html_body)
+    # msg = Message(
+    #     'Пройдите по ссылке для завершения регистрации: <a>%s</a>' % a,
+    #     sender='dmax.dev@gmail.com',
+    #     recipients=
+    #     [email])
+    # msg.body = "This is the email body"
+    # mail.send(msg)
     return jsonify({'success': True})
 
 
