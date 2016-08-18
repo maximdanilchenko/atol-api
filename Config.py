@@ -7,7 +7,8 @@ DEBUG = True
 SECRET_KEY = os.urandom(24)
 
 # база данных
-SQLALCHEMY_DATABASE_URI = os.environ['SQLALCHEMY_DATABASE_URI']#'mysql://root@localhost/api'
+SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root@/cloudbd?unix_socket=/cloudsql/atol-test:us-east1:cloudbd'
+# os.environ['SQLALCHEMY_DATABASE_URI']#'mysql://root@localhost/api'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # время, через которое удаляется кэш запись, если она не обновляется
