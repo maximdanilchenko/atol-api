@@ -8,15 +8,16 @@ SECRET_KEY = os.urandom(24)
 
 # база данных
 env = os.getenv('SERVER_SOFTWARE')
-if (env and env.startswith('Google App Engine/')):
-    # Connecting from App Engine
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root@/cloudsql?unix_socket=/cloudsql/atol-test:us-east1:cloudbd'
-    # os.environ['SQLALCHEMY_DATABASE_URI']#'mysql://root@localhost/api'
-    """ mysql+mysqldb://root@/<dbname>?unix_socket=/cloudsql/<projectid>:<instancename> """
-else:
-    # Connecting from an external network.
-    # Make sure your network is whitelisted
-    SQLALCHEMY_DATABASE_URI = 'mysql://root@104.196.55.149:3306/cloudbd'
+SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root@/atol_hab?unix_socket=/cloudsql/atol-test:us-east1:cloudbd'
+# if (env and env.startswith('Google App Engine/')):
+#     # Connecting from App Engine
+#     SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root@/atol_hab?unix_socket=/cloudsql/atol-test:us-east1:cloudbd'
+#     # os.environ['SQLALCHEMY_DATABASE_URI']#'mysql://root@localhost/api'
+#     """ mysql+mysqldb://root@/<dbname>?unix_socket=/cloudsql/<projectid>:<instancename> """
+# else:
+#     # Connecting from an external network.
+#     # Make sure your network is whitelisted
+#     SQLALCHEMY_DATABASE_URI = 'mysql://root@104.196.55.149:3306/cloudbd'
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
