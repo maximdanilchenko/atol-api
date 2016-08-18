@@ -24,7 +24,7 @@ work_dir = "%s/%s" % (work_dir.replace("\\", "/"), 'html')
 """
 from google.appengine.api import mail
 # mail = Mail(app)
-# db.drop_all() # раскомментить, чтобы удалить все таблицы из БД при старте приложения
+db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
 db.create_all()
 cache = SimpleCache()
 
