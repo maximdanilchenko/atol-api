@@ -14,3 +14,9 @@ libraries:
   version: "0.15"
 - name: MySQLdb
   version: "latest"
+
+env_variables:
+    # Replace user, password, database, project, and instance with the values obtained
+    # when configuring your Cloud SQL instance.
+    SQLALCHEMY_DATABASE_URI: >-
+      mysql+pymysql://ROOT@/cloudbd?unix_socket=/cloudsql/atol-test:us-east1:cloudbd
