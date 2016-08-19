@@ -5,7 +5,7 @@ import sys
 
 # приложение
 DEBUG = True
-SECRET_KEY = os.urandom(24)
+SECRET_KEY = "\xd2\xc9\xc7\xe1\x03\xe7%\xd0\xed?z\x85\xc0\x8e\x04'LH\x142\t\x11SB"
 
 # база данных
 env = os.getenv('SERVER_SOFTWARE')
