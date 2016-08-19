@@ -4,10 +4,8 @@ import os
 import sys
 from flask import send_file, url_for, jsonify, abort, make_response, redirect
 from jinja2 import Environment, FileSystemLoader
-from flask_mail import Mail, Message
-from werkzeug.contrib.cache import SimpleCache
-# в продакшене это должен быть мемкэш/GoogleAppEngine кэш сервер:
-# http://flask.pocoo.org/docs/0.11/patterns/caching/
+from werkzeug.contrib.cache import GAEMemcachedCache
+from google.appengine.api import mail
 from Helpers import *
 import Token
 from Models import User
@@ -22,11 +20,10 @@ work_dir = "%s/%s" % (work_dir.replace("\\", "/"), 'html')
     -----Настройка приложения-----
     Объекты: mail, db, cache
 """
-from google.appengine.api import mail
 # mail = Mail(app)
 # db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
 db.create_all()
-cache = SimpleCache()
+cache = GAEMemcachedCache()
 
 """
     -----REST-API сервера-----
@@ -113,14 +110,6 @@ def signup():
                    to=mail_to,
                    subject=mail_subject,
                    body=mail_body)
-                   # html=mail_html_body)
-    # msg = Message(
-    #     'Пройдите по ссылке для завершения регистрации: <a>%s</a>' % a,
-    #     sender='dmax.dev@gmail.com',
-    #     recipients=
-    #     [email])
-    # msg.body = "This is the email body"
-    # mail.send(msg)
     return jsonify({'success': True})
 
 
