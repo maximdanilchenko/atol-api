@@ -106,7 +106,7 @@ def signup():
     # SMTP не работает в нашей сети с компа в офисе, нужен корпоративный почтовый сервер
     # настроим на серваке уже
 
-    mail_html_body = "<h1>ATOL </h1><a href='%s'>Ссылка</a>" % a
+    mail_html_body = "<html><head></head><body><h1>ATOL </h1><a href='%s'>Ссылка</a></body></html>" % a
     mail_to = email
     mail_from = 'dmax.dev@gmail.com'
 
