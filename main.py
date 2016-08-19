@@ -85,6 +85,9 @@ def signup():
             abort(401)
         token = Token.generate_token(password, app.config['SECRET_KEY'])
         a = url_for('recovery', token=token, email=email, _external=True)
+        mail_subject = 'Замена пароля'
+        mail_body = """Пройдите по ссылке для замены пароля:
+            %s""" % a
     else:
         token = Token.generate_token(email, app.config['SECRET_KEY'])
         user = User('', email, Token.generate_token(password, app.config['SECRET_KEY']))
@@ -95,21 +98,23 @@ def signup():
             abort(400)
         # выслать на почту пользователя следующую ссылку для подтверждение принадлежности почты:
         a = url_for('confirm', token=token, _external=True)
+        mail_subject = 'Регистрация'
+        mail_body = """Поздравляем!
+        Пройдите по ссылке для завершения регистрации:
+        %s""" % a
     # print a
     # SMTP не работает в нашей сети с компа в офисе, нужен корпоративный почтовый сервер
     # настроим на серваке уже
 
-    # mail_html_body = '<h1>Пройдите по ссылке для завершения регистрации: </h1><a>%s</a>' % a
+    mail_html_body = "<h1>ATOL </h1><a href='%s'>Ссылка</a>" % a
     mail_to = email
     mail_from = 'dmax.dev@gmail.com'
-    mail_subject = 'Регистрация'
-    mail_body = """Поздравляем!
-Пройдите по ссылке для завершения регистрации:
-%s""" % a
+
     mail.send_mail(sender=mail_from,
                    to=mail_to,
                    subject=mail_subject,
-                   body=mail_body)
+                   body=mail_body,
+                   html=mail_html_body)
     return jsonify({'success': True})
 
 
