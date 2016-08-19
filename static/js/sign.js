@@ -38,6 +38,7 @@ function signUp() {
                 if (response.success == true){
                     $("#main").css("display","none");
                     $("#final").css("display","block");
+                    $("#error").css("display","none");
                 };
             },
         'json' ).fail(function() {
@@ -58,6 +59,7 @@ function back() {
 function rec_pass(){
     $("#main").css("display","none");
     $("#recovery").css("display","block");
+    $("#error").css("display","none");
 }
 
 function recovery(){
@@ -69,6 +71,7 @@ function recovery(){
                 if (response.success == true){
                     $("#recovery").css("display","none");
                     $("#final_rec").css("display","block");
+                    $("#error").css("display","none");
                 };
             },
         'json' ).fail(function() {
