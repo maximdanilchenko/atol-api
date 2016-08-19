@@ -3,10 +3,13 @@
 
 // Tabs
 function openLogTab(tabName) {
-    $(".login").css("display","none");
-    $(".snbtn").toggleClass("w3-theme-dark");
-    $(".snbtn").toggleClass("w3-theme");
-    $("#"+tabName).css("display","block");
+    if ($("#"+tabName).css("display") == "none"){
+        $(".login").css("display","none");
+        $(".snbtn").toggleClass("w3-theme-dark");
+        $(".snbtn").toggleClass("w3-theme");
+        $("#"+tabName).css("display","block");
+        $("#error").css("display","none");
+    }
 }
 
 
@@ -19,7 +22,7 @@ function signIn() {
             };
         },
     'json' ).fail(function() {
-        $("#main").css("display","none");
+//        $("#main").css("display","none");
         $("#error").css("display","block");
   });
 }
@@ -38,7 +41,7 @@ function signUp() {
                 };
             },
         'json' ).fail(function() {
-            $("#main").css("display","none");
+//            $("#main").css("display","none");
             $("#error").css("display","block");
       });
     }
@@ -69,7 +72,7 @@ function recovery(){
                 };
             },
         'json' ).fail(function() {
-            $("#recovery").css("display","none");
+//            $("#recovery").css("display","none");
             $("#error").css("display","block");
       });
     }

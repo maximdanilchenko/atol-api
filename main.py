@@ -22,9 +22,9 @@ work_dir = "%s/%s" % (work_dir.replace("\\", "/"), 'html')
     -----Настройка приложения-----
     Объекты: mail, db, cache
 """
-from google.appengine.api import mail
-# mail = Mail(app)
-db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
+# from google.appengine.api import mail
+mail = Mail(app)
+# db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
 db.create_all()
 cache = SimpleCache()
 
@@ -102,10 +102,10 @@ def signup():
     # SMTP не работает в нашей сети с компа в офисе, нужен корпоративный почтовый сервер
     # настроим на серваке уже
 
-    mail_html_body = '<h1>Пройдите по ссылке для завершения регистрации: </h1><a>%s</a>' % a
+    # mail_html_body = '<h1>Пройдите по ссылке для завершения регистрации: </h1><a>%s</a>' % a
     mail_to = email
     mail_from = 'dmax.dev@gmail.com'
-    mail_subject = 'регистрация'
+    mail_subject = 'Регистрация'
     mail_body = """Поздравляем!
 Пройдите по ссылке для завершения регистрации:
 %s""" % a
@@ -152,7 +152,6 @@ def confirm(token):
         user.confirmed = True
         db.session.commit()
         return redirect(url_for('success'))
-        # return jsonify({'success': True, 'email': email})
 
 
 @app.route("/recovery", methods=['GET'])
@@ -170,7 +169,6 @@ def recovery():
         user.confirmed = True
         db.session.commit()
         return redirect(url_for('success'))
-        # return jsonify({'success': True, 'email': email})
 
 
 """
@@ -204,7 +202,8 @@ def success():
 def home():
     return env.get_template("Home.html").render()
 
+env_serv = os.getenv('SERVER_SOFTWARE')
 
-# if __name__ == "__main__":
-#     # app.run(host='0.0.0.0', port=80)
-#     app.run()
+if not (env_serv and env_serv.startswith('Google App Engine/')):
+    if 'win' in sys.platform and __name__ == "__main__":
+        app.run()
