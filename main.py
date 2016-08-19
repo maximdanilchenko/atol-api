@@ -68,7 +68,7 @@ MAIL_HTML_REC = """<!DOCTYPE html>
 from google.appengine.api import mail
 # from flask_mail import Mail
 # mail = Mail(app)
-db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
+# db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
 db.create_all()
 
 from werkzeug.contrib.cache import GAEMemcachedCache, SimpleCache
