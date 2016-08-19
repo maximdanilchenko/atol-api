@@ -53,7 +53,9 @@ function signUp() {
 
 //Reload
 function back() {
-    location.reload();
+    $("#main").css("display","block");
+    $("#recovery").css("display","none");
+    $("#error").css("display","none");
 }
 
 function rec_pass(){
