@@ -16,6 +16,53 @@ work_dir = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else
 work_dir = "%s/%s" % (work_dir.replace("\\", "/"), 'html')
 
 
+MAIL_HTML_REG = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+    <link rel="stylesheet" href="http://www.w3schools.com/lib/w3-theme-red.css">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+<body>
+<header>
+</header>
+<div class="w3-row-padding w3-center w3-margin-top">
+    <div>
+        <img src="https://atol-test.appspot.com/static/img/logo.png" alt="АТОЛ" width="96" height="38">
+        <h1>Поздравляем!</h1>
+        <p>Регистрация в личном кабинете ATOL почти завершена</p>
+        <a href={}>Пройдите по этой ссылке для завершения регистрации</a>
+    </div>
+</div>
+</body>
+</html>"""
+
+MAIL_HTML_REC = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+    <link rel="stylesheet" href="http://www.w3schools.com/lib/w3-theme-red.css">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+<body>
+<header>
+</header>
+<div class="w3-row-padding w3-center w3-margin-top">
+    <div>
+        <img src="https://atol-test.appspot.com/static/img/logo.png" alt="АТОЛ" width="96" height="38">
+        <h1>Замена пароля</h1>
+        <p>Замена пароля личного кабинета ATOL почти завершена</p>
+        <a href={}>Пройдите по этой ссылке для подтверждения замены пароля</a>
+    </div>
+</div>
+</body>
+</html>"""
+
+
 """
     -----Настройка приложения-----
     Объекты: mail, db, cache
@@ -88,6 +135,7 @@ def signup():
         mail_subject = 'Замена пароля'
         mail_body = """Пройдите по ссылке для замены пароля:
             %s""" % a
+        mail_html_body = MAIL_HTML_REC.format(a)
     else:
         token = Token.generate_token(email, app.config['SECRET_KEY'])
         user = User('', email, Token.generate_token(password, app.config['SECRET_KEY']))
@@ -102,11 +150,11 @@ def signup():
         mail_body = """Поздравляем!
         Пройдите по ссылке для завершения регистрации:
         %s""" % a
+        mail_html_body = MAIL_HTML_REG.format(a)
     # print a
     # SMTP не работает в нашей сети с компа в офисе, нужен корпоративный почтовый сервер
     # настроим на серваке уже
 
-    mail_html_body = "<html><head></head><body><h1>ATOL </h1><a href='%s'>Ссылка</a></body></html>" % a
     mail_to = email
     mail_from = 'dmax.dev@gmail.com'
 
