@@ -5,7 +5,6 @@ import sys
 
 # приложение
 DEBUG = True
-SECRET_KEY = "\xd2\xc9\xc7\xe1\x03\xe7%\xd0\xed?z\x85\xc0\x8e\x04'LH\x142\t\x11SB"
 
 # база данных
 env = os.getenv('SERVER_SOFTWARE')
@@ -23,6 +22,8 @@ else:
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+with open('key') as key:
+    SECRET_KEY = key.readline()
 # время, через которое удаляется кэш запись, если она не обновляется
 MAX_CACHE_TIME = 24 * 60 * 60
 

@@ -18,7 +18,7 @@ env_variables:
     # Replace user, password, database, project, and instance with the values obtained
     # when configuring your Cloud SQL instance.
     SQLALCHEMY_DATABASE_URI: >-
-      mysql+mysqldb://ROOT@/cloudbd?unix_socket=/cloudsql/atol-test:us-east1:cloudbd
+      mysql+mysqldb://root@/atol_hab?unix_socket=/cloudsql/atol-test:us-east1:cloudbd
 
 skip_files:
  - env/lib/python2.7/site-packages/setuptools/script\ \(dev\).tmpl
