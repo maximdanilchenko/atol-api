@@ -22,7 +22,7 @@ else:
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-with open('key') as key:
+with open('key.secret') as key:
     SECRET_KEY = key.readline()
 # время, через которое удаляется кэш запись, если она не обновляется
 MAX_CACHE_TIME = 24 * 60 * 60
