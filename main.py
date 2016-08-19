@@ -4,8 +4,6 @@ import os
 import sys
 from flask import send_file, url_for, jsonify, abort, make_response, redirect
 from jinja2 import Environment, FileSystemLoader
-from werkzeug.contrib.cache import GAEMemcachedCache
-from google.appengine.api import mail
 from Helpers import *
 import Token
 from Models import User
@@ -54,9 +52,9 @@ MAIL_HTML_REC = """<!DOCTYPE html>
 <div class="w3-row-padding w3-center w3-margin-top">
     <div>
         <img src="https://atol-test.appspot.com/static/img/logo.png" alt="АТОЛ" width="96" height="38">
-        <h1>Замена пароля</h1>
-        <p>Замена пароля личного кабинета ATOL почти завершена</p>
-        <a href={}>Пройдите по этой ссылке для подтверждения замены пароля</a>
+        <h1>Изменение пароля</h1>
+        <p>Изменение пароля личного кабинета ATOL почти завершено</p>
+        <a href={}>Пройдите по этой ссылке для изменения пароля</a>
     </div>
 </div>
 </body>
@@ -67,10 +65,17 @@ MAIL_HTML_REC = """<!DOCTYPE html>
     -----Настройка приложения-----
     Объекты: mail, db, cache
 """
+from google.appengine.api import mail
+# from flask_mail import Mail
 # mail = Mail(app)
-# db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
+db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
 db.create_all()
-cache = GAEMemcachedCache()
+
+from werkzeug.contrib.cache import GAEMemcachedCache, SimpleCache
+if 'win' in sys.platform:
+    cache = SimpleCache()
+else:
+    cache = GAEMemcachedCache()
 
 """
     -----REST-API сервера-----
@@ -117,47 +122,58 @@ def try_update_post():
         abort(404)
 
 
-@app.route("/api/signup", methods=['POST'])
-def signup():
-    email, password, conf_password, recovery = validate_post(('email', 'password', 'conf_password', 'recovery',), (str,) * 4, ('',) * 4)
-    if not (email and password and conf_password == password):
+@app.route("/api/recovery", methods=['POST'])
+def api_recovery():
+    email, = validate_post(('email',),(str,), ('',))
+    if not email:
         abort(400)
-    # зарегестрировать пользователя в базе, если не получается, то возвращаем ошибку
-    if recovery:
-        try:
-            user = User.query.filter_by(email=email).first()
-            if not user:
-                abort(401)
-        except:
+    token = Token.generate_token(email, app.config['SECRET_KEY'])
+    try:
+        user = User.query.filter_by(email=email).first()
+        if not user:
             abort(401)
-        token = Token.generate_token(password, app.config['SECRET_KEY'])
-        a = url_for('recovery', token=token, email=email, _external=True)
-        mail_subject = 'Замена пароля'
-        mail_body = """Пройдите по ссылке для замены пароля:
+        user.token = token
+    except:
+        abort(401)
+    a = url_for('recovery', token=token, _external=True)
+    print a
+    mail_subject = 'Замена пароля'
+    mail_body = """Пройдите по ссылке для замены пароля:
             %s""" % a
-        mail_html_body = MAIL_HTML_REC.format(a)
-    else:
-        token = Token.generate_token(email, app.config['SECRET_KEY'])
-        user = User('', email, Token.generate_token(password, app.config['SECRET_KEY']))
-        db.session.add(user)
-        try:
-            db.session.commit()
-        except:
-            abort(400)
-        # выслать на почту пользователя следующую ссылку для подтверждение принадлежности почты:
-        a = url_for('confirm', token=token, _external=True)
-        mail_subject = 'Регистрация'
-        mail_body = """Поздравляем!
-        Пройдите по ссылке для завершения регистрации:
-        %s""" % a
-        mail_html_body = MAIL_HTML_REG.format(a)
-    # print a
-    # SMTP не работает в нашей сети с компа в офисе, нужен корпоративный почтовый сервер
-    # настроим на серваке уже
-
+    mail_html_body = MAIL_HTML_REC.format(a)
     mail_to = email
     mail_from = 'dmax.dev@gmail.com'
+    mail.send_mail(sender=mail_from,
+                   to=mail_to,
+                   subject=mail_subject,
+                   body=mail_body,
+                   html=mail_html_body)
+    return jsonify({'success': True})
 
+
+@app.route("/api/signup", methods=['POST'])
+def api_signup():
+    email, password, conf_password = validate_post(('email', 'password', 'conf_password',), (str,) * 3, ('',) * 3)
+    if not (email and password and conf_password == password):
+        abort(400)
+    token = Token.generate_token(email, app.config['SECRET_KEY'])
+    user = User.query.filter_by(email=email, confirmed=False).first()
+    if not user:
+        user = User('', email, Token.generate_token(password, app.config['SECRET_KEY']))
+        db.session.add(user)
+    try:
+        db.session.commit()
+    except:
+        abort(400)
+    a = url_for('api_confirm', token=token, _external=True)
+    print a
+    mail_subject = 'Регистрация'
+    mail_body = """Поздравляем!
+    Пройдите по ссылке для завершения регистрации:
+    %s""" % a
+    mail_html_body = MAIL_HTML_REG.format(a)
+    mail_to = email
+    mail_from = 'dmax.dev@gmail.com'
     mail.send_mail(sender=mail_from,
                    to=mail_to,
                    subject=mail_subject,
@@ -167,7 +183,7 @@ def signup():
 
 
 @app.route("/api/signin", methods=['POST'])
-def signin():
+def api_signin():
     email, password = validate_post(('email', 'password',), (str,) * 2, ('',) * 2)
     if not (email and password):
         abort(400)
@@ -177,12 +193,32 @@ def signin():
     token = Token.generate_token(user.id, app.config['SECRET_KEY'])
     # Получить обратно: user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
     cache.set(token, user_info(request), app.config['MAX_CACHE_TIME'])
+    user.token = ''
+    db.session.commit()
+    return jsonify({'success': True, 'access_token': token})
+
+
+@app.route("/api/newpas", methods=['POST'])
+def api_newpas():
+    token, password, conf_password = validate_post(('token', 'password', 'conf_password',), (str,) * 3, ('',) * 3)
+    if not (token and password and conf_password == password):
+        abort(400)
+    email = Token.confirm_token(token, app.config['SECRET_KEY'], None)
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        abort(401)
+    user.password = Token.generate_token(password, app.config['SECRET_KEY'])
+    user.token = ''
+    user.confirmed = True
+    db.session.commit()
+    # Получить обратно: user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
+    in_token = Token.generate_token(user.id, app.config['SECRET_KEY'])
+    cache.set(in_token, user_info(request), app.config['MAX_CACHE_TIME'])
     return jsonify({'success': True, 'access_token': token})
 
 
 @app.route("/confirm/<string:token>", methods=['GET'])
-def confirm(token):
-    # token, = validate_get(('token',), (str,), (None,))
+def api_confirm(token):
     if token:
         email = Token.confirm_token(token, app.config['SECRET_KEY'], app.config['CONFIRM_TIME'])
         # проверить пользователя по почте в базе и пометить, что он подтвердил email
@@ -196,21 +232,17 @@ def confirm(token):
         return redirect(url_for('success'))
 
 
-@app.route("/recovery", methods=['GET'])
-def recovery():
-    token, email = validate_get(('token', 'email',), (str,)*2, (None,)*2)
-    if token and email:
-        password = Token.confirm_token(token, app.config['SECRET_KEY'], app.config['CONFIRM_TIME'])
+@app.route("/recovery/<string:token>", methods=['GET'])
+def recovery(token):
+    if token:
+        email = Token.confirm_token(token, app.config['SECRET_KEY'], app.config['CONFIRM_TIME'])
         # проверить пользователя по почте в базе и пометить, что он подтвердил email
-        if not password:
+        if not email:
             abort(400)
         user = User.query.filter_by(email=email).first()
         if not user:
             abort(401)
-        user.password = Token.generate_token(password, app.config['SECRET_KEY'])
-        user.confirmed = True
-        db.session.commit()
-        return redirect(url_for('success'))
+        return redirect(url_for('newpassword', email=email, token=token))
 
 
 """
@@ -221,14 +253,6 @@ env = Environment(loader=FileSystemLoader(siteBasePath))
 
 
 # Страницы сайта
-@app.route("/sign.html")
-@app.route("/sign")
-@app.route("/Sign.html")
-@app.route("/Sign")
-def sign():
-    return env.get_template("Sign.html").render()
-
-
 @app.route("/success.html")
 def success():
     return env.get_template("Success.html").render()
@@ -243,6 +267,32 @@ def success():
 @app.route("/")
 def home():
     return env.get_template("Home.html").render()
+
+
+@app.route("/signin.html")
+@app.route("/signin")
+def signin():
+    return env.get_template("signin.html").render()
+
+
+@app.route("/signup.html")
+@app.route("/signup")
+def signup():
+    return env.get_template("signup.html").render()
+
+
+@app.route("/recover.html")
+@app.route("/recover")
+def recover():
+    return env.get_template("recover.html").render()
+
+
+@app.route("/newpassword.html")
+@app.route("/newpassword")
+def newpassword():
+    email, token = validate_get(('email', 'token',), (str,) * 2, ('',) * 2)
+    return env.get_template("newpassword.html").render(email=email, token=token)
+
 
 env_serv = os.getenv('SERVER_SOFTWARE')
 

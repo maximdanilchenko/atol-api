@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<!--HEAD-->
+<head>
+    <title>Регистрация</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <link rel="stylesheet" href="/static/css/w3.css">
+    <link rel="stylesheet" href="/static/css/w3-theme-red.css">
+    <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="static/js/jquery-1.11.3.min.js"></script>
+    <script src="static/js/jquery-ui.min.js"></script>
+    <script src="static/js/sign.js"></script>
+</head>
+
+<body class="w3-animate-opacity">
+
+<!--HEADER-->
+<header class="w3-container w3-white w3-padding">
+    <div class="w3-right">
+        <img src="static/img/logo.png" alt="АТОЛ" width="96" height="38">
+    </div>
+</header>
+<br>
+<div class="w3-row-padding w3-margin-top">
+
+    <!--LEFT MARGIN-->
+    <div class="w3-third">&nbsp;</div>
+
+    <!--CENTER MAIN CONTENT COLUMN-->
+    <div class="w3-third">
+
+        <!--FINAL AFTER REGISTRATION-->
+        <div id="final" class="w3-center" style="display:none">
+            <br>
+            <h2>Регистрация почти завершена!</h2>
+            Ссылка для завершения регистрации отправлена Вам на почту
+        </div>
+
+        <!--FORM MAIN-->
+        <div id="main">
+            <!--SIGNIN-->
+            <div id="signup" class="w3-card-4 login w3-animate-opacity">
+
+                <header class="w3-container w3-theme">
+                    <h2>Регистрация</h2>
+                </header>
+
+                <form id="signup-form" class="w3-container">
+                    <div class="w3-group">
+                        <input class="w3-input" type="email" name="email" required>
+                        <label class="w3-label w3-validate">Почта</label>
+                    </div>
+                    <div class="w3-group">
+                        <input class="w3-input" type="password" name="password" required>
+                        <label class="w3-label w3-validate">Пароль</label>
+                    </div>
+                    <div class="w3-group">
+                        <input class="w3-input" type="password" name="conf_password" required>
+                        <label class="w3-label w3-validate">Пожалуйста, подтвердите свой пароль</label>
+                    </div>
+                    <div class="w3-group">
+                        <!--<a class="w3-btn w3-text-white w3-grey" onclick="rec_pass()">Забыл пароль</a>-->
+                        <button class="w3-btn w3-theme w3-large" type="submit">Зарегистрироваться</button>
+                        <p class="w3-right w3-text-grey">
+                            <a class="w3-hover-text-red" href="signin.html">Вход</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+
+            <!--ERROR-->
+            <div id="error" class="w3-center w3-text-red" style="display:none">
+                <br>
+                <h2>Ошибка</h2>
+                Данные введены неправильно!
+                <br>
+            </div>
+        </div>
+    </div>
+    <!--RIGHT MARGIN-->
+    <div class="w3-third">&nbsp;</div>
+</div>
+<br>
+
+<script>
+
+$("#signup-form").submit(function(event){
+    signUp();
+    return false;
+});
+
+</script>
+
+</body>
+</html>
