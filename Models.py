@@ -9,7 +9,7 @@ class User(db.Model):
     password = db.Column(db.String(150), unique=True)
     email = db.Column(db.String(120), unique=True)
     confirmed = db.Column(db.Boolean, default=False)
-    token = db.Column(db.String(150), unique=True)
+    recovery_token = db.Column(db.String(150), unique=True)
 
     def __init__(self, name, email, password):
         self.name = name

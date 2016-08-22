@@ -8,12 +8,16 @@ from Helpers import *
 import Token
 from Models import User
 from App import app, db
+from google.appengine.api import mail
+# from flask_mail import Mail
+# mail = Mail(app)
 
+# рабочая директория
 work_dir = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.path.dirname(
     os.path.realpath(__file__))
 work_dir = "%s/%s" % (work_dir.replace("\\", "/"), 'html')
 
-
+# html тело писем для отправки
 MAIL_HTML_REG = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,12 +69,9 @@ MAIL_HTML_REC = """<!DOCTYPE html>
     -----Настройка приложения-----
     Объекты: mail, db, cache
 """
-from google.appengine.api import mail
-# from flask_mail import Mail
-# mail = Mail(app)
 # db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
 db.create_all()
-
+# задаем кэширование в зависимости от платформы запуска
 from werkzeug.contrib.cache import GAEMemcachedCache, SimpleCache
 if 'win' in sys.platform:
     cache = SimpleCache()
@@ -82,6 +83,7 @@ else:
 """
 
 
+# обработчики ошибок
 @app.errorhandler(400)
 def bad_request(error):
     return make_response(jsonify({'success': False, 'error': 'Bad request'}), 400)
@@ -98,6 +100,9 @@ def not_found(error):
 
 
 def is_auth(fn):
+    """
+    декоратор для проверки аутентификации методов API
+    """
     def wrapped():
         access_token, = validate_post(('access_token',), (str,), (0,)) or validate_get(('access_token',), (str,), (0,))
         if not access_token:
@@ -113,6 +118,11 @@ def is_auth(fn):
 
 @app.route("/hub/connect", methods=['POST'])
 def try_update_post():
+    """
+    метод для подключения к хабу. Если идентификатор соответсвтует хабу, который нужно обновить,
+    то на хаб отправляется скрипт для запуска
+    :return:
+    """
     hub_id, = validate_post(('hub_id',), (to_int,), (0,))
     # Тут мы должны определить что это за хаб и нужно ли ему обновление, и после этого сделать нужное действие
     if hub_id:
@@ -124,6 +134,12 @@ def try_update_post():
 
 @app.route("/api/recovery", methods=['POST'])
 def api_recovery():
+    """
+    Вызывается для того, чтобы на почту отправить ссылку на страницу для замены пароля.
+    В базе сохраняется токен для валидации пользователся по ссылке
+    , который в дальнейшем удаляется после смены пароля пользователем.
+    :return:
+    """
     email, = validate_post(('email',),(str,), ('',))
     if not email:
         abort(400)
@@ -132,7 +148,8 @@ def api_recovery():
         user = User.query.filter_by(email=email).first()
         if not user:
             abort(401)
-        user.token = token
+        user.recovery_token = token
+        db.session.commit()
     except:
         abort(401)
     a = url_for('recovery', token=token, _external=True)
@@ -153,6 +170,12 @@ def api_recovery():
 
 @app.route("/api/signup", methods=['POST'])
 def api_signup():
+    """
+    Регистрация пользователя. Требуются почта и два поля пароля. Пользователь сохраняется в базе
+    и на его почту высылается ссылка для подтверждения адреса почты. Если пользователь не подтвердил
+    почту, то он может ещй раз зарегестрироваться.
+    :return:
+    """
     email, password, conf_password = validate_post(('email', 'password', 'conf_password',), (str,) * 3, ('',) * 3)
     if not (email and password and conf_password == password):
         abort(400)
@@ -184,6 +207,12 @@ def api_signup():
 
 @app.route("/api/signin", methods=['POST'])
 def api_signin():
+    """
+    Вход. ищется пользователь с данной почтой и проверяется его пароль.
+    Если все хорошо, то возвращается access_token, который генерируется на основе
+    id пользователя, а в кэше запоминается информация об устройстве/браузере/ip пользователя.
+    :return:
+    """
     email, password = validate_post(('email', 'password',), (str,) * 2, ('',) * 2)
     if not (email and password):
         abort(400)
@@ -193,22 +222,26 @@ def api_signin():
     token = Token.generate_token(user.id, app.config['SECRET_KEY'])
     # Получить обратно: user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
     cache.set(token, user_info(request), app.config['MAX_CACHE_TIME'])
-    user.token = ''
+    user.recovery_token = ''
     db.session.commit()
     return jsonify({'success': True, 'access_token': token})
 
 
 @app.route("/api/newpas", methods=['POST'])
 def api_newpas():
+    """
+    Меняет пароль пользователя, а потом регистрирует его и возвращает access_token
+    :return:
+    """
     token, password, conf_password = validate_post(('token', 'password', 'conf_password',), (str,) * 3, ('',) * 3)
     if not (token and password and conf_password == password):
         abort(400)
-    email = Token.confirm_token(token, app.config['SECRET_KEY'], None)
-    user = User.query.filter_by(email=email).first()
+    # email = Token.confirm_token(token, app.config['SECRET_KEY'], None)
+    user = User.query.filter_by(recovery_token=token).first()
     if not user:
         abort(401)
     user.password = Token.generate_token(password, app.config['SECRET_KEY'])
-    user.token = ''
+    user.recovery_token = ''
     user.confirmed = True
     db.session.commit()
     # Получить обратно: user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
@@ -219,6 +252,12 @@ def api_newpas():
 
 @app.route("/confirm/<string:token>", methods=['GET'])
 def api_confirm(token):
+    """
+    поддверждения адреса почты, происходит пометка в БД, что пользователь подтвержден, после чего он может войти
+    Происходит редирект на страницу успеха
+    :param token:
+    :return:
+    """
     if token:
         email = Token.confirm_token(token, app.config['SECRET_KEY'], app.config['CONFIRM_TIME'])
         # проверить пользователя по почте в базе и пометить, что он подтвердил email
@@ -234,15 +273,20 @@ def api_confirm(token):
 
 @app.route("/recovery/<string:token>", methods=['GET'])
 def recovery(token):
+    """
+
+    :param token:
+    :return:
+    """
     if token:
-        email = Token.confirm_token(token, app.config['SECRET_KEY'], app.config['CONFIRM_TIME'])
+        # email = Token.confirm_token(token, app.config['SECRET_KEY'], app.config['CONFIRM_TIME'])
         # проверить пользователя по почте в базе и пометить, что он подтвердил email
-        if not email:
-            abort(400)
-        user = User.query.filter_by(email=email).first()
+        # if not email:
+        #     abort(400)
+        user = User.query.filter_by(recovery_token=token).first()
         if not user:
             abort(401)
-        return redirect(url_for('newpassword', email=email, token=token))
+        return redirect(url_for('newpassword', email=user.email, token=token))
 
 
 """
