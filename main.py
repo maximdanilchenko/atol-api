@@ -6,7 +6,7 @@ from flask import send_file, url_for, jsonify, abort, make_response, redirect
 from jinja2 import Environment, FileSystemLoader
 from Helpers import *
 import Token
-from Models import User
+from Models import User, Partner, Client, Hub
 from App import app, db
 from google.appengine.api import mail
 # from flask_mail import Mail
@@ -67,7 +67,7 @@ MAIL_HTML_REC = """<!DOCTYPE html>
 
 """
     -----Настройка приложения-----
-    Объекты: mail, db, cache
+    Объекты: db, cache
 """
 db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
 db.create_all()
@@ -176,14 +176,25 @@ def api_signup():
     почту, то он может ещй раз зарегестрироваться.
     :return:
     """
-    email, password, conf_password = validate_post(('email', 'password', 'conf_password',), (str,) * 3, ('',) * 3)
-    if not (email and password and conf_password == password):
+    email, password, conf_password, user_type = validate_post(('email', 'password', 'conf_password', 'type'), (str,) * 4, ('',) * 4)
+    if not (email and user_type and password and conf_password == password):
         abort(400)
     token = Token.generate_token(email, app.config['SECRET_KEY'])
-    user = User.query.filter_by(email=email, confirmed=False).first()
+    user = User.query.filter_by(email=email, confirmed=False, user_type=user_type).first()
     if not user:
-        user = User('', email, Token.generate_token(password, app.config['SECRET_KEY']))
+        user = User('', email, Token.generate_token(password, app.config['SECRET_KEY']), user_type)
+        if user_type == 'client':
+            client = Client()
+            client.user = user
+            db.session.add(client)
+        elif user_type == 'partner':
+            partner = Partner()
+            partner.user = user
+            db.session.add(partner)
+        else:
+            abort(400)
         db.session.add(user)
+    db.session.commit()
     try:
         db.session.commit()
     except:

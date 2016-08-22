@@ -41,23 +41,33 @@
         <!--FORM MAIN-->
         <div id="main">
             <!--SIGNIN-->
-            <div id="signup" class="w3-card-4 login w3-animate-opacity">
+            <div id="signup" class="w3-card-2 login w3-animate-opacity">
 
                 <header class="w3-container w3-theme">
                     <h2>Регистрация</h2>
                 </header>
 
                 <form id="signup-form" class="w3-container">
+                    <div class="w3-group w3-row-padding">
+                        <div class="w3-half">
+                            <input id="partner" class="w3-radio" type="radio" name="type" value="partner" checked>
+                            <label class="w3-validate">Партнёр</label>
+                        </div>
+                        <div class="w3-half">
+                            <input id="client" class="w3-radio" type="radio" name="type" value="client">
+                            <label class="w3-validate">Клиент</label>
+                        </div>
+                    </div>
                     <div class="w3-group">
-                        <input class="w3-input" type="email" name="email" required>
+                        <input class="w3-input w3-border" type="email" name="email" required>
                         <label class="w3-label w3-validate">Почта</label>
                     </div>
                     <div class="w3-group">
-                        <input class="w3-input" type="password" name="password" required>
+                        <input class="w3-input w3-border" type="password" name="password" required>
                         <label class="w3-label w3-validate">Пароль</label>
                     </div>
                     <div class="w3-group">
-                        <input class="w3-input" type="password" name="conf_password" required>
+                        <input class="w3-input w3-border" type="password" name="conf_password" required>
                         <label class="w3-label w3-validate">Пожалуйста, подтвердите свой пароль</label>
                     </div>
                     <div class="w3-group">
@@ -90,6 +100,9 @@ $("#signup-form").submit(function(event){
     signUp();
     return false;
 });
+
+
+
 
 </script>
 
