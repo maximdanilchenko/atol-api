@@ -17,9 +17,10 @@
     <script src="static/js/sign.js"></script>
     <script src="static/js/jquery-sortable-lists.min.js"></script>
     <script src="static/js/hub_tree.js"></script>
+    <script src="jquery.ui.touch-punch.min.js"></script>
 </head>
 
-<body class="w3-padding-8">
+<body>
 
 <!--HEADER-->
 <header class="w3-container">
@@ -37,17 +38,17 @@
     </ul>
 </header>
 
-<div class="w3-container w3-animate-opacity">
+<div class="w3-row-padding w3-animate-opacity">
 
     <!--Дерево Хабов-->
     <div class="w3-third">
-        <div class="w3-col w3-container">
+        <div class="w3-col">
             <div class="w3-card-2 w3-row" style="height:85vh;">
-                <header class="w3-theme w3-container" style="height:7vh;">
+                <header class="w3-theme w3-container" style="height:10%;">
                     <h4>Все HUB'ы</h4>
                 </header>
-                <div class="w3-row" style="height:70vh; overflow-y:scroll;">
-                    <ul class="sTree2 listsClass noScur w3-margin-left" id="sTree2">
+                <div class="w3-row" style="height:80%; overflow-y:scroll;">
+                    <ul class="sTree2 listsClass noScur w3-margin-left w3-ul" id="sTree2">
                         <li class="sortableListsOpen" data-module="p">
                             <div>Папка</div>
                             <ul class="">
@@ -144,7 +145,7 @@
                         </li>
                     </ul>
                 </div>
-                <footer class="w3-theme w3-container" style="height:8vh;">
+                <footer class="w3-theme w3-container" style="height:10%;">
                     <h4>Кнопки</h4>
                 </footer>
             </div>
@@ -152,22 +153,35 @@
     </div>
 
     <div class="w3-twothird">
-
-        <!--Статистика для выбранного Хаба-->
-        <div class="w3-row w3-container">
-            <div class="w3-card-2 w3-padding-jumbo" style="height:60vh">
-                <h2>Статистика для выбранного Хаба</h2>
+        <div class="w3-card-2" style="height:85vh;">
+            <!--Статистика для выбранного Хаба-->
+            <div style="height:65%">
+                <header class="w3-theme w3-padding-small">
+                    <h4>Статистика для выбранного Хаба</h4>
+                </header>
             </div>
-        </div>
-
-        <!--Дополнительные настройки-->
-        <div class="w3-row w3-container">
-            <div class="w3-card-2 w3-padding-jumbo" style="height:25vh">
-                <h2>Дополнительные настройки</h2>
+            <!--Дополнительные настройки-->
+            <div style="height:35%">
+                <header class="w3-theme w3-padding-small">
+                    <h4>Дополнительные настройки</h4>
+                </header>
             </div>
         </div>
     </div>
 </div>
+
+<!--FOOTER-->
+<br class="w3-hide-medium w3-hide-large">
+<br class="w3-hide-medium w3-hide-large">
+<footer class="w3-hide-medium w3-hide-large">
+    <ul class="w3-navbar w3-center">
+        <li>
+            <a class="w3-hover-none" href="http://www.atol.ru/">
+                <img src="static/img/logo.png" alt="АТОЛ" width="96" height="38">
+            </a>
+        </li>
+    </ul>
+</footer>
 
 </body>
 </html>
