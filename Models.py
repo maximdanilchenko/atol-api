@@ -29,14 +29,16 @@ class User(db.Model):
 
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    hubs = db.relationship('Hub', backref='client', lazy='dynamic')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    hubs = db.relationship('Hub', backref='client', lazy='dynamic')
 
 
 class Partner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    hubs = db.relationship('Hub', backref='partner', lazy='dynamic')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    hubs = db.relationship('Hub', backref='partner', lazy='dynamic')
 
 
 class Hub(db.Model):

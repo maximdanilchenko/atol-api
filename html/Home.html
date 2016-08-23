@@ -6,47 +6,169 @@
     <title>Авторизация</title>
     <link rel="shortcut icon" href="static/img/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+
     <link rel="stylesheet" href="static/css/w3.css">
     <link rel="stylesheet" href="static/css/w3-theme-red.css">
     <link rel="stylesheet" href="static/css/font-awesome.min.css">
     <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
     <script src="static/js/jquery-1.11.3.min.js"></script>
     <script src="static/js/jquery-ui.min.js"></script>
     <script src="static/js/sign.js"></script>
+    <script src="static/js/jquery-sortable-lists.min.js"></script>
+    <script src="static/js/hub_tree.js"></script>
 </head>
 
-<body class="w3-animate-opacity">
+<body class="w3-padding-8">
 
 <!--HEADER-->
-<header class="w3-container w3-white w3-padding" id="myHeader">
-    <div class="w3-threequarter">
-        <h2>ЛИЧНЫЙ КАБИНЕТ</h2>
-    </div>
-    <div class="w3-quarter">
-        <img class="w3-right" src="static/img/logo.png" alt="АТОЛ" width="96" height="38">
-    </div>
+<header class="w3-container">
+    <ul class="w3-navbar w3-xlarge">
+        <li class="w3-left w3-navitem">ЛИЧНЫЙ КАБИНЕТ</li>
+        <li><a class="w3-hover-none w3-hover-text-red" href="#">Выход</a></li>
+        <li><a class="w3-hover-none w3-hover-text-red" href="#">Помощь</a></li>
+        <li class="w3-right w3-navitem w3-hide-small">
+            <a class="w3-hover-none" href="http://www.atol.ru/">
+                <img src="static/img/logo.png" alt="АТОЛ"
+                     style="vertical-align: bottom;position: absolute;right:25px;top:10px;"
+                     width="96" height="38">
+            </a>
+        </li>
+    </ul>
 </header>
 
-<!--Дерево Хабов-->
-<div class="w3-third">
-    <div class="w3-col s12 w3-orange w3-container" style="height:100vh">
-        <h2>Дерево Хабов</h2>
+<div class="w3-container w3-animate-opacity">
+
+    <!--Дерево Хабов-->
+    <div class="w3-third">
+        <div class="w3-col w3-container">
+            <div class="w3-card-2 w3-row" style="height:85vh;">
+                <header class="w3-theme w3-container" style="height:7vh;">
+                    <h4>Все HUB'ы</h4>
+                </header>
+                <div class="w3-row" style="height:70vh; overflow-y:scroll;">
+                    <ul class="sTree2 listsClass noScur w3-margin-left" id="sTree2">
+                        <li class="sortableListsOpen" data-module="p">
+                            <div>Папка</div>
+                            <ul class="">
+                                <li data-module="hub">
+                                    <div><span class="clickable">Item b2 - clickable text</span></div>
+                                </li>
+                                <li data-module="hub">
+                                    <div>
+                                        <button class="clickable">HUB</button>
+                                    </div>
+                                </li>
+                                <li data-module="hub">
+                                    <div>HUB</div>
+                                </li>
+                                <li data-module="hub">
+                                    <div>HUB</div>
+                                </li>
+                                <li data-module="hub">
+                                    <div>HUB</div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="" data-module="p">
+                            <div>Папка</div>
+                            <ul class="">
+                                <li data-module="hub">
+                                    <div>HUB</div>
+                                </li>
+                                <li data-module="hub">
+                                    <div>HUB</div>
+                                </li>
+                                <li data-module="hub">
+                                    <div>HUB</div>
+                                </li>
+                                <li class="" data-module="p">
+                                    <div>Папка</div>
+                                    <ul class="">
+                                        <li data-module="hub">
+                                            <div>HUB</div>
+                                        </li>
+                                        <li data-module="hub">
+                                            <div>HUB</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="sortableListsOpen" data-module="p">
+                            <div>Папка</div>
+                            <ul class="">
+                                <li data-module="hub">
+                                    <div><span class="clickable">Item b2 - clickable text</span></div>
+                                </li>
+                                <li data-module="hub">
+                                    <div>
+                                        <button class="clickable">HUB</button>
+                                    </div>
+                                </li>
+                                <li data-module="hub">
+                                    <div>HUB</div>
+                                </li>
+                                <li data-module="hub">
+                                    <div>HUB</div>
+                                </li>
+                                <li data-module="hub">
+                                    <div>HUB</div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="" data-module="p">
+                            <div>Папка</div>
+                            <ul class="">
+                                <li data-module="hub">
+                                    <div>HUB</div>
+                                </li>
+                                <li data-module="hub">
+                                    <div>HUB</div>
+                                </li>
+                                <li data-module="hub">
+                                    <div>HUB</div>
+                                </li>
+                                <li class="" data-module="p">
+                                    <div>Папка</div>
+                                    <ul class="">
+                                        <li data-module="hub">
+                                            <div>HUB</div>
+                                        </li>
+                                        <li data-module="hub">
+                                            <div>HUB</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <footer class="w3-theme w3-container" style="height:8vh;">
+                    <h4>Кнопки</h4>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <div class="w3-twothird">
+
+        <!--Статистика для выбранного Хаба-->
+        <div class="w3-row w3-container">
+            <div class="w3-card-2 w3-padding-jumbo" style="height:60vh">
+                <h2>Статистика для выбранного Хаба</h2>
+            </div>
+        </div>
+
+        <!--Дополнительные настройки-->
+        <div class="w3-row w3-container">
+            <div class="w3-card-2 w3-padding-jumbo" style="height:25vh">
+                <h2>Дополнительные настройки</h2>
+            </div>
+        </div>
     </div>
 </div>
-
-<div class="w3-twothird">
-
-    <!--Статистика для выбранного Хаба-->
-    <div class="w3-row w3-red w3-container" style="height:70vh">
-        <h2>Статистика для выбранного Хаба</h2>
-    </div>
-
-    <!--Дополнительные настройки-->
-    <div class="w3-row w3-green w3-container" style="height:30vh">
-        <h2>Дополнительные настройки</h2>
-    </div>
-</div>
-
 
 </body>
 </html>
