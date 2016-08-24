@@ -12,12 +12,13 @@
     <link rel="stylesheet" href="static/css/style.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
-    <script src="static/js/jquery-1.11.3.min.js"></script>
+    <script src="static/js/jquery-3.1.0.min.js"></script>
     <script src="static/js/jquery-ui.min.js"></script>
     <script src="static/js/jquery.ui.touch-punch.js"></script>
+    <script src="static/js/jquery.mjs.nestedSortable.js"></script>
     <script src="static/js/sign.js"></script>
-    <script src="static/js/jquery-sortable-lists.min.js"></script>
-    <script src="static/js/hub_tree.js"></script>
+    <!--<script src="static/js/jquery-sortable-lists.min.js"></script>-->
+    <!--<script src="static/js/hub_tree.js"></script>-->
 </head>
 
 <body>
@@ -48,7 +49,26 @@
                     <h4>Все HUB'ы</h4>
                 </header>
                 <div class="w3-row" style="height:80%; overflow-y:scroll;">
-                    <ul class="sTree2 listsClass noScur w3-margin-left w3-ul" id="sTree2">
+                    <ol class="sortable">
+                        <li>
+                            <div>Some content</div>
+                        </li>
+                        <li>
+                            <div>Some content</div>
+                            <ol>
+                                <li>
+                                    <div>Some content</div>
+                                </li>
+                                <li>
+                                    <div>Some content</div>
+                                </li>
+                            </ol>
+                        </li>
+                        <li>
+                            <div>Some content</div>
+                        </li>
+                    </ol>
+                    <!--<ul class="sTree2 listsClass noScur w3-margin-left w3-ul" id="sTree2">
                         <li class="sortableListsOpen" data-module="p">
                             <div>Папка</div>
                             <ul class="">
@@ -143,7 +163,7 @@
                                 </li>
                             </ul>
                         </li>
-                    </ul>
+                    </ul>-->
                 </div>
                 <footer class="w3-theme w3-container" style="height:10%;">
                     <h4>Кнопки</h4>
@@ -182,6 +202,16 @@
         </li>
     </ul>
 </footer>
+<script>
+    $(document).ready(function(){
 
+        $('.sortable').nestedSortable({
+            handle: 'div',
+            items: 'li',
+            toleranceElement: '> div'
+        });
+
+    });
+</script>
 </body>
 </html>
