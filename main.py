@@ -32,7 +32,7 @@ MAIL_HTML_REG = """<!DOCTYPE html>
 </header>
 <div class="w3-row-padding w3-center w3-margin-top">
     <div>
-        <img src="https://atol-test.appspot.com/static/img/logo.png" alt="АТОЛ" width="96" height="38">
+        <img src="https://atol-test.appspot.com/static/img/logo.png" alt="АТОЛ" width="130" height="35">
         <h1>Поздравляем!</h1>
         <p>Регистрация в личном кабинете ATOL почти завершена</p>
         <a href={}>Пройдите по этой ссылке для завершения регистрации</a>
@@ -55,7 +55,7 @@ MAIL_HTML_REC = """<!DOCTYPE html>
 </header>
 <div class="w3-row-padding w3-center w3-margin-top">
     <div>
-        <img src="https://atol-test.appspot.com/static/img/logo.png" alt="АТОЛ" width="96" height="38">
+        <img src="https://atol-test.appspot.com/static/img/logo.png" alt="АТОЛ" width="130" height="35">
         <h1>Изменение пароля</h1>
         <p>Изменение пароля личного кабинета ATOL почти завершено</p>
         <a href={}>Пройдите по этой ссылке для изменения пароля</a>

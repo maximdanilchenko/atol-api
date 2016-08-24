@@ -19,3 +19,10 @@ body {
 cursor:default;
 }
 
+li {
+    list-style-type: none;
+}
+
+.sortable {
+cursor: pointer;
+}

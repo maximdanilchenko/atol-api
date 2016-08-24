@@ -7,16 +7,17 @@
     <link rel="shortcut icon" href="static/img/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
 
-    <link rel="stylesheet" href="static/css/w3.css">
-    <link rel="stylesheet" href="static/css/w3-theme-red.css">
-    <link rel="stylesheet" href="static/css/style.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-
     <script src="static/js/jquery-3.1.0.min.js"></script>
     <script src="static/js/jquery-ui.min.js"></script>
     <script src="static/js/jquery.ui.touch-punch.js"></script>
     <script src="static/js/jquery.mjs.nestedSortable.js"></script>
     <script src="static/js/sign.js"></script>
+
+    <link rel="stylesheet" href="static/css/w3.css">
+    <link rel="stylesheet" href="static/css/w3-theme-red.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="static/css/style.css">
+
     <!--<script src="static/js/jquery-sortable-lists.min.js"></script>-->
     <!--<script src="static/js/hub_tree.js"></script>-->
 </head>
@@ -49,121 +50,107 @@
                     <h4>Все HUB'ы</h4>
                 </header>
                 <div class="w3-row" style="height:80%; overflow-y:scroll;">
-                    <ol class="sortable">
+                    <ul class="sortable w3-ul w3-margin w3-border w3-large w3-light-grey">
                         <li>
-                            <div>Some content</div>
+                            <div>
+                                <div class="tab">
+                                    <i class="fa fa-plus" aria-hidden="true" style="display:none;"></i>
+                                    <i class="fa fa-minus" aria-hidden="true"></i>
+                                    Папка
+                                </div>
+                            </div>
+                            <ul>
+                                <li class="hub">
+                                    <div>HUB1</div>
+                                </li>
+                                <li class="hub">
+                                    <div>HUB2</div>
+                                </li>
+                            </ul>
                         </li>
                         <li>
-                            <div>Some content</div>
-                            <ol>
-                                <li>
-                                    <div>Some content</div>
+                            <div>
+                                <div class="tab">
+                                    <i class="fa fa-plus" aria-hidden="true" style="display:none;"></i>
+                                    <i class="fa fa-minus" aria-hidden="true"></i>
+                                    Ещё папка
+                                </div>
+                            </div>
+                            <ul>
+                                <li class="hub">
+                                    <div>HUB3</div>
                                 </li>
-                                <li>
-                                    <div>Some content</div>
+                                <li class="hub">
+                                    <div>HUB4</div>
                                 </li>
-                            </ol>
+                            </ul>
+                        </li>
+                        <li class="hub">
+                            <div><span></span>HUB</div>
                         </li>
                         <li>
-                            <div>Some content</div>
-                        </li>
-                    </ol>
-                    <!--<ul class="sTree2 listsClass noScur w3-margin-left w3-ul" id="sTree2">
-                        <li class="sortableListsOpen" data-module="p">
-                            <div>Папка</div>
-                            <ul class="">
-                                <li data-module="hub">
-                                    <div><span class="clickable">Item b2 - clickable text</span></div>
+                            <div>
+                                <div class="tab">
+                                    <i class="fa fa-plus" aria-hidden="true" style="display:none;"></i>
+                                    <i class="fa fa-minus" aria-hidden="true"></i>
+                                    Папка
+                                </div>
+                            </div>
+                            <ul>
+                                <li class="hub">
+                                    <div>HUB1</div>
                                 </li>
-                                <li data-module="hub">
-                                    <div>
-                                        <button class="clickable">HUB</button>
-                                    </div>
-                                </li>
-                                <li data-module="hub">
-                                    <div>HUB</div>
-                                </li>
-                                <li data-module="hub">
-                                    <div>HUB</div>
-                                </li>
-                                <li data-module="hub">
-                                    <div>HUB</div>
+                                <li class="hub">
+                                    <div>HUB2</div>
                                 </li>
                             </ul>
                         </li>
-                        <li class="" data-module="p">
-                            <div>Папка</div>
-                            <ul class="">
-                                <li data-module="hub">
-                                    <div>HUB</div>
+                        <li>
+                            <div>
+                                <div class="tab">
+                                    <i class="fa fa-plus" aria-hidden="true" style="display:none;"></i>
+                                    <i class="fa fa-minus" aria-hidden="true"></i>
+                                    Ещё папка
+                                </div>
+                            </div>
+                            <ul>
+                                <li class="hub">
+                                    <div>HUB3</div>
                                 </li>
-                                <li data-module="hub">
-                                    <div>HUB</div>
+                                <li class="hub">
+                                    <div>HUB4</div>
                                 </li>
-                                <li data-module="hub">
-                                    <div>HUB</div>
+                                <li class="hub">
+                                    <div><span></span>HUB</div>
                                 </li>
-                                <li class="" data-module="p">
-                                    <div>Папка</div>
-                                    <ul class="">
-                                        <li data-module="hub">
-                                            <div>HUB</div>
-                                        </li>
-                                        <li data-module="hub">
-                                            <div>HUB</div>
-                                        </li>
-                                    </ul>
+                                <li class="hub">
+                                    <div><span></span>HUB</div>
                                 </li>
-                            </ul>
-                        </li>
-                        <li class="sortableListsOpen" data-module="p">
-                            <div>Папка</div>
-                            <ul class="">
-                                <li data-module="hub">
-                                    <div><span class="clickable">Item b2 - clickable text</span></div>
+                                <li class="hub">
+                                    <div><span></span>HUB</div>
                                 </li>
-                                <li data-module="hub">
-                                    <div>
-                                        <button class="clickable">HUB</button>
-                                    </div>
+                                <li class="hub">
+                                    <div><span></span>HUB</div>
                                 </li>
-                                <li data-module="hub">
-                                    <div>HUB</div>
+                                <li class="hub">
+                                    <div><span></span>HUB</div>
                                 </li>
-                                <li data-module="hub">
-                                    <div>HUB</div>
-                                </li>
-                                <li data-module="hub">
-                                    <div>HUB</div>
+                                <li class="hub">
+                                    <div><span></span>HUB</div>
                                 </li>
                             </ul>
                         </li>
-                        <li class="" data-module="p">
-                            <div>Папка</div>
-                            <ul class="">
-                                <li data-module="hub">
-                                    <div>HUB</div>
-                                </li>
-                                <li data-module="hub">
-                                    <div>HUB</div>
-                                </li>
-                                <li data-module="hub">
-                                    <div>HUB</div>
-                                </li>
-                                <li class="" data-module="p">
-                                    <div>Папка</div>
-                                    <ul class="">
-                                        <li data-module="hub">
-                                            <div>HUB</div>
-                                        </li>
-                                        <li data-module="hub">
-                                            <div>HUB</div>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
+                        <li class="hub">
+                            <div><span></span>HUB</div>
                         </li>
-                    </ul>-->
+                        <li class="hub">
+                            <div><span></span>HUB</div>
+                        </li>
+                        <li class="hub">
+                            <div><span></span>HUB</div>
+                        </li>
+
+                    </ul>
                 </div>
                 <footer class="w3-theme w3-container" style="height:10%;">
                     <h4>Кнопки</h4>
@@ -207,12 +194,27 @@
     $(document).ready(function(){
 
         $('.sortable').nestedSortable({
+            forcePlaceholderSize: true,
             handle: 'div',
             items: 'li',
-            toleranceElement: '> div'
+            toleranceElement: '> div',
+            listType: 'ul',
+            disableNesting: 'hub'
+
         });
 
     });
+
+
+    $('.tab').on('click', function() {
+        $(this).closest( "li" ).children("ul").toggle("fast");
+        $(this).children().toggle();
+    });
+
+
+
+
+
 </script>
 </body>
 </html>
