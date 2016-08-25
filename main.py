@@ -8,7 +8,11 @@ from Helpers import *
 import Token
 from Models import User, Partner, Client, Hub
 from App import app, db
-from google.appengine.api import mail
+on_gae = True
+try:
+    from google.appengine.api import mail
+except:
+    on_gae = False
 # from flask_mail import Mail
 # mail = Mail(app)
 
@@ -160,11 +164,12 @@ def api_recovery():
     mail_html_body = MAIL_HTML_REC.format(a)
     mail_to = email
     mail_from = 'dmax.dev@gmail.com'
-    mail.send_mail(sender=mail_from,
-                   to=mail_to,
-                   subject=mail_subject,
-                   body=mail_body,
-                   html=mail_html_body)
+    if on_gae:
+        mail.send_mail(sender=mail_from,
+                       to=mail_to,
+                       subject=mail_subject,
+                       body=mail_body,
+                       html=mail_html_body)
     return jsonify({'success': True})
 
 
@@ -208,11 +213,12 @@ def api_signup():
     mail_html_body = MAIL_HTML_REG.format(a)
     mail_to = email
     mail_from = 'dmax.dev@gmail.com'
-    mail.send_mail(sender=mail_from,
-                   to=mail_to,
-                   subject=mail_subject,
-                   body=mail_body,
-                   html=mail_html_body)
+    if on_gae:
+        mail.send_mail(sender=mail_from,
+                       to=mail_to,
+                       subject=mail_subject,
+                       body=mail_body,
+                       html=mail_html_body)
     return jsonify({'success': True})
 
 
