@@ -27,14 +27,14 @@
 <!--HEADER-->
 <header class="w3-container">
     <ul class="w3-navbar w3-xlarge">
-        <li class="w3-left w3-navitem">ЛИЧНЫЙ КАБИНЕТ</li>
+        <li class="w3-left w3-navitem w3-hide-small">ЛИЧНЫЙ КАБИНЕТ</li>
         <li><a class="w3-hover-none w3-hover-text-red" href="signin">Выход</a></li>
         <li><a class="w3-hover-none w3-hover-text-red" href="#">Помощь</a></li>
         <li class="w3-right w3-navitem w3-hide-small">
             <a class="w3-hover-none" href="http://www.atol.ru/">
                 <img src="static/img/logo.png" alt="АТОЛ"
-                     style="vertical-align: bottom;position: absolute;right:25px;top:10px;"
-                     width="130" height="35">
+                     style="vertical-align: bottom;position: absolute;right:25px;top:15px;"
+                     width="87" height="23">
             </a>
         </li>
     </ul>
@@ -45,12 +45,11 @@
     <!--Дерево Хабов-->
     <div class="w3-third">
         <div class="w3-col">
-            <div class="w3-card-2 w3-light-grey w3-row" style="height:85vh;">
-                <div style="height:90%">
+            <div class="w3-card-2 w3-light-grey w3-row">
                 <header class="w3-theme w3-padding-small">
                     <h4><i class="fa fa-fw fa-sitemap"></i>&nbsp;Все HUB'ы</h4>
                 </header>
-                <div class="w3-row" style="overflow-y:scroll;">
+                <div class="w3-row" style="height:70vh; overflow-y:scroll;">
                     <ul class="sortable">
                         <li>
                             <div>
@@ -108,8 +107,7 @@
                         </li>
                     </ul>
                 </div>
-                    </div>
-                <footer class="w3-theme w3-padding-small" style="height:10%">
+                <footer class="w3-theme w3-padding-small">
                     <h4>Кнопки</h4>
                 </footer>
             </div>
@@ -118,18 +116,24 @@
     </div>
 
     <div class="w3-twothird">
-        <div class="w3-card-2 w3-white" style="height:85vh;">
+        <div class="w3-card-2 w3-white">
             <!--Статистика для выбранного Хаба-->
-            <div style="height:65%">
+            <div>
                 <header class="w3-theme w3-padding-small">
                     <h4><i class="fa fa-fw fa-dashboard"></i>&nbsp;Статистика для выбранного Хаба</h4>
                 </header>
+                <div style="height:50vh">
+
+                </div>
             </div>
             <!--Дополнительные настройки-->
-            <div style="height:35%">
+            <div>
                 <header class="w3-theme w3-padding-small">
                     <h4>Дополнительные настройки</h4>
                 </header>
+                <div style="height:20vh">
+
+                </div>
             </div>
         </div>
     </div>
@@ -142,7 +146,7 @@
     <ul class="w3-navbar w3-center">
         <li>
             <a class="w3-hover-none" href="http://www.atol.ru/">
-                <img src="static/img/logo.png" alt="АТОЛ" width="130" height="35">
+                <img src="static/img/logo.png" alt="АТОЛ" width="87" height="23">
             </a>
         </li>
     </ul>
@@ -167,6 +171,8 @@
         $(this).closest( "li" ).children("ul").toggle("fast");
         $(this).children().toggle();
     });
+
+
 
 
 
