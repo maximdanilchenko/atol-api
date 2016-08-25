@@ -29,20 +29,47 @@ class User(db.Model):
 
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, unique=True)
 
     hubs = db.relationship('Hub', backref='client', lazy='dynamic')
+    groups = db.relationship('Client_group', backref='client', lazy='dynamic')
 
 
 class Partner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, unique=True)
 
     hubs = db.relationship('Hub', backref='partner', lazy='dynamic')
+    groups = db.relationship('Partner_group', backref='partner', lazy='dynamic')
+
+
+class Client_group(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    parent_id = db.Column(db.Integer)
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False, unique=True)
+
+    hubs = db.relationship('Hub', backref='client_group', lazy='dynamic')
+
+
+class Partner_group(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    parent_id = db.Column(db.Integer)
+    partner_id = db.Column(db.Integer, db.ForeignKey('partner.id'), nullable=False, unique=True)
+
+    hubs = db.relationship('Hub', backref='partner_group', lazy='dynamic')
+
+
+class Hub_meta(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    hub = db.relationship("Hub", uselist=False, backref="hub_meta")
 
 
 class Hub(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    hub_meta_id = db.Column(db.Integer, db.ForeignKey('hub_meta.id'), unique=True)
     device_id = db.Column(db.String(150), unique=True)
-    client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
-    partner_id = db.Column(db.Integer, db.ForeignKey('partner.id'))
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), unique=True)
+    partner_id = db.Column(db.Integer, db.ForeignKey('partner.id'), unique=True)
+    client_group_id = db.Column(db.Integer, db.ForeignKey('client_group.id'), unique=True)
+    partner_group_id = db.Column(db.Integer, db.ForeignKey('partner_group.id'), unique=True)

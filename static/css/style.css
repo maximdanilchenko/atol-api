@@ -23,6 +23,11 @@ li {
     list-style-type: none;
 }
 
-.sortable {
-cursor: pointer;
+
+.sortable li {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    cursor: pointer;
 }
+
+.my-panel {color:#fff !important; background-color:#f44336 !important}

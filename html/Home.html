@@ -12,6 +12,7 @@
     <script src="static/js/jquery.ui.touch-punch.js"></script>
     <script src="static/js/jquery.mjs.nestedSortable.js"></script>
     <script src="static/js/sign.js"></script>
+    <script src="static/js/tree.js"></script>
 
     <link rel="stylesheet" href="static/css/w3.css">
     <link rel="stylesheet" href="static/css/w3-theme-red.css">
@@ -52,69 +53,69 @@
                 <div style="height:70vh; overflow-y:scroll;">
                     <ul class="sortable">
                         <li id="rootHub">
-                            <div>
-                                <div class="tab">
-                                    <i class="fa fa-fw fa-folder-o" style="display:none;"></i>
-                                    <i class="fa fa-fw fa-folder-open-o"></i>
-                                    Корень
-                                </div>
+
+                            <div class="tab">
+                                <i class="fa fa-fw fa-folder-o" style="display:none;"></i>
+                                <i class="fa fa-fw fa-folder-open-o"></i>
+                                Корень
                             </div>
-                        <ul>
-                        <li>
-                            <div>
-                                <div class="tab">
-                                    <i class="fa fa-fw fa-folder-o" style="display:none;"></i>
-                                    <i class="fa fa-fw fa-folder-open-o"></i>
-                                    Папка
-                                </div>
-                            </div>
+
                             <ul>
-                                <li class="hub">
-                                    <div><i class="fa fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB1</div>
+                                <li>
+
+                                    <div class="tab">
+                                        <i class="fa fa-fw fa-folder-o" style="display:none;"></i>
+                                        <i class="fa fa-fw fa-folder-open-o"></i>
+                                        Папка
+                                    </div>
+
+                                    <ul>
+                                        <li class="hub">
+                                            <div><i class="fa fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB1</div>
+                                        </li>
+                                        <li class="hub">
+                                            <div><i class="fa fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB2</div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+
+                                    <div class="tab">
+                                        <i class="fa fa-fw fa-folder-o" style="display:none;"></i>
+                                        <i class="fa fa-fw fa-folder-open-o"></i>
+                                        Ещё папка
+                                    </div>
+                                    <ul>
+                                        <li class="hub">
+                                            <div><i class="fa fa-fw fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB3
+                                            </div>
+                                        </li>
+                                        <li class="hub">
+                                            <div><i class="fa fa-fw fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB4
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li class="hub">
-                                    <div><i class="fa fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB2</div>
+                                    <div><span></span><i class="fa fa-fw fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="tab">
+                                        <i class="fa fa-fw fa-folder-o" style="display:none;"></i>
+                                        <i class="fa fa-fw fa-folder-open-o"></i>
+                                        Папка
+                                    </div>
+                                    <ul>
+                                        <li class="hub">
+                                            <div><i class="fa fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB1</div>
+                                        </li>
+                                        <li class="hub">
+                                            <div><i class="fa fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB2</div>
+                                        </li>
+                                    </ul>
                                 </li>
                             </ul>
-                        </li>
-                        <li>
-                            <div>
-                                <div class="tab">
-                                    <i class="fa fa-fw fa-folder-o" style="display:none;"></i>
-                                    <i class="fa fa-fw fa-folder-open-o"></i>
-                                    Ещё папка
-                                </div>
-                            </div>
-                            <ul>
-                                <li class="hub">
-                                    <div><i class="fa fa-fw fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB3</div>
-                                </li>
-                                <li class="hub">
-                                    <div><i class="fa fa-fw fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB4</div>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="hub">
-                            <div><span></span><i class="fa fa-fw fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB</div>
-                        </li>
-                        <li>
-                            <div>
-                                <div class="tab">
-                                    <i class="fa fa-fw fa-folder-o" style="display:none;"></i>
-                                    <i class="fa fa-fw fa-folder-open-o"></i>
-                                    Папка
-                                </div>
-                            </div>
-                            <ul>
-                                <li class="hub">
-                                    <div><i class="fa fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB1</div>
-                                </li>
-                                <li class="hub">
-                                    <div><i class="fa fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB2</div>
-                                </li>
-                            </ul>
-                        </li>
-                        </ul>
                         </li>
                     </ul>
                 </div>
@@ -160,9 +161,9 @@
     </ul>
 </footer>
 <script>
-    $(document).ready(function(){
+$(document).ready(function(){
 
-        $('.sortable').nestedSortable({
+    $('.sortable').nestedSortable({
             forcePlaceholderSize: true,
             handle: 'div',
             items: 'li',
@@ -171,21 +172,14 @@
             disableNesting: 'hub',
             rootID: 'rootHub',
             protectRoot: true
-
-        });
-
     });
 
+});
 
-    $('.tab').on('click', function() {
-        $(this).closest( "li" ).children("ul").toggle("fast");
-        $(this).children().toggle();
-    });
-
-
-
-
-
+$('.tab').on('click', function() {
+    $(this).closest( "li" ).children("ul").toggle("fast");
+    $(this).children("i").toggle();
+});
 
 
 </script>

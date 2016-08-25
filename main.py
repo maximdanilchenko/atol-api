@@ -6,7 +6,7 @@ from flask import send_file, url_for, jsonify, abort, make_response, redirect
 from jinja2 import Environment, FileSystemLoader
 from Helpers import *
 import Token
-from Models import User, Partner, Client, Hub
+from Models import User, Partner, Client, Hub, Hub_meta, Client_group, Partner_group
 from App import app, db
 on_gae = True
 try:
@@ -73,7 +73,7 @@ MAIL_HTML_REC = """<!DOCTYPE html>
     -----Настройка приложения-----
     Объекты: db, cache
 """
-# db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
+db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
 db.create_all()
 # задаем кэширование в зависимости от платформы запуска
 from werkzeug.contrib.cache import GAEMemcachedCache, SimpleCache
@@ -306,6 +306,35 @@ def recovery(token):
         return redirect(url_for('newpassword', email=user.email, token=token))
 
 
+@is_auth
+@app.route("/api/get_user_info", methods=['GET'])
+def get_info():
+    access_token, = validate_get(('access_token',), (str,), (0,))
+    if not access_token:
+        abort(401)
+    user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
+    user = User.query.filter_by(id=user_id)
+    return jsonify({'name': user.name, 'type': user.user_type})
+
+
+@is_auth
+@app.route("/api/push_hub", methods=['POST'])
+def push_hub():
+    access_token, device_id = validate_post(('access_token', 'device_id',), (str,)*2, (0,)*2)
+    if not access_token:
+        abort(401)
+    user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
+    user = User.query.filter_by(id=user_id)
+    device = Hub.query.filter_by(device_id=device_id)
+    if not (user and user.user_type and device):
+        abort(400)
+    if user.user_type == 'client':
+        user.client.hubs.append(device)
+    elif user.user_type == 'partner':
+        user.partner.hubs.append(device)
+    db.session.commit()
+    return jsonify({'success': True})
+
 """
     -----Страницы личного кабинета-----
 """
@@ -360,3 +389,4 @@ env_serv = os.getenv('SERVER_SOFTWARE')
 if not (env_serv and env_serv.startswith('Google App Engine/')):
     if 'win' in sys.platform and __name__ == "__main__":
         app.run()
+
