@@ -6,6 +6,7 @@ function signIn() {
     $.post( "/api/signin", $("#signin-form").serialize(),
         function(response){
             if (response.success == true){
+                localStorage.setItem("atol_access_token", response.access_token);
                 window.open("index.html","_self");
             };
         },
@@ -39,6 +40,14 @@ function signUp() {
     }
 }
 
+
+// SignOut
+function signOut() {
+    localStorage.setItem("atol_access_token", "");
+    window.open("signin.html","_self");
+}
+
+
 function newPas() {
     pass = $("#newpas-form input[name='password']");
     c_pass = $("#newpas-form input[name='conf_password']");
@@ -46,6 +55,7 @@ function newPas() {
         $.post( "api/newpas", $("#newpas-form").serialize(),
             function(response) {
                 if (response.success == true) {
+                    localStorage.setItem("atol_access_token", response.access_token);
                     window.open("index.html","_self");
                 };
             },

@@ -23,11 +23,44 @@ li {
     list-style-type: none;
 }
 
+.sortable {
+left: -10px;
+}
 
 .sortable li {
+    position: relative;
     padding-top: 1px;
     padding-bottom: 1px;
     cursor: pointer;
+    left: -20px;
+}
+
+a {
+cursor: pointer;
+}
+
+.tab a:hover,.hub a:hover {
+color: #9e9e9e;
 }
 
 .my-panel {color:#fff !important; background-color:#f44336 !important}
+
+.my-disactive {
+}
+
+.my-active {
+color:#f44336;
+}
+
+
+
+#scroll::-webkit-scrollbar
+{
+	width: 6px;
+	background-color: #F5F5F5;
+}
+
+#scroll::-webkit-scrollbar-thumb
+{
+	background-color: #616161;
+}

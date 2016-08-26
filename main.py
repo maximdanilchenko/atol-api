@@ -109,9 +109,11 @@ def is_auth(fn):
     """
     def wrapped():
         access_token, = validate_post(('access_token',), (str,), (0,)) or validate_get(('access_token',), (str,), (0,))
+        print 'wrapped, access_token: %s' % access_token
         if not access_token:
             abort(401)
         addr = cache.get(access_token)
+        print 'wrapped, cache: %s' % addr
         if addr and addr == user_info(request):
             cache.set(access_token, user_info(request), app.config['MAX_CACHE_TIME'])
             fn()
@@ -119,6 +121,14 @@ def is_auth(fn):
             abort(401)
     return wrapped
 
+def validate_user(access_token):
+    if not access_token:
+        abort(401)
+    user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
+    user = User.query.filter_by(id=user_id).first()
+    if not (user and user.user_type):
+        abort(400)
+    return user
 
 @app.route("/hub/connect", methods=['POST'])
 def try_update_post():
@@ -189,12 +199,10 @@ def api_signup():
     if not user:
         user = User('', email, Token.generate_token(password, app.config['SECRET_KEY']), user_type)
         if user_type == 'client':
-            client = Client()
-            client.user = user
+            client = Client(user)
             db.session.add(client)
         elif user_type == 'partner':
-            partner = Partner()
-            partner.user = user
+            partner = Partner(user)
             db.session.add(partner)
         else:
             abort(400)
@@ -204,6 +212,8 @@ def api_signup():
         db.session.commit()
     except:
         abort(400)
+    if user.email == 'maxalexdanilchenko@gmail.com':
+        testdata()
     a = url_for('api_confirm', token=token, _external=True)
     print a
     mail_subject = 'Регистрация'
@@ -310,28 +320,65 @@ def recovery(token):
 @app.route("/api/get_user_info", methods=['GET'])
 def get_info():
     access_token, = validate_get(('access_token',), (str,), (0,))
+    addr = cache.get(access_token)
+    print 'get_info, cache: %s' % addr
     if not access_token:
         abort(401)
     user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
-    user = User.query.filter_by(id=user_id)
-    return jsonify({'name': user.name, 'type': user.user_type})
+    user = User.query.filter_by(id=user_id).first()
+    name = user.name or user.email
+    return jsonify({'success': True, 'name': name[:14], 'type': user.user_type})
 
 
 @is_auth
-@app.route("/api/push_hub", methods=['POST'])
-def push_hub():
+@app.route("/api/get_tree", methods=['POST'])
+def get_tree():
+    access_token, = validate_post(('access_token',), (str,), (0,))
+    user = validate_user(access_token)
+    tree = {}
+    if user.user_type == 'client':
+        tree[user.client.group.id]['name'] = user.client.group.name
+    elif user.user_type == 'partner':
+        pass
+
+
+@is_auth
+@app.route("/api/connect_hub", methods=['POST'])
+def connect_hub():
     access_token, device_id = validate_post(('access_token', 'device_id',), (str,)*2, (0,)*2)
-    if not access_token:
+    if not access_token and device_id:
         abort(401)
     user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
-    user = User.query.filter_by(id=user_id)
-    device = Hub.query.filter_by(device_id=device_id)
+    user = User.query.filter_by(id=user_id).first()
+    device = Hub.query.filter_by(device_id=device_id).first()
     if not (user and user.user_type and device):
         abort(400)
     if user.user_type == 'client':
         user.client.hubs.append(device)
     elif user.user_type == 'partner':
         user.partner.hubs.append(device)
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+@is_auth
+@app.route("/api/disconnect_hub", methods=['POST'])
+def disconnect_hub():
+    access_token, device_id = validate_post(('access_token', 'device_id',), (str,)*2, (0,)*2)
+    if not access_token and device_id:
+        abort(401)
+    user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
+    user = User.query.filter_by(id=user_id).first()
+    device = Hub.query.filter_by(device_id=device_id).first()
+    if not (user and user.user_type and device):
+        abort(400)
+    try:
+        if user.user_type == 'client':
+            user.client.hubs.remove(device)
+        elif user.user_type == 'partner':
+            user.partner.hubs.remove(device)
+    except:
+        abort(400)
     db.session.commit()
     return jsonify({'success': True})
 
@@ -382,6 +429,49 @@ def recover():
 def newpassword():
     email, token = validate_get(('email', 'token',), (str,) * 2, ('',) * 2)
     return env.get_template("newpassword.html").render(email=email, token=token)
+
+
+def testdata():
+    user = User.query.filter_by(email='maxalexdanilchenko@gmail.com', user_type='partner').first()
+    partner = user.partner
+
+    new_group = Partner_group('group1', partner=partner)
+
+    print new_group.partner.user
+
+    hub1 = Hub('hub1')
+    hub2 = Hub('hub2')
+    hub3 = Hub('hub3')
+    hub4 = Hub('hub4')
+    hub5 = Hub('hub5')
+
+    new_sub_group = Partner_group('group2', parent=new_group)
+    new_sub_sub_group = Partner_group('group3', parent=new_sub_group)
+
+
+    db.session.add_all([hub1, hub2, hub3, hub4, hub5, new_group, new_sub_group, new_sub_sub_group])
+    db.session.commit()
+
+    new_group.hubs.extend([hub1, hub2])
+    new_sub_group.hubs.extend([hub3, hub4])
+    new_sub_sub_group.hubs.extend([hub5])
+    db.session.commit()
+
+    tree = get_tree(new_group, 'partner')
+    tr = {}
+    tr[tree[0]] = tree[1]
+    print jsonify(tr)
+
+
+def get_tree(node, user_type):
+    if user_type not in ('partner', 'client'):
+        return None
+    children = node.childes
+    children_dict = dict(get_tree(child, user_type) for child in children if children)
+    return (node.id, {"name": node.name,
+                      "hubs": [{"id": hub.id,
+                                "name": hub.partner_name if user_type == 'partner' else hub.client_name} for hub in node.hubs],
+                      "children": children_dict})
 
 
 env_serv = os.getenv('SERVER_SOFTWARE')
