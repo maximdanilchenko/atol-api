@@ -329,7 +329,9 @@ def get_info():
     user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
     user = User.query.filter_by(id=user_id).first()
     name = user.name or user.email
-    return jsonify({'success': True, 'name': '%s..' % name[:23], 'type': user.user_type})
+    if len(name) > 30:
+        name = '%s..' % name[:28]
+    return jsonify({'success': True, 'name': name, 'type': user.user_type})
 
 
 @app.route("/api/get_tree", methods=['POST'])

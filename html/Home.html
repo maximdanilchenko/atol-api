@@ -3,7 +3,7 @@
 
 <!--HEAD-->
 <head>
-    <title>Личный кабинет</title>
+    <title class="body-title">Личный Кабинет&nbsp;|&nbsp;</title>
     <link rel="shortcut icon" href="static/img/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
 
@@ -21,29 +21,36 @@
 
 </head>
 
-<body class="w3-light-grey">
+<body>
 
-<a href="http://www.atol.ru/">
+<a class="w3-hide-small" href="http://www.atol.ru/">
     <img src="static/img/logo.png" alt="АТОЛ"
-         style="vertical-align: bottom;position: absolute;right:25px;top:7px;"
+         style="vertical-align: bottom;position: absolute;right:25px;top:10px;"
          width="87" height="23">
 </a>
 
 <!--HEADER (NAV)-->
-<nav id="open-menu" class="w3-sidenav w3-card-2 w3-large w3-left-align" style="display:none; width:100%">
+
+<nav id="open-menu" class="w3-sidenav w3-theme w3-card-2 w3-large w3-left-align" style="display:none; width:100%">
     <a class="w3-hover-none w3-hover-text-grey" onclick="openMenu();"><i
             class="fa fa-fw fa-times"></i></a>
-    <a class="my-active w3-hover-none w3-hover-text-grey" href="#">
+    <a class="my-active w3-hover-none w3-hover-text-light-grey" href="#">
         <i class="fa fa-fw fa-cogs"></i>&nbsp;Панель управления</a>
-    <a class="my-disactive w3-hover-none w3-hover-text-grey" href="#">
+    <a class="my-disactive w3-hover-none w3-hover-text-light-grey" href="#">
         <i class="fa fa-fw fa-envelope-o"></i>&nbsp;Почтовый ящик</a>
-    <a class="menu-name my-disactive w3-hover-none w3-hover-text-grey" href="#">
-        <i class="fa fa-fw fa-user"></i>&nbsp;</a>
-    <a onclick="signOut();" class="w3-hover-none w3-hover-text-grey">
+    <a class="menu-name my-disactive w3-hover-none w3-hover-text-light-grey" href="#">
+        <i class="fa fa-fw fa-user"></i>&nbsp;Учётная запись</a>
+    <a onclick="signOut();" class="w3-hover-none w3-hover-text-light-grey">
         <i class="fa fa-fw fa-sign-out"></i>&nbsp;Выход</a>
 </nav>
 
-<ul class="w3-navbar w3-card-2 w3-white w3-text-dark-grey w3-margin-bottom">
+
+<div class="w3-col l1 w3-hide-small w3-hide-medium">&nbsp;</div>
+<!--<div class="w3-col l11">-->
+    <h5 class="body-title w3-hide-small"> Личный Кабинет&nbsp;|&nbsp;</h5>
+<!--</div>-->
+
+<ul class="w3-padding-small w3-navbar w3-card-2 w3-theme w3-margin-bottom w3-text-dark-grey">
 
     <li class="w3-col l1 m1 w3-hide-small w3-hide-medium">&nbsp;</li>
 
@@ -52,28 +59,27 @@
                 class="fa fa-fw fa-bars"></i></a>
     </li>
 
-    <li class="w3-hide-small w3-hide-medium"><a class="my-active w3-hover-none w3-hover-text-grey" href="#">
+    <li class="w3-hide-small w3-hide-medium"><a class="my-active w3-hover-none w3-hover-text-light-grey" href="#">
         <i class="fa fa-fw fa-cogs"></i>&nbsp;Панель управления</a></li>
-    <li class="w3-hide-small w3-hide-medium"><a class="my-disactive w3-hover-none w3-hover-text-grey" href="#">
+    <li class="w3-hide-small w3-hide-medium"><a class="my-disactive w3-hover-none w3-hover-text-light-grey" href="#">
         <i class="fa fa-fw fa-envelope-o"></i>&nbsp;Почтовый ящик</a></li>
-    <li class="w3-hide-small w3-hide-medium"><a class="menu-name my-disactive w3-hover-none w3-hover-text-grey"
+    <li class="w3-hide-small w3-hide-medium"><a class="menu-name my-disactive w3-hover-none w3-hover-text-light-grey"
                                                 href="#">
-        <i class="fa fa-fw fa-user"></i>&nbsp;</a></li>
-    <li class="w3-hide-small w3-hide-medium"><a onclick="signOut();" class="w3-hover-none w3-hover-text-grey">
+        <i class="fa fa-fw fa-user"></i>&nbsp;Учётная запись</a></li>
+    <li class="w3-hide-small w3-hide-medium"><a onclick="signOut();" class="w3-hover-none w3-hover-text-light-grey">
         <i class="fa fa-fw fa-sign-out"></i>&nbsp;Выход</a></li>
 
-    <li class="w3-hide-small w3-hide-large"><a class="my-active w3-hover-none w3-hover-text-grey" href="#">
+    <li class="w3-hide-small w3-hide-large"><a class="my-active w3-hover-none w3-hover-text-light-grey" href="#">
         <i class="fa fa-fw fa-cogs"></i></a></li>
-    <li class="w3-hide-small w3-hide-large"><a class="my-disactive w3-hover-none w3-hover-text-grey" href="#">
+    <li class="w3-hide-small w3-hide-large"><a class="my-disactive w3-hover-none w3-hover-text-light-grey" href="#">
         <i class="fa fa-fw fa-envelope-o"></i></a></li>
-    <li class="w3-hide-small w3-hide-large"><a class="my-disactive w3-hover-none w3-hover-text-grey" href="#">
+    <li class="w3-hide-small w3-hide-large"><a class="my-disactive w3-hover-none w3-hover-text-light-grey" href="#">
         <i class="fa fa-fw fa-user"></i></a></li>
-    <li class="w3-hide-small w3-hide-large"><a onclick="signOut();" class="w3-hover-none w3-hover-text-grey">
+    <li class="w3-hide-small w3-hide-large"><a onclick="signOut();" class="w3-hover-none w3-hover-text-light-grey">
         <i class="fa fa-fw fa-sign-out"></i></a></li>
 
     <!--<li class="w3-col l2 m2 w3-hide-small">&nbsp;</li>-->
 </ul>
-
 
 <div class="w3-row">
     <div class="w3-col l1 w3-hide-small w3-hide-medium">&nbsp;</div>
@@ -92,7 +98,7 @@
                                 <i id="save" class="fa fa-fw fa-floppy-o"></i></a>
                         </h5>
                     </header>
-                    <div id="scroll" style="height:70vh; overflow-y:scroll;">
+                    <div class="w3-light-grey" id="scroll" style="height:70vh; overflow-y:scroll;">
                         <ul class="sortable">
                             <li id="rootHub">
                                 <div class="tab">
@@ -185,7 +191,7 @@
                 <header class="w3-border-bottom w3-theme w3-text-dark-grey w3-padding-small">
                     <h5 class="w3-margin-left"><i class="fa fa-fw fa-dashboard"></i>&nbsp;Основная панель</h5>
                 </header>
-                <div style="height:70vh">
+                <div class="w3-light-grey" style="height:70vh">
 
                 </div>
 
@@ -238,6 +244,8 @@ $('.tab i').on('click', function() {
     $(this).closest( "li" ).children("ul").toggle("fast");
     $(this).parent().children("i").toggle();
 });
+
+
 
 
 

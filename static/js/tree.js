@@ -12,7 +12,7 @@ function getUserInfo() {
         function(response){
         console.log(response)
             if (response.success == true){
-                $('.menu-name').append(response.name);
+                $('.body-title').append(response.name);
                 //response.type
             }
             else {
