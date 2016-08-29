@@ -4,6 +4,7 @@ import os
 import sys
 from flask import send_file, url_for, jsonify, abort, make_response, redirect
 from jinja2 import Environment, FileSystemLoader
+from functools import wraps
 from Helpers import *
 import Token
 from Models import User, Partner, Client, Hub, Hub_meta, Client_group, Partner_group
@@ -107,8 +108,11 @@ def is_auth(fn):
     """
     декоратор для проверки аутентификации методов API
     """
-    def wrapped():
-        access_token, = validate_post(('access_token',), (str,), (0,)) or validate_get(('access_token',), (str,), (0,))
+    @wraps(fn)
+    def wrapped(*args, **kwargs):
+        access_token, = validate_post(('access_token',), (str,), (0,))
+        if not access_token:
+            access_token, = validate_get(('access_token',), (str,), (0,))
         print 'wrapped, access_token: %s' % access_token
         if not access_token:
             abort(401)
@@ -116,10 +120,11 @@ def is_auth(fn):
         print 'wrapped, cache: %s' % addr
         if addr and addr == user_info(request):
             cache.set(access_token, user_info(request), app.config['MAX_CACHE_TIME'])
-            fn()
+            return fn(*args, **kwargs)
         else:
             abort(401)
     return wrapped
+
 
 def validate_user(access_token):
     if not access_token:
@@ -316,8 +321,8 @@ def recovery(token):
         return redirect(url_for('newpassword', email=user.email, token=token))
 
 
-@is_auth
 @app.route("/api/get_user_info", methods=['GET'])
+@is_auth
 def get_info():
     access_token, = validate_get(('access_token',), (str,), (0,))
     addr = cache.get(access_token)
@@ -327,23 +332,30 @@ def get_info():
     user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
     user = User.query.filter_by(id=user_id).first()
     name = user.name or user.email
-    return jsonify({'success': True, 'name': name[:14], 'type': user.user_type})
+    print {'success': True, 'name': name[:22], 'type': user.user_type}
+    return jsonify({'success': True, 'name': name[:22], 'type': user.user_type})
 
 
-@is_auth
 @app.route("/api/get_tree", methods=['POST'])
+@is_auth
 def get_tree():
     access_token, = validate_post(('access_token',), (str,), (0,))
     user = validate_user(access_token)
     tree = {}
     if user.user_type == 'client':
-        tree[user.client.group.id]['name'] = user.client.group.name
+        tree = get_tree(user.client.group, 'client')
+        tr = {}
+        tr[tree[0]] = tree[1]
+        return jsonify(tr)
     elif user.user_type == 'partner':
-        pass
+        tree = get_tree(user.partner.group, 'partner')
+        tr = {}
+        tr[tree[0]] = tree[1]
+        return jsonify(tr)
 
 
-@is_auth
 @app.route("/api/connect_hub", methods=['POST'])
+@is_auth
 def connect_hub():
     access_token, device_id = validate_post(('access_token', 'device_id',), (str,)*2, (0,)*2)
     if not access_token and device_id:
@@ -361,8 +373,8 @@ def connect_hub():
     return jsonify({'success': True})
 
 
-@is_auth
 @app.route("/api/disconnect_hub", methods=['POST'])
+@is_auth
 def disconnect_hub():
     access_token, device_id = validate_post(('access_token', 'device_id',), (str,)*2, (0,)*2)
     if not access_token and device_id:
