@@ -35,7 +35,7 @@ font-weight: normal;
 .my-active {
 color:#f44336;
 //color:#000;
-font-weight: bold;
+font-weight: 600;
 }
 
 
@@ -43,10 +43,10 @@ font-weight: bold;
 #scroll::-webkit-scrollbar
 {
 	width: 6px;
-	background-color: #F5F5F5;
+	background-color: #F7F7F7;
 }
 
 #scroll::-webkit-scrollbar-thumb
 {
-	background-color: #616161;
+	background-color: #ccc;
 }

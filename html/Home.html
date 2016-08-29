@@ -85,13 +85,13 @@
     <div class="w3-col l1 w3-hide-small w3-hide-medium w3-hide-large">&nbsp;</div>
 
     <div class="w3-col l12 m12 s12">
-
-        <div class="w3-row w3-card-2 w3-round-small w3-animate-opacity">
+<!--w3-border-left w3-border-right w3-border-bottom w3-border-light-grey -->
+        <div class="w3-row w3-card-2 w3-animate-opacity">
             <!--Дерево Хабов-->
-            <div class="w3-border w3-round-small w3-col l4 m4 s12">
+            <div class="w3-border-left w3-border-right w3-col l4 m4 s12">
 
 
-                <div class=" w3-row">
+                <!--<div class="w3-row">-->
                     <header class="w3-border-bottom w3-theme w3-text-dark-grey w3-padding-small">
                         <h5 class="w3-margin-left w3-margin-right"><i class="fa fa-fw fa-sitemap"></i>&nbsp;Все HUB'ы
                             <a class="w3-right w3-hover-none w3-hover-text-dark-grey" href="#">
@@ -179,12 +179,12 @@
                                 <i class="fa fa-fw fa-trash-o"></i></a>
                         </div>
                     </footer>
-                </div>
+                <!--</div>-->
                 <!--<br class="w3-light-grey w3-hide-medium w3-hide-large">-->
 
             </div>
 
-            <div class="w3-border w3-round-small w3-col l8 m8 s12">
+            <div class="w3-border-left w3-border-right w3-col l8 m8 s12">
 
                 <!--Статистика для выбранного Хаба-->
 
@@ -237,6 +237,7 @@ $(document).ready(function(){
             protectRoot: true
     });
     getUserInfo();
+    getTree();
 
 });
 

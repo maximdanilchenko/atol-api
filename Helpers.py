@@ -50,3 +50,15 @@ def user_info(req=request):
 
 def make_code_for_id(hub_id):
     return "code"
+
+
+def get_tree(node, user_type):
+    if user_type not in ('partner', 'client'):
+        return None
+    children = node.childes
+    children_dict = [get_tree(child, user_type) for child in children if children]
+    return dict({"id": node.id,
+             "name": node.name,
+             "hubs": [{"id": hub.id,
+                       "name": hub.partner_name if user_type == 'partner' else hub.client_name} for hub in node.hubs],
+             "children": children_dict})

@@ -336,20 +336,16 @@ def get_info():
 
 @app.route("/api/get_tree", methods=['POST'])
 @is_auth
-def get_tree():
+def api_get_tree():
     access_token, = validate_post(('access_token',), (str,), (0,))
     user = validate_user(access_token)
     tree = {}
     if user.user_type == 'client':
         tree = get_tree(user.client.group, 'client')
-        tr = {}
-        tr[tree[0]] = tree[1]
-        return jsonify(tr)
+        return jsonify({'success': True, 'tree': tree})
     elif user.user_type == 'partner':
         tree = get_tree(user.partner.group, 'partner')
-        tr = {}
-        tr[tree[0]] = tree[1]
-        return jsonify(tr)
+        return jsonify({'success': True, 'tree': tree})
 
 
 @app.route("/api/connect_hub", methods=['POST'])
@@ -468,20 +464,8 @@ def testdata():
     db.session.commit()
 
     tree = get_tree(new_group, 'partner')
-    tr = {}
-    tr[tree[0]] = tree[1]
-    print jsonify(tr)
+    print tree
 
-
-def get_tree(node, user_type):
-    if user_type not in ('partner', 'client'):
-        return None
-    children = node.childes
-    children_dict = dict(get_tree(child, user_type) for child in children if children)
-    return (node.id, {"name": node.name,
-                      "hubs": [{"id": hub.id,
-                                "name": hub.partner_name if user_type == 'partner' else hub.client_name} for hub in node.hubs],
-                      "children": children_dict})
 
 
 env_serv = os.getenv('SERVER_SOFTWARE')
