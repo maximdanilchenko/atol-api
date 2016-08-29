@@ -113,11 +113,9 @@ def is_auth(fn):
         access_token, = validate_post(('access_token',), (str,), (0,))
         if not access_token:
             access_token, = validate_get(('access_token',), (str,), (0,))
-        print 'wrapped, access_token: %s' % access_token
         if not access_token:
             abort(401)
         addr = cache.get(access_token)
-        print 'wrapped, cache: %s' % addr
         if addr and addr == user_info(request):
             cache.set(access_token, user_info(request), app.config['MAX_CACHE_TIME'])
             return fn(*args, **kwargs)
@@ -326,14 +324,12 @@ def recovery(token):
 def get_info():
     access_token, = validate_get(('access_token',), (str,), (0,))
     addr = cache.get(access_token)
-    print 'get_info, cache: %s' % addr
     if not access_token:
         abort(401)
     user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
     user = User.query.filter_by(id=user_id).first()
     name = user.name or user.email
-    print {'success': True, 'name': name[:22], 'type': user.user_type}
-    return jsonify({'success': True, 'name': name[:22], 'type': user.user_type})
+    return jsonify({'success': True, 'name': name[:25], 'type': user.user_type})
 
 
 @app.route("/api/get_tree", methods=['POST'])
