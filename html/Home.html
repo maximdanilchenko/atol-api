@@ -24,7 +24,7 @@
 <body class="w3-white">
 
 <a href="http://www.atol.ru/">
-    <img src="static/img/logo.png" alt="АТОЛ"
+    <img class="" src="static/img/logo.png" alt="АТОЛ"
          style="vertical-align: bottom;position: absolute;right:25px;top:10px;"
          width="87" height="23">
 </a>
@@ -85,100 +85,51 @@
     <div class="w3-col l1 w3-hide-small w3-hide-medium w3-hide-large">&nbsp;</div>
 
     <div class="w3-col l12 m12 s12">
-<!--w3-border-left w3-border-right w3-border-bottom w3-border-light-grey -->
+        <!--w3-border-left w3-border-right w3-border-bottom w3-border-light-grey -->
         <div class="w3-row w3-card-2 w3-animate-opacity">
             <!--Дерево Хабов-->
             <div class="w3-border-left w3-border-right w3-col l4 m4 s12">
 
 
                 <!--<div class="w3-row">-->
-                    <header class="w3-border-bottom w3-theme w3-text-dark-grey w3-padding-small">
-                        <h5 class="w3-margin-left w3-margin-right"><i class="fa fa-fw fa-sitemap"></i>&nbsp;Все HUB'ы
-                            <a class="w3-right w3-hover-none w3-hover-text-dark-grey" href="#">
-                                <i id="save" class="fa fa-fw fa-floppy-o"></i></a>
-                        </h5>
-                    </header>
-                    <div class="w3-light-grey" id="scroll" style="height:70vh; overflow-y:scroll;">
-                        <ul class="sortable">
-                            <li id="rootHub">
-                                <div class="tab">
-                                    <i class="fa fa-fw fa-folder-o" style="display:none;"></i>
-                                    <i class="fa fa-fw fa-folder-open-o"></i>
-                                    <a>Корень</a>
-                                </div>
-                                <ul>
-                                    <li>
-                                        <div class="tab">
-                                            <i class="fa fa-fw fa-folder-o" style="display:none;"></i>
-                                            <i class="fa fa-fw fa-folder-open-o"></i>
-                                            <a>Папка</a>
-                                        </div>
-                                        <ul>
-                                            <li class="hub">
-                                                <div><i class="fa fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB1
-                                                </div>
-                                            </li>
-                                            <li class="hub">
-                                                <div><i class="fa fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB2
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <div class="tab">
-                                            <i class="fa fa-fw fa-folder-o" style="display:none;"></i>
-                                            <i class="fa fa-fw fa-folder-open-o"></i>
-                                            <a>Ещё папка</a>
-                                        </div>
-                                        <ul>
-                                            <li class="hub">
-                                                <div><i class="fa fa-fw fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB3
-                                                </div>
-                                            </li>
-                                            <li class="hub">
-                                                <div><i class="fa fa-fw fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB4
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="hub">
-                                        <div><span></span><i
-                                                class="fa fa-fw fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="tab">
-                                            <i class="fa fa-fw fa-folder-o" style="display:none;"></i>
-                                            <i class="fa fa-fw fa-folder-open-o"></i>
-                                            <a>Папка</a>
-                                        </div>
-                                        <ul>
-                                            <li class="hub">
-                                                <div><i class="fa fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB1
-                                                </div>
-                                            </li>
-                                            <li class="hub">
-                                                <div><i class="fa fa-mobile-phone fa-fw fa-rotate-90"></i>&nbsp;HUB2
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
+                <header class="w3-border-bottom w3-theme w3-text-dark-grey w3-padding-small">
+                    <h5 class="w3-margin-left w3-margin-right"><i class="fa fa-fw fa-sitemap"></i>&nbsp;Все HUB'ы
+                        <a class="w3-right w3-hover-none w3-hover-text-dark-grey" href="#">
+                            <i id="save" class="fa fa-fw fa-floppy-o"></i></a>
+                    </h5>
+                </header>
+                <div class="w3-light-grey w3-text-dark-grey" id="scroll" style="height:70vh; overflow-y:scroll;">
+                    <ul class="sortable">
+                        <li id="rootHub">
+                            <div class="tab-root active-elem">
+                                <i class="fa fa-fw fa-folder-o" style="display:none;"></i>
+                                <i class="fa fa-fw fa-folder-open-o"></i>&nbsp;
+                                <a></a>
+                            </div>
+                            <ul>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <footer class="w3-border-top w3-white w3-text-dark-grey w3-large">
+                    <div class="w3-btn-bar w3-show-inline-block">
+                        <a onclick="$('#modal-folder').show();" id="panel-folder" class="my-labeled w3-btn w3-hover-none w3-hover-text-theme">
+                            <i class="fa fa-fw fa-folder-o"></i>
+                            <i class="my-label w3-small fa fa-fw fa-plus"></i>
+                        </a>
+
+                        <a onclick="$('#modal-hub').show();" id="panel-hub" class="my-labeled w3-btn w3-hover-none w3-hover-text-theme">
+                            <i class="fa fa-fw fa-laptop"></i>
+                            <i class="my-label w3-small fa fa-fw fa-plus"></i>
+                        </a>
+
+                        <a onclick="$('#modal-rename').show();" id="panel-rename" class="w3-btn w3-hover-none w3-hover-text-theme">
+                            <i class="fa fa-fw fa-pencil"></i></a>
+
+                        <a onclick="$('#modal-delete').show();" style="display:none" id="panel-delete" class="w3-btn w3-hover-none w3-hover-text-theme">
+                            <i class="fa fa-fw fa-trash-o"></i></a>
                     </div>
-                    <footer class="w3-border-top w3-white w3-text-dark-grey w3-large">
-                        <div class="w3-btn-bar w3-show-inline-block">
-                            <a id="folder" class="w3-btn w3-hover-none w3-hover-text-theme" href="#">
-                                <i class="fa fa-fw fa-folder-o"></i></a>
-                            <a id="hub" class="w3-btn w3-hover-none w3-hover-text-theme" href="#">
-                                <i class="fa fa-fw fa-mobile-phone fa-rotate-90"></i></a>
-                            <a id="name" class="w3-btn w3-hover-none w3-hover-text-theme" href="#">
-                                <i class="fa fa-fw fa-pencil"></i></a>
-                            <a id="delete" class="w3-btn w3-hover-none w3-hover-text-theme" href="#">
-                                <i class="fa fa-fw fa-trash-o"></i></a>
-                        </div>
-                    </footer>
+                </footer>
                 <!--</div>-->
                 <!--<br class="w3-light-grey w3-hide-medium w3-hide-large">-->
 
@@ -189,7 +140,12 @@
                 <!--Статистика для выбранного Хаба-->
 
                 <header class="w3-border-bottom w3-theme w3-text-dark-grey w3-padding-small">
-                    <h5 class="w3-margin-left"><i class="fa fa-fw fa-dashboard"></i>&nbsp;Основная панель</h5>
+                    <h5 class="w3-margin-left w3-margin-right"><i class="fa fa-fw fa-sliders"></i>&nbsp;
+                        <text id="dashboard-group"></text>
+                        <text style="display:none" id="dashboard-hub"></text>
+                        <a class="w3-right w3-hover-none w3-hover-text-dark-grey" href="#">
+                            <i id="reload" class="fa fa-fw fa-repeat"></i></a>
+                    </h5>
                 </header>
                 <div class="w3-light-grey" style="height:70vh">
 
@@ -203,7 +159,6 @@
                             <i class="fa fa-fw fa-pencil"></i></a>
                     </div>
                 </footer>
-
 
             </div>
         </div>
@@ -224,7 +179,104 @@
     </div>
     <div class="w3-col l2 w3-hide-small w3-hide-medium w3-hide-large">&nbsp;</div>
 </div>
+
+
+<!--MODALS-->
+<div id="modal-folder" class="w3-modal">
+    <div class="w3-modal-content w3-card-2">
+        <header class="w3-container w3-theme">
+      <span onclick="$('#modal-folder').hide();"
+            class="w3-closebtn">&times;</span>
+            <h2>Добавление группы</h2>
+        </header>
+
+        <form id="folder-form" class="w3-container">
+            <div class="w3-group">
+                <input class="w3-input w3-border" type="text" name="name" required>
+                <label class="w3-label w3-validate">Придумайте имя новой группы</label>
+            </div>
+            <div class="w3-group">
+                <button class="w3-btn w3-theme w3-large" type="submit">Создать группу</button>
+                <button class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-folder').hide();">Отмена
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="modal-hub" class="w3-modal">
+    <div class="w3-modal-content w3-card-2">
+        <header class="w3-container w3-theme">
+      <span onclick="$('#modal-hub').hide();"
+            class="w3-closebtn">&times;</span>
+            <h2>Добавление Хаба</h2>
+        </header>
+
+        <form id="hub-form" class="w3-container">
+            <div class="w3-group">
+                <input class="w3-input w3-border" type="text" name="hub_id" required>
+                <label class="w3-label w3-validate">Введите идентификатор Хаба</label>
+            </div>
+            <div class="w3-group">
+                <input class="w3-input w3-border" type="text" name="name" required>
+                <label class="w3-label w3-validate">Придумайте имя Хаба</label>
+            </div>
+            <div class="w3-group">
+                <button class="w3-btn w3-theme w3-large" type="submit">Добавить Хаб</button>
+                <button class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-hub').hide();">Отмена
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="modal-rename" class="w3-modal">
+    <div class="w3-modal-content w3-card-2">
+        <header class="w3-container w3-theme">
+      <span onclick="$('#modal-rename').hide();"
+            class="w3-closebtn">&times;</span>
+            <h2>Новое имя</h2>
+        </header>
+
+        <form id="rename-form" class="w3-container">
+            <div class="w3-group">
+                <input class="w3-input w3-border" type="text" name="name" required>
+                <label class="w3-label w3-validate">Введите новое имя</label>
+            </div>
+            <div class="w3-group">
+                <button class="w3-btn w3-theme w3-large" type="submit">Переименовать</button>
+                <button class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-rename').hide();">Отмена
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="modal-delete" class="w3-modal">
+    <div class="w3-modal-content w3-card-2">
+        <header class="w3-container w3-theme">
+            <span onclick="$('#modal-delete').hide();" class="w3-closebtn">&times;</span>
+            <h2>Удаление Хаба</h2>
+        </header>
+
+        <div class="w3-container">
+            <h4>Вы уверены, что хотите удалить этот Хаб?</h4>
+        </div>
+
+        <footer class="w3-container">
+            <div class="w3-group">
+            <button class="w3-btn w3-theme w3-large">Удалить</button>
+            <button class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-delete').hide();">Отмена
+            </button>
+                </div>
+        </footer>
+    </div>
+</div>
+
 <script>
+getUserInfo();
+getTree();
+
 $(document).ready(function(){
 
     $('.sortable').nestedSortable({
@@ -236,18 +288,81 @@ $(document).ready(function(){
             rootID: 'rootHub',
             protectRoot: true
     });
-    getUserInfo();
-    getTree();
 
 });
 
-$('.tab i').on('click', function() {
+
+//////Скрытие/открытие папок
+//Корень
+$('.sortable').on('click', '.tab-root > i', function() {
+    $(this).closest( "li" ).children("ul").toggle("fast");
+    $(this).parent().children("i").toggle();
+});
+
+//Папка
+$('.sortable').on('click', '.tab > i', function() {
     $(this).closest( "li" ).children("ul").toggle("fast");
     $(this).parent().children("i").toggle();
 });
 
 
+//////Выбор элементов
+//Корень
+$('.sortable').on('click', '.tab-root > a', function() {
+    $('.active-elem').removeClass("active-elem");
+    $(this).parent().addClass("active-elem");
 
+    $('#panel-folder').show();
+    $('#panel-hub').show();
+    $('#panel-name').show();
+    $('#panel-delete').hide();
+
+    $('#dashboard-group').show();
+    $('#dashboard-group').html($(this).parent().children("a").html());
+    $('#dashboard-hub').hide();
+});
+
+//Папка
+$('.sortable').on('click', '.tab > a', function() {
+    $('.active-elem').removeClass("active-elem");
+    $(this).parent().addClass("active-elem");
+    $('#panel-folder').show();
+    $('#panel-hub').show();
+    $('#panel-name').show();
+    $('#panel-delete').show();
+
+    $('#dashboard-group').show();
+    $('#dashboard-group').html($(this).parent().children("a").html());
+    $('#dashboard-hub').hide();
+});
+
+//Хаб
+$('.sortable').on('click', '.hub > a', function() {
+    $('.active-elem').removeClass("active-elem");
+    $(this).parent().addClass("active-elem");
+    $('#panel-folder').hide();
+    $('#panel-hub').hide();
+    $('#panel-name').show();
+    $('#panel-delete').show();
+
+    $('#dashboard-group').hide();
+    $('#dashboard-hub').html($(this).parent().children("a").html());
+    $('#dashboard-hub').show();
+});
+
+
+//////Кнопки под деревом
+$("#folder-form").submit(function(event){
+    return false;
+});
+
+$("#hub-form").submit(function(event){
+    return false;
+});
+
+$("#rename-form").submit(function(event){
+    return false;
+});
 
 
 </script>

@@ -36,6 +36,7 @@ class Client(db.Model):
 
     def __init__(self, user):
         self.user = user
+        self.group = Client_group(user.name if user.name else user.email)
 
 
 class Partner(db.Model):
@@ -47,13 +48,15 @@ class Partner(db.Model):
 
     def __init__(self, user):
         self.user = user
+        self.group = Partner_group(user.name if user.name else user.email)
 
 
 class Client_group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20))
+    name = db.Column(db.String(120))
     parent_id = db.Column(db.Integer, db.ForeignKey(id))
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'), unique=True)
+    order_id = db.Column(db.Integer)
 
     childes = db.relationship('Client_group', cascade="all", backref=db.backref('parent', remote_side=id), lazy='dynamic')
     hubs = db.relationship('Hub', backref='client_group', lazy='dynamic')
@@ -67,9 +70,10 @@ class Client_group(db.Model):
 
 class Partner_group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20))
+    name = db.Column(db.String(120))
     parent_id = db.Column(db.Integer, db.ForeignKey(id))
     partner_id = db.Column(db.Integer, db.ForeignKey('partner.id'), unique=True)
+    order_id = db.Column(db.Integer)
 
     childes = db.relationship('Partner_group', cascade="all", backref=db.backref('parent', remote_side=id), lazy='dynamic')
     hubs = db.relationship('Hub', backref='partner_group', lazy='dynamic')
@@ -83,8 +87,8 @@ class Partner_group(db.Model):
 
 class Hub_meta(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-
     hub = db.relationship("Hub", uselist=False, backref="hub_meta")
+
 
 
 class Hub(db.Model):
@@ -97,8 +101,13 @@ class Hub(db.Model):
     # partner_id = db.Column(db.Integer, db.ForeignKey('partner.id'), unique=True)
     client_group_id = db.Column(db.Integer, db.ForeignKey('client_group.id'))
     partner_group_id = db.Column(db.Integer, db.ForeignKey('partner_group.id'))
+    order_client_id = db.Column(db.Integer)
+    order_partner_id = db.Column(db.Integer)
 
-    def __init__(self, device_id, client_name=None, partner_name=None):
+    def __init__(self, device_id, client_name=None, partner_name=None, order_client_id=0, order_partner_id=0):
+        self.hub_meta = Hub_meta()
         self.device_id = device_id
         self.client_name = client_name
         self.partner_name = partner_name
+        self.order_client_id = order_client_id
+        self.order_partner_id = order_partner_id

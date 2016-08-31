@@ -74,7 +74,7 @@ MAIL_HTML_REC = """<!DOCTYPE html>
     -----Настройка приложения-----
     Объекты: db, cache
 """
-# db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
+db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
 db.create_all()
 # задаем кэширование в зависимости от платформы запуска
 from werkzeug.contrib.cache import GAEMemcachedCache, SimpleCache
@@ -441,15 +441,15 @@ def testdata():
     user = User.query.filter_by(email='maxalexdanilchenko@gmail.com', user_type='partner').first()
     partner = user.partner
 
-    new_group = Partner_group('group1', partner=partner)
+    new_group = user.partner.group
 
     print new_group.partner.user
 
-    hub1 = Hub('hub1')
-    hub2 = Hub('hub2')
-    hub3 = Hub('hub3')
-    hub4 = Hub('hub4')
-    hub5 = Hub('hub5')
+    hub1 = Hub('hub1', partner_name='мой Хаб')
+    hub2 = Hub('hub2', partner_name='Hub2')
+    hub3 = Hub('hub3', partner_name='Hub3')
+    hub4 = Hub('hub4', partner_name='Hub4')
+    hub5 = Hub('hub5', partner_name='Hub5')
 
     new_sub_group = Partner_group('group2', parent=new_group)
     new_sub_sub_group = Partner_group('group3', parent=new_sub_group)
@@ -459,7 +459,11 @@ def testdata():
     db.session.commit()
 
     new_group.hubs.extend([hub1, hub2])
+    hub1.order_partner_id = 2
+    hub2.order_partner_id = 1
     new_sub_group.hubs.extend([hub3, hub4])
+    hub3.order_partner_id = 0
+    hub4.order_partner_id = 1
     new_sub_sub_group.hubs.extend([hub5])
     db.session.commit()
 
