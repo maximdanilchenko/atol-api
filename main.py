@@ -542,11 +542,12 @@ def newpassword():
 
 
 def testdata():
+    if Hub.query.filter_by(device_id='hub1').first():
+        return
     user = User.query.filter_by(email='maxalexdanilchenko@gmail.com', user_type='partner').first()
 
     new_group = user.partner.group
 
-    print new_group.partner.user
 
     hub1 = Hub('hub1', partner_name='мой Хаб')
     hub2 = Hub('hub2', partner_name='Hub2')
@@ -576,8 +577,9 @@ env_serv = os.getenv('SERVER_SOFTWARE')
 
 
 if app.config['DEBUG']:
-    db.session.add_all([Hub('device-id-%d'%i) for i in range(app.config['TEST_HUB_NUM'])])
-    db.session.commit()
+    if not Hub.query.filter_by(device_id='device-id-0').first():
+        db.session.add_all([Hub('device-id-%d'%i) for i in range(app.config['TEST_HUB_NUM'])])
+        db.session.commit()
 
 if not (env_serv and env_serv.startswith('Google App Engine/')):
     if 'win' in sys.platform and __name__ == "__main__":
