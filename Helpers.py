@@ -86,3 +86,15 @@ def valid_group_user(group, user):
         if user_gr.user != user:
             return False
     return True
+
+def parseList(name):
+    result = {}
+    p = re.compile('%s\[(?P<i>\d+)\]\[(?P<type>\w+)\]' % name)
+    for key in request.form.iterkeys():
+        m = re.match(p, key)
+        if m:
+            d = m.groupdict()
+            if not result.has_key(d['i']):
+                result[d['i']] = {}
+            result[d['i']][d['type']] = request.form[key]
+    return result

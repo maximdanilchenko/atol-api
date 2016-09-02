@@ -14,15 +14,16 @@ left: -10px;
     position: relative;
     padding-top: 1px;
     padding-bottom: 2px;
-    cursor: pointer;
     left: -20px;
 }
 
-a {
+.ui-state-highlight { background-color: #fff; border:1px solid #ccc; height: 1.5em; line-height: 1.2em; }
+
+a, .sortable i {
 cursor: pointer;
 }
 
-.tab a:hover,.tab-root a:hover,.hub:hover {
+.tab a:hover,.tab-root a:hover,.hub a:hover {
     color: #f6665c;
     font-weight: 600;
 }

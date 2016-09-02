@@ -110,8 +110,10 @@ def is_auth(fn):
     """
     @wraps(fn)
     def wrapped(*args, **kwargs):
-        access_token, = validate_post(('access_token',), (str,), (0,))
-        if not access_token:
+        access_token = 0
+        if request.method == "POST":
+            access_token, = validate_post(('access_token',), (str,), (0,))
+        elif request.method == "GET":
             access_token, = validate_get(('access_token',), (str,), (0,))
         if not access_token:
             abort(401)
@@ -341,7 +343,10 @@ def api_get_tree():
 @app.route("/api/connect_hub", methods=['POST'])
 @is_auth
 def connect_hub():
-    access_token, device_id, group_id, name = validate_post(('access_token', 'device_id', 'group_id', 'name'), (str, str, int, unicode), (0,)*4)
+    access_token, device_id, group_id, name, order_id = \
+        validate_post(('access_token', 'device_id', 'group_id', 'name', 'order_id'),
+                      (str, str, int, unicode, int),
+                      (0,)*5)
     if not (access_token and device_id and name and group_id):
         abort(400)
     user = validate_user(access_token)
@@ -353,7 +358,9 @@ def connect_hub():
         if not valid_group_user(group, user):
             abort(404)
         device.client_name = name
+        device.order_client_id = order_id
         group.hubs.append(device)
+        db.session.commit()
     elif user.user_type == 'partner':
         if device.partner_group:
             abort(400)
@@ -361,15 +368,19 @@ def connect_hub():
         if not valid_group_user(group, user):
             abort(404)
         device.partner_name = name
+        device.order_partner_id = order_id
         group.hubs.append(device)
-    db.session.commit()
+        db.session.commit()
     return jsonify({'success': True, 'id': device.id, 'name': name})
 
 
 @app.route("/api/disconnect_hub", methods=['POST'])
 @is_auth
 def disconnect_hub():
-    access_token, hub_id, group_id = validate_post(('access_token', 'hub_id', 'group_id'), (str, int, int), (0,)*3)
+    access_token, hub_id, group_id = validate_post(
+        ('access_token', 'hub_id', 'group_id'),
+        (str, int, int),
+        (0,)*3)
     if not (access_token and hub_id and group_id):
         abort(400)
     user = validate_user(access_token)
@@ -396,7 +407,9 @@ def disconnect_hub():
 @app.route("/api/rename_hub", methods=['POST'])
 @is_auth
 def rename_hub():
-    access_token, hub_id, group_id, name = validate_post(('access_token', 'hub_id', 'group_id', 'name'), (str ,str, int, unicode), (0,)*4)
+    access_token, hub_id, group_id, name = validate_post(('access_token', 'hub_id', 'group_id', 'name'),
+                                                         (str, str, int, unicode),
+                                                         (0,)*4)
     if not (access_token and hub_id and name and group_id):
         abort(400)
     user = validate_user(access_token)
@@ -424,7 +437,9 @@ def rename_hub():
 @app.route("/api/create_group", methods=['POST'])
 @is_auth
 def create_group():
-    access_token, parent_id, name = validate_post(('access_token', 'parent_id', 'name'), (str, int, unicode), (0,)*3)
+    access_token, parent_id, name, order_id = validate_post(('access_token', 'parent_id', 'name', 'order_id'),
+                                                            (str, int, unicode, int),
+                                                            (0,)*4)
     if not (access_token and name and parent_id):
         abort(400)
     user = validate_user(access_token)
@@ -433,12 +448,14 @@ def create_group():
         if not valid_group_user(parent, user):
             abort(404)
         new_group = Client_group(name, parent=parent)
+        new_group.order_id = order_id
         db.session.add(new_group)
     elif user.user_type == 'partner':
         parent = Partner_group.query.get_or_404(parent_id)
         if not valid_group_user(parent, user):
             abort(404)
         new_group = Partner_group(name, parent=parent)
+        new_group.order_id = order_id
         db.session.add(new_group)
     else:
         abort(400)
@@ -491,6 +508,55 @@ def rename_group():
     db.session.commit()
     return jsonify({'success': True, 'name': name})
 
+
+@app.route("/api/reorder", methods=['POST'])
+@is_auth
+def reorder():
+    access_token, parent_id = validate_post(('access_token', 'parent_id'), (str, int), (0,)*2)
+    if not (access_token and parent_id):
+        abort(400)
+    children = parseList('children')
+    if not children:
+        abort(400)
+    user = validate_user(access_token)
+    if user.user_type == 'client':
+        if not valid_group_user(Client_group.query.get_or_404(parent_id), user):
+            abort(401)
+        for key in children:
+            if children[key]['type'] == 'hub':
+                hub = Hub.query.get_or_404(int(children[key]['id']))
+                if not valid_group_user(hub.client_group, user):
+                    abort(401)
+                hub.order_client_id = int(children[key]['order_id'])
+                hub.client_group_id = parent_id
+                db.session.commit()
+            if children[key]['type'] == 'tab':
+                group = Client_group.query.get_or_404(int(children[key]['id']))
+                if not valid_group_user(group, user):
+                    abort(401)
+                group.order_id = int(children[key]['order_id'])
+                group.parent_id = parent_id
+                db.session.commit()
+    elif user.user_type == 'partner':
+        if not valid_group_user(Partner_group.query.get_or_404(parent_id), user):
+            abort(401)
+        for key in children:
+            if children[key]['type'] == 'hub':
+                hub = Hub.query.get_or_404(int(children[key]['id']))
+                if not valid_group_user(hub.partner_group, user):
+                    abort(401)
+                hub.order_partner_id = int(children[key]['order_id'])
+                hub.partner_group_id = parent_id
+                db.session.commit()
+            if children[key]['type'] == 'tab':
+                group = Partner_group.query.get_or_404(int(children[key]['id']))
+                if not valid_group_user(group, user):
+                    abort(401)
+                group.order_id = int(children[key]['order_id'])
+                group.parent_id = parent_id
+                db.session.commit()
+    db.session.commit()
+    return jsonify({'success': True})
 
 """
     -----Страницы личного кабинета-----
