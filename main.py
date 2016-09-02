@@ -74,7 +74,7 @@ MAIL_HTML_REC = """<!DOCTYPE html>
     -----Настройка приложения-----
     Объекты: db, cache
 """
-# db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
+db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
 db.create_all()
 # задаем кэширование в зависимости от платформы запуска
 from werkzeug.contrib.cache import GAEMemcachedCache, SimpleCache
@@ -128,8 +128,8 @@ def validate_user(access_token):
     if not access_token:
         abort(401)
     user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
-    user = User.query.filter_by(id=user_id).first()
-    if not (user and user.user_type):
+    user = User.query.get_or_404(user_id)
+    if not user.user_type:
         abort(400)
     return user
 
@@ -162,9 +162,7 @@ def api_recovery():
         abort(400)
     token = Token.generate_token(email, app.config['SECRET_KEY'])
     try:
-        user = User.query.filter_by(email=email).first()
-        if not user:
-            abort(401)
+        user = User.query.filter_by(email=email).first_or_404()
         user.recovery_token = token
         db.session.commit()
     except:
@@ -215,7 +213,7 @@ def api_signup():
         db.session.commit()
     except:
         abort(400)
-    if user.email == 'maxalexdanilchenko@gmail.com':
+    if app.config['DEBUG'] and user.email == 'maxalexdanilchenko@gmail.com':
         testdata()
     a = url_for('api_confirm', token=token, _external=True)
     print a
@@ -246,8 +244,8 @@ def api_signin():
     email, password = validate_post(('email', 'password',), (str,) * 2, ('',) * 2)
     if not (email and password):
         abort(400)
-    user = User.query.filter_by(email=email).first()
-    if not user or Token.confirm_token(user.password, app.config['SECRET_KEY'], None) != password or not user.confirmed:
+    user = User.query.filter_by(email=email).first_or_404()
+    if Token.confirm_token(user.password, app.config['SECRET_KEY'], None) != password or not user.confirmed:
         abort(401)
     token = Token.generate_token(user.id, app.config['SECRET_KEY'])
     # Получить обратно: user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
@@ -267,9 +265,7 @@ def api_newpas():
     if not (token and password and conf_password == password):
         abort(400)
     # email = Token.confirm_token(token, app.config['SECRET_KEY'], None)
-    user = User.query.filter_by(recovery_token=token).first()
-    if not user:
-        abort(401)
+    user = User.query.filter_by(recovery_token=token).first_or_404()
     user.password = Token.generate_token(password, app.config['SECRET_KEY'])
     user.recovery_token = ''
     user.confirmed = True
@@ -293,9 +289,7 @@ def api_confirm(token):
         # проверить пользователя по почте в базе и пометить, что он подтвердил email
         if not email:
             abort(400)
-        user = User.query.filter_by(email=email).first()
-        if not user:
-            abort(401)
+        user = User.query.filter_by(email=email).first_or_404()
         user.confirmed = True
         db.session.commit()
         return redirect(url_for('success'))
@@ -313,9 +307,7 @@ def recovery(token):
         # проверить пользователя по почте в базе и пометить, что он подтвердил email
         # if not email:
         #     abort(400)
-        user = User.query.filter_by(recovery_token=token).first()
-        if not user:
-            abort(401)
+        user = User.query.filter_by(recovery_token=token).first_or_404()
         return redirect(url_for('newpassword', email=user.email, token=token))
 
 
@@ -323,11 +315,9 @@ def recovery(token):
 @is_auth
 def get_info():
     access_token, = validate_get(('access_token',), (str,), (0,))
-    addr = cache.get(access_token)
     if not access_token:
-        abort(401)
-    user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
-    user = User.query.filter_by(id=user_id).first()
+        abort(400)
+    user = validate_user(access_token)
     name = user.name or user.email
     if len(name) > 30:
         name = '%s..' % name[:28]
@@ -339,54 +329,168 @@ def get_info():
 def api_get_tree():
     access_token, = validate_post(('access_token',), (str,), (0,))
     user = validate_user(access_token)
-    tree = {}
     if user.user_type == 'client':
         tree = get_tree(user.client.group, 'client')
         return jsonify({'success': True, 'tree': tree})
     elif user.user_type == 'partner':
         tree = get_tree(user.partner.group, 'partner')
         return jsonify({'success': True, 'tree': tree})
+    abort(400)
 
 
 @app.route("/api/connect_hub", methods=['POST'])
 @is_auth
 def connect_hub():
-    access_token, device_id = validate_post(('access_token', 'device_id',), (str,)*2, (0,)*2)
-    if not access_token and device_id:
-        abort(401)
-    user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
-    user = User.query.filter_by(id=user_id).first()
-    device = Hub.query.filter_by(device_id=device_id).first()
-    if not (user and user.user_type and device):
+    access_token, device_id, group_id, name = validate_post(('access_token', 'device_id', 'group_id', 'name'), (str, str, int, unicode), (0,)*4)
+    if not (access_token and device_id and name and group_id):
         abort(400)
+    user = validate_user(access_token)
+    device = Hub.query.filter_by(device_id=device_id).first_or_404()
     if user.user_type == 'client':
-        user.client.hubs.append(device)
+        if device.client_group:
+            abort(400)
+        group = Client_group.query.get_or_404(group_id)
+        if not valid_group_user(group, user):
+            abort(404)
+        device.client_name = name
+        group.hubs.append(device)
     elif user.user_type == 'partner':
-        user.partner.hubs.append(device)
+        if device.partner_group:
+            abort(400)
+        group = Partner_group.query.get_or_404(group_id)
+        if not valid_group_user(group, user):
+            abort(404)
+        device.partner_name = name
+        group.hubs.append(device)
     db.session.commit()
-    return jsonify({'success': True})
+    return jsonify({'success': True, 'id': device.id, 'name': name})
 
 
 @app.route("/api/disconnect_hub", methods=['POST'])
 @is_auth
 def disconnect_hub():
-    access_token, device_id = validate_post(('access_token', 'device_id',), (str,)*2, (0,)*2)
-    if not access_token and device_id:
-        abort(401)
-    user_id = Token.confirm_token(access_token, app.config['SECRET_KEY'], None)
-    user = User.query.filter_by(id=user_id).first()
-    device = Hub.query.filter_by(device_id=device_id).first()
-    if not (user and user.user_type and device):
+    access_token, hub_id, group_id = validate_post(('access_token', 'hub_id', 'group_id'), (str, int, int), (0,)*3)
+    if not (access_token and hub_id and group_id):
         abort(400)
+    user = validate_user(access_token)
+    device = Hub.query.get_or_404(hub_id)
     try:
         if user.user_type == 'client':
-            user.client.hubs.remove(device)
+            group = Client_group.query.get_or_404(group_id)
+            if valid_group_user(group, user):
+                group.hubs.remove(device)
+            else:
+                abort(404)
         elif user.user_type == 'partner':
-            user.partner.hubs.remove(device)
+            group = Partner_group.query.get_or_404(group_id)
+            if valid_group_user(group, user):
+                group.hubs.remove(device)
+            else:
+                abort(404)
     except:
         abort(400)
     db.session.commit()
     return jsonify({'success': True})
+
+
+@app.route("/api/rename_hub", methods=['POST'])
+@is_auth
+def rename_hub():
+    access_token, hub_id, group_id, name = validate_post(('access_token', 'hub_id', 'group_id', 'name'), (str ,str, int, unicode), (0,)*4)
+    if not (access_token and hub_id and name and group_id):
+        abort(400)
+    user = validate_user(access_token)
+    device = Hub.query.get(hub_id)
+    if not device:
+        abort(400)
+    if user.user_type == 'client':
+        if not device.client_group or device.client_group.id != group_id:
+            abort(400)
+        group = device.client_group
+        if not valid_group_user(group, user):
+            abort(404)
+        device.client_name = name
+    elif user.user_type == 'partner':
+        if not device.partner_group or device.partner_group.id != group_id:
+            abort(400)
+        group = device.partner_group
+        if not valid_group_user(group, user):
+            abort(404)
+        device.partner_name = name
+    db.session.commit()
+    return jsonify({'success': True, 'name': name})
+
+
+@app.route("/api/create_group", methods=['POST'])
+@is_auth
+def create_group():
+    access_token, parent_id, name = validate_post(('access_token', 'parent_id', 'name'), (str, int, unicode), (0,)*3)
+    if not (access_token and name and parent_id):
+        abort(400)
+    user = validate_user(access_token)
+    if user.user_type == 'client':
+        parent = Client_group.query.get_or_404(parent_id)
+        if not valid_group_user(parent, user):
+            abort(404)
+        new_group = Client_group(name, parent=parent)
+        db.session.add(new_group)
+    elif user.user_type == 'partner':
+        parent = Partner_group.query.get_or_404(parent_id)
+        if not valid_group_user(parent, user):
+            abort(404)
+        new_group = Partner_group(name, parent=parent)
+        db.session.add(new_group)
+    else:
+        abort(400)
+    db.session.commit()
+    return jsonify({'success': True, 'id': new_group.id, 'name': name})
+
+
+@app.route("/api/remove_group", methods=['POST'])
+@is_auth
+def remove_group():
+    access_token, group_id = validate_post(('access_token', 'group_id'), (str, int), (0,)*2)
+    if not (access_token and group_id):
+        abort(400)
+    user = validate_user(access_token)
+    if user.user_type == 'client':
+        group = Client_group.query.get_or_404(group_id)
+        if not valid_group_user(group, user):
+            abort(404)
+        db.session.delete(group)
+    elif user.user_type == 'partner':
+        group = Partner_group.query.get_or_404(group_id)
+        if not valid_group_user(group, user):
+            abort(404)
+        db.session.delete(group)
+    else:
+        abort(400)
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+@app.route("/api/rename_group", methods=['POST'])
+@is_auth
+def rename_group():
+    access_token, group_id, name = validate_post(('access_token', 'group_id', 'name'), (str, int, unicode), (0,)*3)
+    if not (access_token and name and group_id):
+        abort(400)
+    user = validate_user(access_token)
+    if user.user_type == 'client':
+        group = Client_group.query.get_or_404(group_id)
+        if not valid_group_user(group, user):
+            abort(404)
+        group.name = name
+    elif user.user_type == 'partner':
+        group = Partner_group.query.get_or_404(group_id)
+        if not valid_group_user(group, user):
+            abort(404)
+        group.name = name
+    else:
+        abort(400)
+    db.session.commit()
+    return jsonify({'success': True, 'name': name})
+
 
 """
     -----Страницы личного кабинета-----
@@ -439,7 +543,6 @@ def newpassword():
 
 def testdata():
     user = User.query.filter_by(email='maxalexdanilchenko@gmail.com', user_type='partner').first()
-    partner = user.partner
 
     new_group = user.partner.group
 
@@ -453,7 +556,6 @@ def testdata():
 
     new_sub_group = Partner_group('group2', parent=new_group)
     new_sub_sub_group = Partner_group('group3', parent=new_sub_group)
-
 
     db.session.add_all([hub1, hub2, hub3, hub4, hub5, new_group, new_sub_group, new_sub_sub_group])
     db.session.commit()
@@ -470,11 +572,13 @@ def testdata():
     tree = get_tree(new_group, 'partner')
     print tree
 
-
-
 env_serv = os.getenv('SERVER_SOFTWARE')
+
+
+if app.config['DEBUG']:
+    db.session.add_all([Hub('device-id-%d'%i) for i in range(app.config['TEST_HUB_NUM'])])
+    db.session.commit()
 
 if not (env_serv and env_serv.startswith('Google App Engine/')):
     if 'win' in sys.platform and __name__ == "__main__":
         app.run()
-

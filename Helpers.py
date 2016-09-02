@@ -65,3 +65,24 @@ def get_tree(node, user_type):
                  "name": node.name,
                  "order_id": node.order_id,
                  "children": groups_list + hubs_list})
+
+
+# --проверка на пренадлежность группы пользователю
+def valid_group_user(group, user):
+    if user.user_type == 'client':
+        gr = group
+        user_gr = gr.client
+        while not user_gr:
+            gr = gr.parent
+            user_gr = gr.client
+        if user_gr.user != user:
+            return False
+    elif user.user_type == 'partner':
+        gr = group
+        user_gr = gr.partner
+        while not user_gr:
+            gr = gr.parent
+            user_gr = gr.partner
+        if user_gr.user != user:
+            return False
+    return True

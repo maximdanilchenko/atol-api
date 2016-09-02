@@ -95,5 +95,4 @@ function recovery() {
 //            $("#recovery").css("display","none");
             $("#error").css("display","block");
       });
-
 }

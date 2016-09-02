@@ -7,7 +7,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50))
+    name = db.Column(db.String(120))
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(150), unique=True, nullable=False)
     confirmed = db.Column(db.Boolean, default=False)
@@ -93,8 +93,8 @@ class Hub_meta(db.Model):
 
 class Hub(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    client_name = db.Column(db.String(20))
-    partner_name = db.Column(db.String(20))
+    client_name = db.Column(db.String(120))
+    partner_name = db.Column(db.String(120))
     hub_meta_id = db.Column(db.Integer, db.ForeignKey('hub_meta.id'), unique=True)
     device_id = db.Column(db.String(150), unique=True, nullable=False)
     # client_id = db.Column(db.Integer, db.ForeignKey('client.id'), unique=True)

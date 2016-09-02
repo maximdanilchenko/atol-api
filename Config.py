@@ -5,7 +5,7 @@ import sys
 
 # приложение
 DEBUG = True
-
+TEST_HUB_NUM = 100
 # база данных
 env = os.getenv('SERVER_SOFTWARE')
 
@@ -37,3 +37,4 @@ MAX_CACHE_TIME = 24 * 60 * 60
 
 # время, в течение которого ссылка для подтверждения почты является действующей (confirmation token is valid)
 CONFIRM_TIME = 24 * 60 * 60
+

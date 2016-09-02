@@ -12,7 +12,7 @@
     <script src="static/js/jquery.ui.touch-punch.js"></script>
     <script src="static/js/jquery.mjs.nestedSortable.js"></script>
     <script src="static/js/sign.js"></script>
-    <script src="static/js/tree.js"></script>
+    <script src="static/js/atol-api.js"></script>
 
     <link rel="stylesheet" href="static/css/w3.css">
     <link rel="stylesheet" href="static/css/w3-theme-red.css">
@@ -102,9 +102,9 @@
                     <ul class="sortable">
                         <li id="rootHub">
                             <div class="tab-root active-elem">
-                                <i class="fa fa-fw fa-folder-o" style="display:none;"></i>
-                                <i class="fa fa-fw fa-folder-open-o"></i>&nbsp;
-                                <a></a>
+                                <i class="fa fa-fw fa-folder" style="display:none;"></i>
+                                <i class="fa fa-fw fa-folder-open"></i>
+                                &nbsp;<a></a>
                             </div>
                             <ul>
                             </ul>
@@ -113,20 +113,32 @@
                 </div>
                 <footer class="w3-border-top w3-white w3-text-dark-grey w3-large">
                     <div class="w3-btn-bar w3-show-inline-block">
-                        <a onclick="$('#modal-folder').show();" id="panel-folder" class="my-labeled w3-btn w3-hover-none w3-hover-text-theme">
+                        <a onclick="$('#modal-group').show();" id="panel-group"
+                           class="my-labeled w3-btn w3-hover-none w3-hover-text-theme">
                             <i class="fa fa-fw fa-folder-o"></i>
                             <i class="my-label w3-small fa fa-fw fa-plus"></i>
                         </a>
 
-                        <a onclick="$('#modal-hub').show();" id="panel-hub" class="my-labeled w3-btn w3-hover-none w3-hover-text-theme">
+                        <a onclick="$('#modal-hub').show();" id="panel-hub"
+                           class="my-labeled w3-btn w3-hover-none w3-hover-text-theme">
                             <i class="fa fa-fw fa-laptop"></i>
                             <i class="my-label w3-small fa fa-fw fa-plus"></i>
                         </a>
 
-                        <a onclick="$('#modal-rename').show();" id="panel-rename" class="w3-btn w3-hover-none w3-hover-text-theme">
+                        <a onclick="$('#modal-rename-group').show();" id="panel-rename-group"
+                           class="w3-btn w3-hover-none w3-hover-text-theme">
                             <i class="fa fa-fw fa-pencil"></i></a>
 
-                        <a onclick="$('#modal-delete').show();" style="display:none" id="panel-delete" class="w3-btn w3-hover-none w3-hover-text-theme">
+                        <a onclick="$('#modal-rename-hub').show();" style="display:none" id="panel-rename-hub"
+                           class="w3-btn w3-hover-none w3-hover-text-theme">
+                            <i class="fa fa-fw fa-pencil"></i></a>
+
+                        <a onclick="$('#modal-delete-hub').show();" style="display:none" id="panel-delete-hub"
+                           class="w3-btn w3-hover-none w3-hover-text-theme">
+                            <i class="fa fa-fw fa-trash-o"></i></a>
+
+                        <a onclick="$('#modal-delete-group').show();" style="display:none" id="panel-delete-group"
+                           class="w3-btn w3-hover-none w3-hover-text-theme">
                             <i class="fa fa-fw fa-trash-o"></i></a>
                     </div>
                 </footer>
@@ -182,23 +194,23 @@
 
 
 <!--MODALS-->
-<div id="modal-folder" class="w3-modal">
+<div id="modal-group" class="w3-modal">
     <div class="w3-modal-content w3-card-2">
         <header class="w3-container w3-theme">
-      <span onclick="$('#modal-folder').hide();"
+      <span onclick="$('#modal-group').hide();"
             class="w3-closebtn">&times;</span>
             <h2>Добавление группы</h2>
         </header>
 
-        <form id="folder-form" class="w3-container">
+        <form id="group-form" class="w3-container">
             <div class="w3-group">
                 <input class="w3-input w3-border" type="text" name="name" required>
                 <label class="w3-label w3-validate">Придумайте имя новой группы</label>
             </div>
             <div class="w3-group">
-                <button class="w3-btn w3-theme w3-large" type="submit">Создать группу</button>
-                <button class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-folder').hide();">Отмена
-                </button>
+                <a class="w3-btn w3-theme w3-large" onclick="addGroup();" type="submit">Создать группу</a>
+                <a class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-group').hide();">Отмена
+                </a>
             </div>
         </form>
     </div>
@@ -214,48 +226,89 @@
 
         <form id="hub-form" class="w3-container">
             <div class="w3-group">
-                <input class="w3-input w3-border" type="text" name="hub_id" required>
-                <label class="w3-label w3-validate">Введите идентификатор Хаба</label>
+                <input class="w3-input w3-border" type="text" name="device_id" required>
+                <label id="hub-label" class="w3-label w3-validate">Введите идентификатор Хаба</label>
             </div>
             <div class="w3-group">
                 <input class="w3-input w3-border" type="text" name="name" required>
                 <label class="w3-label w3-validate">Придумайте имя Хаба</label>
             </div>
             <div class="w3-group">
-                <button class="w3-btn w3-theme w3-large" type="submit">Добавить Хаб</button>
-                <button class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-hub').hide();">Отмена
-                </button>
+                <a class="w3-btn w3-theme w3-large" onclick="addHub();" type="submit">Добавить Хаб</a>
+                <a class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-hub').hide();">Отмена
+                </a>
             </div>
         </form>
     </div>
 </div>
 
-<div id="modal-rename" class="w3-modal">
+<div id="modal-rename-hub" class="w3-modal">
     <div class="w3-modal-content w3-card-2">
         <header class="w3-container w3-theme">
-      <span onclick="$('#modal-rename').hide();"
-            class="w3-closebtn">&times;</span>
-            <h2>Новое имя</h2>
+            <span onclick="$('#modal-rename-hub').hide();" class="w3-closebtn">&times;</span>
+            <h2>Новое имя Хаба</h2>
         </header>
 
-        <form id="rename-form" class="w3-container">
+        <form id="rename-form-hub" class="w3-container">
             <div class="w3-group">
                 <input class="w3-input w3-border" type="text" name="name" required>
-                <label class="w3-label w3-validate">Введите новое имя</label>
+                <label class="w3-label w3-validate">Введите новое имя Хаба</label>
             </div>
             <div class="w3-group">
-                <button class="w3-btn w3-theme w3-large" type="submit">Переименовать</button>
-                <button class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-rename').hide();">Отмена
-                </button>
+                <a class="w3-btn w3-theme w3-large" onclick="renameHub();" type="submit">Переименовать</a>
+                <a class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-rename-hub').hide();">Отмена
+                </a>
             </div>
         </form>
     </div>
 </div>
 
-<div id="modal-delete" class="w3-modal">
+<div id="modal-rename-group" class="w3-modal">
     <div class="w3-modal-content w3-card-2">
         <header class="w3-container w3-theme">
-            <span onclick="$('#modal-delete').hide();" class="w3-closebtn">&times;</span>
+            <span onclick="$('#modal-rename-group').hide();" class="w3-closebtn">&times;</span>
+            <h2>Новое имя Группы</h2>
+        </header>
+
+        <form id="rename-form-group" class="w3-container">
+            <div class="w3-group">
+                <input class="w3-input w3-border" type="text" name="name" required>
+                <label class="w3-label w3-validate">Введите новое имя Группы</label>
+            </div>
+            <div class="w3-group">
+                <a class="w3-btn w3-theme w3-large" onclick="renameGroup();" type="submit">Переименовать</a>
+                <a class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-rename-group').hide();">Отмена
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="modal-delete-group" class="w3-modal">
+    <div class="w3-modal-content w3-card-2">
+        <header class="w3-container w3-theme">
+            <span onclick="$('#modal-delete-group').hide();" class="w3-closebtn">&times;</span>
+            <h2>Удаление Группы</h2>
+        </header>
+
+        <div class="w3-container">
+            <h4>Вы уверены, что хотите удалить эту Группу?</h4>
+            <h5>Все дочерние элементы будут также удалены!</h5>
+        </div>
+
+        <footer class="w3-container">
+            <div class="w3-group">
+                <a class="w3-btn w3-theme w3-large" onclick="deleteGroup();">Удалить</a>
+                <a class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-delete-group').hide();">Отмена</a>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<div id="modal-delete-hub" class="w3-modal">
+    <div class="w3-modal-content w3-card-2">
+        <header class="w3-container w3-theme">
+            <span onclick="$('#modal-delete-hub').hide();" class="w3-closebtn">&times;</span>
             <h2>Удаление Хаба</h2>
         </header>
 
@@ -265,10 +318,9 @@
 
         <footer class="w3-container">
             <div class="w3-group">
-            <button class="w3-btn w3-theme w3-large">Удалить</button>
-            <button class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-delete').hide();">Отмена
-            </button>
-                </div>
+                <a class="w3-btn w3-theme w3-large" onclick="deleteHub();">Удалить</a>
+                <a class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-delete-hub').hide();">Отмена</a>
+            </div>
         </footer>
     </div>
 </div>
@@ -279,15 +331,7 @@ getTree();
 
 $(document).ready(function(){
 
-    $('.sortable').nestedSortable({
-            handle: 'div',
-            items: 'li',
-            toleranceElement: '> div',
-            listType: 'ul',
-            disableNesting: 'hub',
-            rootID: 'rootHub',
-            protectRoot: true
-    });
+    reloadTree();
 
 });
 
@@ -300,7 +344,7 @@ $('.sortable').on('click', '.tab-root > i', function() {
 });
 
 //Папка
-$('.sortable').on('click', '.tab > i', function() {
+$('.sortable').on('click', '.tab > div > i', function() {
     $(this).closest( "li" ).children("ul").toggle("fast");
     $(this).parent().children("i").toggle();
 });
@@ -312,57 +356,54 @@ $('.sortable').on('click', '.tab-root > a', function() {
     $('.active-elem').removeClass("active-elem");
     $(this).parent().addClass("active-elem");
 
-    $('#panel-folder').show();
-    $('#panel-hub').show();
-    $('#panel-name').show();
-    $('#panel-delete').hide();
+    $('#panel-group').show("fast");
+    $('#panel-hub').show("fast");
+    $('#panel-rename-group').show("fast");
+    $('#panel-rename-hub').hide("fast");
+    $('#panel-delete-hub').hide("fast");
+    $('#panel-delete-group').hide("fast");
 
-    $('#dashboard-group').show();
     $('#dashboard-group').html($(this).parent().children("a").html());
     $('#dashboard-hub').hide();
+    $('#dashboard-group').show();
 });
 
 //Папка
-$('.sortable').on('click', '.tab > a', function() {
+$('.sortable').on('click', '.tab > div > a', function() {
     $('.active-elem').removeClass("active-elem");
     $(this).parent().addClass("active-elem");
-    $('#panel-folder').show();
-    $('#panel-hub').show();
-    $('#panel-name').show();
-    $('#panel-delete').show();
+    $('#panel-group').show("fast");
+    $('#panel-hub').show("fast");
+    $('#panel-rename-group').show("fast");
+    $('#panel-rename-hub').hide("fast");
+    $('#panel-delete-hub').hide("fast");
+    $('#panel-delete-group').show("fast");
 
-    $('#dashboard-group').show();
     $('#dashboard-group').html($(this).parent().children("a").html());
     $('#dashboard-hub').hide();
+    $('#dashboard-group').show();
 });
 
 //Хаб
-$('.sortable').on('click', '.hub > a', function() {
+$('.sortable').on('click', '.hub > div > a', function() {
     $('.active-elem').removeClass("active-elem");
     $(this).parent().addClass("active-elem");
-    $('#panel-folder').hide();
-    $('#panel-hub').hide();
-    $('#panel-name').show();
-    $('#panel-delete').show();
+    $('#panel-group').hide("fast");
+    $('#panel-hub').hide("fast");
+    $('#panel-rename-group').hide("fast");
+    $('#panel-rename-hub').show("fast");
+    $('#panel-delete-hub').show("fast");
+    $('#panel-delete-group').hide("fast");
 
-    $('#dashboard-group').hide();
     $('#dashboard-hub').html($(this).parent().children("a").html());
+    $('#dashboard-group').hide();
     $('#dashboard-hub').show();
 });
 
 
 //////Кнопки под деревом
-$("#folder-form").submit(function(event){
-    return false;
-});
 
-$("#hub-form").submit(function(event){
-    return false;
-});
 
-$("#rename-form").submit(function(event){
-    return false;
-});
 
 
 </script>
