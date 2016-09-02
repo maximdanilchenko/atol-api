@@ -37,12 +37,13 @@ $('.sortable').nestedSortable({
                         console.log("success");
                         }
                         else {
-
+                        $('.sortable').nestedSortable("cancel");
                         };
                     $("#modal-wait").hide();
                     },
                 'json' ).fail(function() {
                         $("#modal-wait").hide();
+                        $('.sortable').nestedSortable("cancel");
                         });
                 },
 
