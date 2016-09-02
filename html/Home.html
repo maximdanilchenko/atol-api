@@ -140,6 +140,10 @@
                         <a onclick="$('#modal-delete-group').show();" style="display:none" id="panel-delete-group"
                            class="w3-btn w3-hover-none w3-hover-text-theme">
                             <i class="fa fa-fw fa-trash-o"></i></a>
+
+                        <div class="w3-btn w3-text-white w3-hover-none" style="cursor:default">
+                        <i class="fa fa-fw fa-repeat"></i>
+                        </div>
                     </div>
                 </footer>
                 <!--</div>-->
@@ -374,10 +378,10 @@ $('.sortable').on('click', '.tab > div > a', function() {
     $(this).parent().addClass("active-elem");
     $('#panel-group').show("fast");
     $('#panel-hub').show("fast");
-    $('#panel-rename-group').show("fast");
-    $('#panel-rename-hub').hide("fast");
-    $('#panel-delete-hub').hide("fast");
-    $('#panel-delete-group').show("fast");
+    $('#panel-rename-group').show();
+    $('#panel-rename-hub').hide();
+    $('#panel-delete-hub').hide();
+    $('#panel-delete-group').show();
 
     $('#dashboard-group').html($(this).parent().children("a").html());
     $('#dashboard-hub').hide();
@@ -390,10 +394,10 @@ $('.sortable').on('click', '.hub > div > a', function() {
     $(this).parent().addClass("active-elem");
     $('#panel-group').hide("fast");
     $('#panel-hub').hide("fast");
-    $('#panel-rename-group').hide("fast");
-    $('#panel-rename-hub').show("fast");
-    $('#panel-delete-hub').show("fast");
-    $('#panel-delete-group').hide("fast");
+    $('#panel-rename-group').hide();
+    $('#panel-rename-hub').show();
+    $('#panel-delete-hub').show();
+    $('#panel-delete-group').hide();
 
     $('#dashboard-hub').html($(this).parent().children("a").html());
     $('#dashboard-group').hide();
