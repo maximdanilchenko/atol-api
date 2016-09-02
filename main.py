@@ -74,7 +74,7 @@ MAIL_HTML_REC = """<!DOCTYPE html>
     -----Настройка приложения-----
     Объекты: db, cache
 """
-# db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
+db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
 db.create_all()
 # задаем кэширование в зависимости от платформы запуска
 from werkzeug.contrib.cache import GAEMemcachedCache, SimpleCache
