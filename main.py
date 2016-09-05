@@ -645,7 +645,7 @@ env_serv = os.getenv('SERVER_SOFTWARE')
 
 if app.config['DEBUG']:
     if not Hub.query.filter_by(device_id='device-id-0').first():
-        db.session.add_all([Hub('device-id-%d'%i) for i in range(app.config['TEST_HUB_NUM'])])
+        db.session.add_all([Hub('device-id-%d' % i) for i in range(app.config['TEST_HUB_NUM'])])
         db.session.commit()
 
 

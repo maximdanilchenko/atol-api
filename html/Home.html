@@ -88,7 +88,7 @@
 
     <div class="w3-col l12 m12 s12">
         <!--w3-border-left w3-border-right w3-border-bottom w3-border-light-grey -->
-        <div class="w3-row w3-card-2 w3-animate-opacity">
+        <div id="main" class="w3-row w3-card-2 w3-animate-opacity">
             <!--Левая панель-->
             <div id="left" class="w3-border-left w3-border-right w3-col l4 m4 s12">
 
@@ -429,6 +429,9 @@ $('#handle').mousedown(function(e){
 
 $(document).mouseup(function(e){
        $(document).unbind('mousemove');
+});
+$("#main").mouseleave(function(){
+       $(document).unbind('mousemove')
 });
 
 
