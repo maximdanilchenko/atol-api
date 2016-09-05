@@ -14,6 +14,7 @@
     <script src="static/js/sign.js"></script>
     <script src="static/js/atol-api.js"></script>
 
+
     <link rel="stylesheet" href="static/css/w3.css">
     <link rel="stylesheet" href="static/css/w3-theme-red.css">
     <link rel="stylesheet" href="static/css/font-awesome.min.css">
@@ -45,11 +46,11 @@
 </nav>
 
 
-<!--<div class="w3-col l1 w3-hide-small w3-hide-medium">&nbsp;</div>-->
+<!--TITLE-->
 <div class="w3-row-padding w3-margin-left">
     <h5 class="body-title w3-hide-small">Личный Кабинет&nbsp;|&nbsp;</h5>
 </div>
-
+<!--NAVIGATION-->
 <ul class="w3-padding-small w3-navbar  w3-card-2 w3-light-grey w3-margin-bottom w3-text-dark-grey">
 
     <!--<li class="w3-col l1 m1 w3-hide-small w3-hide-medium">&nbsp;</li>-->
@@ -81,24 +82,24 @@
     <!--<li class="w3-col l2 m2 w3-hide-small">&nbsp;</li>-->
 </ul>
 
+<!--MAIN PART-->
 <div class="w3-row">
     <div class="w3-col l1 w3-hide-small w3-hide-medium w3-hide-large">&nbsp;</div>
 
     <div class="w3-col l12 m12 s12">
         <!--w3-border-left w3-border-right w3-border-bottom w3-border-light-grey -->
         <div class="w3-row w3-card-2 w3-animate-opacity">
-            <!--Дерево Хабов-->
-            <div class="w3-border-left w3-border-right w3-col l4 m4 s12">
+            <!--Левая панель-->
+            <div id="left" class="w3-border-left w3-border-right w3-col l4 m4 s12">
 
-
-                <!--<div class="w3-row">-->
                 <header class="w3-border-bottom w3-theme w3-text-dark-grey w3-padding-small">
                     <h5 class="w3-margin-left w3-margin-right"><i class="fa fa-fw fa-sitemap"></i>&nbsp;Все HUB'ы
                         <a class="w3-right w3-hover-none w3-hover-text-dark-grey" href="#">
                             <i id="save" class="fa fa-fw fa-floppy-o"></i></a>
                     </h5>
                 </header>
-                <div class="w3-light-grey w3-text-dark-grey" id="scroll" style="height:70vh; overflow-y:scroll;">
+
+                <div class="w3-light-grey w3-text-dark-grey" id="scroll" style="height:70vh; overflow-y:scroll; overflow-x:hidden;">
                     <ul class="sortable">
                         <li id="rootHub">
                             <div class="tab-root active-elem">
@@ -111,6 +112,7 @@
                         </li>
                     </ul>
                 </div>
+
                 <footer class="w3-border-top w3-white w3-text-dark-grey w3-large">
                     <div class="w3-btn-bar w3-show-inline-block">
                         <a onclick="$('#modal-group').show();" id="panel-group"
@@ -146,14 +148,12 @@
                         </div>
                     </div>
                 </footer>
-                <!--</div>-->
-                <!--<br class="w3-light-grey w3-hide-medium w3-hide-large">-->
+
 
             </div>
-
-            <div class="w3-border-left w3-border-right w3-col l8 m8 s12">
-
-                <!--Статистика для выбранного Хаба-->
+            <div class="w3-col w3-hide-small w3-hide-medium w3-container" id="handle"></div>
+            <!--Правая панель-->
+            <div id="right" class="w3-border-left w3-border-right w3-col l8 m8 s12">
 
                 <header class="w3-border-bottom w3-theme w3-text-dark-grey w3-padding-small">
                     <h5 class="w3-margin-left w3-margin-right"><i class="fa fa-fw fa-sliders"></i>&nbsp;
@@ -163,11 +163,10 @@
                             <i id="reload" class="fa fa-fw fa-repeat"></i></a>
                     </h5>
                 </header>
+
                 <div class="w3-light-grey" style="height:70vh">
 
                 </div>
-
-                <!--Дополнительные настройки-->
 
                 <footer class="w3-border-top w3-white w3-text-dark-grey w3-large">
                     <div class="w3-btn-bar w3-show-inline-block">
@@ -335,7 +334,10 @@
         </div>
 </div>
 
+
 <script>
+$( "#resizable" ).resizable({ ghost: true });
+
 getUserInfo();
 getTree();
 
@@ -411,9 +413,23 @@ $('.sortable').on('click', '.hub > div > a', function() {
 });
 
 
-//////Сортировка элементов
+//////Изменение ширины окон
+$('#handle').mousedown(function(e){
+    var ww = $(window).width();
+    $(document).mousemove(function(e){
+        var pr = (e.pageX / ww) * 100;
+        if (pr > 18 && pr < 65){
+            $('#handle').css("left",pr + '%');
+            $('#right').css("width",100 - pr + '%');
+            $('#left').css("width",pr + '%');
+        }
+    });
+});
 
 
+$(document).mouseup(function(e){
+       $(document).unbind('mousemove');
+});
 
 
 

@@ -1,3 +1,7 @@
+html,body {
+    height:100%;
+}
+
 .noScur {
 cursor:default;
 }
@@ -15,9 +19,10 @@ left: -10px;
     padding-top: 1px;
     padding-bottom: 2px;
     left: -20px;
+    white-space: nowrap;
 }
 
-.ui-state-highlight { background-color: #fff; border:1px solid #ccc; height: 1.5em; line-height: 1.2em; }
+li:not(.hub) > ul > .ui-state-highlight { background-color: #fff; border:1px solid #ccc; height: 1.5em; line-height: 1.2em; }
 
 a, .sortable i {
 cursor: pointer;
@@ -66,4 +71,26 @@ font-weight: 600;
 .active-elem {
     color: #f6665c;
     font-weight: 600;
+}
+
+#handle {
+    cursor: col-resize;
+    width: 8px;
+    height:80%;
+    position:absolute;
+    left: 30%;
+    padding-top: 5px;
+    padding-right: 0px;
+    padding-bottom: 5px;
+    padding-left: 0px;
+    margin-left: -4px;
+}
+
+@media only screen and (min-width:993px){
+#left {width: 30%}
+#right {width: 70%}}
+
+header, footer {
+    overflow-x:hidden;
+    white-space: nowrap;
 }

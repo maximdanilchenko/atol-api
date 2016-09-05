@@ -135,6 +135,7 @@ def validate_user(access_token):
         abort(400)
     return user
 
+
 @app.route("/hub/connect", methods=['POST'])
 def try_update_post():
     """
@@ -646,6 +647,7 @@ if app.config['DEBUG']:
     if not Hub.query.filter_by(device_id='device-id-0').first():
         db.session.add_all([Hub('device-id-%d'%i) for i in range(app.config['TEST_HUB_NUM'])])
         db.session.commit()
+
 
 if not (env_serv and env_serv.startswith('Google App Engine/')):
     if 'win' in sys.platform and __name__ == "__main__":
