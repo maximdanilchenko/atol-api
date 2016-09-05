@@ -336,17 +336,12 @@
 
 
 <script>
-$( "#resizable" ).resizable({ ghost: true });
-
 getUserInfo();
 getTree();
 
 $(document).ready(function(){
-
     reloadTree();
-
 });
-
 
 //////Скрытие/открытие папок
 //Корень
@@ -384,6 +379,7 @@ $('.sortable').on('click', '.tab-root > a', function() {
 $('.sortable').on('click', '.tab > div > a', function() {
     $('.active-elem').removeClass("active-elem");
     $(this).parent().addClass("active-elem");
+
     $('#panel-group').show("fast");
     $('#panel-hub').show("fast");
     $('#panel-rename-group').show();
@@ -400,6 +396,7 @@ $('.sortable').on('click', '.tab > div > a', function() {
 $('.sortable').on('click', '.hub > div > a', function() {
     $('.active-elem').removeClass("active-elem");
     $(this).parent().addClass("active-elem");
+
     $('#panel-group').hide("fast");
     $('#panel-hub').hide("fast");
     $('#panel-rename-group').hide();
@@ -426,14 +423,13 @@ $('#handle').mousedown(function(e){
     });
 });
 
-
 $(document).mouseup(function(e){
        $(document).unbind('mousemove');
 });
+
 $("#main").mouseleave(function(){
        $(document).unbind('mousemove')
 });
-
 
 
 </script>
