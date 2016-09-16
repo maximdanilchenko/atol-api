@@ -14,6 +14,8 @@
     <script src="static/js/sign.js"></script>
     <script src="static/js/atol-api.js"></script>
 
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.js"></script>
+
     <link rel="stylesheet" href="static/css/w3.css">
     <link rel="stylesheet" href="static/css/w3-theme-red.css">
     <link rel="stylesheet" href="static/css/font-awesome.min.css">
@@ -25,15 +27,13 @@
 
 <a href="http://www.atol.ru/">
     <img class="" src="static/img/logo.png" alt="АТОЛ"
-         style="vertical-align: bottom;position: absolute;right:25px;top:10px;"
-         width="87" height="23">
+         style="vertical-align: bottom;position: absolute;right:25px;top:10px;" width="87" height="23">
 </a>
 
 <!--HEADER (NAV)-->
 
 <nav id="open-menu" class="w3-sidenav w3-theme w3-card-2 w3-large w3-left-align" style="display:none; width:100%">
-    <a class="w3-hover-none w3-hover-text-theme" onclick="openMenu();"><i
-            class="fa fa-fw fa-times"></i></a>
+    <a class="w3-hover-none w3-hover-text-theme" onclick="openMenu();"><i class="fa fa-fw fa-times"></i></a>
     <a class="my-active w3-hover-none w3-hover-text-theme" href="#">
         <i class="fa fa-fw fa-cogs"></i>&nbsp;Панель управления</a>
     <a class="my-disactive w3-hover-none w3-hover-text-theme" href="#">
@@ -55,8 +55,7 @@
     <!--<li class="w3-col l1 m1 w3-hide-small w3-hide-medium">&nbsp;</li>-->
 
     <li class="w3-hide-medium w3-hide-large w3-opennav">
-        <a class="w3-hover-none w3-hover-text-theme" onclick="openMenu();"><i
-                class="fa fa-fw fa-bars"></i></a>
+        <a class="w3-hover-none w3-hover-text-theme" onclick="openMenu();"><i class="fa fa-fw fa-bars"></i></a>
     </li>
 
     <li class="w3-hide-small w3-hide-medium"><a class="my-active w3-hover-none w3-hover-text-theme" href="#">
@@ -66,7 +65,8 @@
     <li class="w3-hide-small w3-hide-medium"><a class="menu-name my-disactive w3-hover-none w3-hover-text-theme"
                                                 href="#">
         <i class="fa fa-fw fa-user"></i>&nbsp;Учётная запись</a></li>
-    <li class="w3-hide-small w3-hide-medium"><a onclick="signOut();" class="w3-hover-none w3-hover-text-theme">
+    <li class="w3-hide-small w3-hide-medium"><a onclick="signOut();"
+                                                class="w3-hover-none w3-hover-text-theme">
         <i class="fa fa-fw fa-sign-out"></i>&nbsp;Выход</a></li>
 
     <li class="w3-hide-small w3-hide-large"><a class="my-active w3-hover-none w3-hover-text-theme" href="#">
@@ -93,12 +93,13 @@
 
                 <header class="w3-border-bottom w3-theme w3-text-dark-grey w3-padding-small">
                     <h5 class="w3-margin-left w3-margin-right"><i class="fa fa-fw fa-sitemap"></i>&nbsp;Все HUB'ы
-                        <a class="w3-right w3-hover-none w3-hover-text-dark-grey" href="#">
-                            <i id="save" class="fa fa-fw fa-floppy-o"></i></a>
+                        <!--<a class="w3-right w3-hover-none w3-hover-text-dark-grey" href="#">-->
+                        <!--<i id="save" class="fa fa-fw fa-floppy-o"></i></a>-->
                     </h5>
                 </header>
 
-                <div class="w3-light-grey w3-text-dark-grey" id="scroll" style="height:70vh; overflow-y:scroll; overflow-x:hidden;">
+                <div class="my-in-shadow w3-light-grey w3-text-dark-grey scroll"
+                     style="height:70vh; overflow-y:scroll; overflow-x:hidden;">
                     <ul class="sortable">
                         <li id="rootHub">
                             <div class="tab-root active-elem">
@@ -143,28 +144,110 @@
                             <i class="fa fa-fw fa-trash-o"></i></a>
 
                         <div class="w3-btn w3-text-white w3-hover-none" style="cursor:default">
-                        <i class="fa fa-fw fa-repeat"></i>
+                            <i class="fa fa-fw fa-repeat"></i>
                         </div>
                     </div>
                 </footer>
 
 
             </div>
-            <div class="w3-col w3-hide-small w3-hide-medium w3-container" id="handle"></div>
+            <div class="w3-col w3-hide-small w3-hide-medium w3-container"
+                 id="handle"></div>
             <!--Правая панель-->
-            <div id="right" class="w3-border-left w3-border-right w3-col l8 m8 s12">
+            <div id="right"
+                 class="w3-border-left w3-border-right w3-col l8 m8 s12">
 
                 <header class="w3-border-bottom w3-theme w3-text-dark-grey w3-padding-small">
                     <h5 class="w3-margin-left w3-margin-right"><i class="fa fa-fw fa-sliders"></i>&nbsp;
-                        <text id="dashboard-group"></text>
-                        <text style="display:none" id="dashboard-hub"></text>
-                        <a class="w3-right w3-hover-none w3-hover-text-dark-grey" href="#">
-                            <i id="reload" class="fa fa-fw fa-repeat"></i></a>
+                        <span id="dashboard-group"></span>
+                        <span style="display:none" id="dashboard-hub"></span>
+                        <!--<a class="w3-right w3-hover-none w3-hover-text-dark-grey" href="#">-->
+                        <!--<i id="reload" class="fa fa-fw fa-repeat"></i></a>-->
                     </h5>
                 </header>
 
-                <div class="w3-light-grey" style="height:70vh">
-
+                <div class="my-in-shadow w3-light-grey w3-text-dark-grey scroll"
+                     style="height:70vh; overflow-y:scroll; overflow-x:hidden;">
+                    <ul id="group_stats" class=" w3-center w3-container" style="display:none">
+                        <li class="w3-col w3-hide-small m3 l4">&nbsp;</li>
+                        <li class="w3-col s12 m6 l3">
+                            <ul class="w3-ul">
+                                <li class="w3-border-0">
+                                    <h4>Подгрупп:
+                                    <span id="group_stats1" class="w3-light-grey w3-right w3-text-dark-grey"><b>0</b></span>
+                                    </h4>
+                                </li>
+                                <li class="w3-border-0">
+                                    <h4>Хабов:
+                                    <span id="group_stats2" class="w3-light-grey w3-right w3-text-dark-grey"><b>3</b></span>
+                                    </h4>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="w3-col w3-hide-small m3 l4">&nbsp;</li>
+                        <li class="wrap w3-col s12 m12 l12">
+                            <h4>
+                                Выберете Хаб для получения подробной статистики
+                            </h4>
+                        </li>
+                    </ul>
+                    <ul id="hub_stats" class="w3-ul">
+                        <li class="w3-ul w3-margin-right w3-container">
+                            <header><h4>Текущее состояние</h4></header>
+                            <ul class="w3-ul w3-col s12 m12 l6 w3-container">
+                                <li class="my-spaned w3-col s12 m12 l12 w3-border-0">
+                                    Версия УТМ:
+                                    <span id="hub_stats1" class="w3-light-grey my-span w3-right w3-text-dark-grey"><b>1.0.14b000876</b></span>
+                                </li>
+                                <li class="my-spaned w3-col s12 m12 l12 w3-border-0">
+                                    Состояние УТМ:
+                                    <span id="hub_stats2" class="w3-light-grey my-span w3-right w3-text-green"><b>включен</b></span>
+                                </li>
+                                <li class="my-spaned w3-col s12 m12 l12 w3-border-0">
+                                    Дней до истечения сертификата ГОСТ:
+                                    <span id="hub_stats3"
+                                          class="w3-light-grey my-span w3-right w3-text-red"><b>17</b></span>
+                                </li>
+                                <li class="my-spaned w3-col s12 m12 l12 w3-border-0">
+                                    Дней до истечения сертификата RSA:
+                                    <span id="hub_stats4"
+                                          class="w3-light-grey my-span w3-right w3-text-green"><b>359</b></span>
+                                </li>
+                            </ul>
+                            <ul class="w3-ul w3-col s12 m12 l6 w3-container">
+                                <li class="my-spaned w3-col s12 m12 l12 w3-border-0">
+                                    Общее количество документов:
+                                    <span id="hub_stats5" class="w3-light-grey my-span w3-right w3-text-green"><b>18</b></span>
+                                </li>
+                                <li class="my-spaned w3-col s12 m12 l12 w3-border-0">
+                                    Количество неотправленных документов:
+                                    <span id="hub_stats6" class="w3-light-grey my-span w3-right w3-text-green"><b>5</b></span>
+                                </li>
+                                <li class="my-spaned w3-col s12 m12 l12 w3-border-0">
+                                    Возраст буффера чеков:
+                                    <span id="hub_stats7" class="w3-light-grey my-span w3-right w3-text-red"><b>3 д, 11 ч, 4 м</b></span>
+                                </li>
+                                <li class="my-spaned w3-col s12 m12 l12 w3-border-0">
+                                    Размер буффера чеков:
+                                    <span id="hub_stats8" class="w3-light-grey my-span w3-right w3-text-green"><b>11</b></span>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="w3-container w3-margin-right">
+                            <header><h4>История</h4></header>
+                            <div class="w3-col s12 m12 l12 w3-margin-right">
+                                <canvas id="myChart" height="35px"></canvas>
+                            </div>
+                            <hr width="100%">
+                            <div class="w3-col s12 m12 l12 w3-margin-right">
+                                <canvas id="myChart1" height="80px"></canvas>
+                            </div>
+                            <hr width="100%">
+                            <div class="w3-col s12 m12 l12 w3-margin-right">
+                                <canvas id="myChart2" height="80px"></canvas>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
 
                 <footer class="w3-border-top w3-white w3-text-dark-grey w3-large">
@@ -184,14 +267,16 @@
             <ul class="w3-navbar w3-center">
                 <li>
                     <a class="w3-hover-none" href="http://www.atol.ru/">
-                        <img src="static/img/logo.png" alt="АТОЛ" width="87" height="23">
+                        <img src="static/img/logo.png" alt="АТОЛ" width="87"
+                             height="23">
                     </a>
                 </li>
             </ul>
         </footer>
 
     </div>
-    <div class="w3-col l2 w3-hide-small w3-hide-medium w3-hide-large">&nbsp;</div>
+    <div class="w3-col l2 w3-hide-small w3-hide-medium w3-hide-large">
+        &nbsp;</div>
 </div>
 
 
@@ -206,12 +291,16 @@
 
         <form id="group-form" class="w3-container">
             <div class="w3-group">
-                <input class="w3-input w3-border" type="text" name="name" required>
-                <label class="w3-label w3-validate">Придумайте имя новой группы</label>
+                <input class="w3-input w3-border" type="text" name="name"
+                       required>
+                <label class="w3-label w3-validate">Придумайте имя новой
+                    группы</label>
             </div>
             <div class="w3-group">
-                <a class="w3-btn w3-theme w3-large" onclick="addGroup();" type="submit">Создать группу</a>
-                <a class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-group').hide();">Отмена
+                <a class="w3-btn w3-theme w3-large" onclick="addGroup();"
+                   type="submit">Создать группу</a>
+                <a class="w3-btn w3-right w3-light-grey w3-large"
+                   onclick="$('#modal-group').hide();">Отмена
                 </a>
             </div>
         </form>
@@ -228,16 +317,21 @@
 
         <form id="hub-form" class="w3-container">
             <div class="w3-group">
-                <input class="w3-input w3-border" type="text" name="device_id" required>
-                <label id="hub-label" class="w3-label w3-validate">Введите идентификатор Хаба</label>
+                <input class="w3-input w3-border" type="text" name="device_id"
+                       required>
+                <label id="hub-label" class="w3-label w3-validate">Введите
+                    идентификатор Хаба</label>
             </div>
             <div class="w3-group">
-                <input class="w3-input w3-border" type="text" name="name" required>
+                <input class="w3-input w3-border" type="text" name="name"
+                       required>
                 <label class="w3-label w3-validate">Придумайте имя Хаба</label>
             </div>
             <div class="w3-group">
-                <a class="w3-btn w3-theme w3-large" onclick="addHub();" type="submit">Добавить Хаб</a>
-                <a class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-hub').hide();">Отмена
+                <a class="w3-btn w3-theme w3-large" onclick="addHub();"
+                   type="submit">Добавить Хаб</a>
+                <a class="w3-btn w3-right w3-light-grey w3-large"
+                   onclick="$('#modal-hub').hide();">Отмена
                 </a>
             </div>
         </form>
@@ -247,18 +341,23 @@
 <div id="modal-rename-hub" class="w3-modal">
     <div class="w3-modal-content w3-card-2">
         <header class="w3-container w3-theme">
-            <span onclick="$('#modal-rename-hub').hide();" class="w3-closebtn">&times;</span>
+            <span onclick="$('#modal-rename-hub').hide();"
+                  class="w3-closebtn">&times;</span>
             <h2>Новое имя Хаба</h2>
         </header>
 
         <form id="rename-form-hub" class="w3-container">
             <div class="w3-group">
-                <input class="w3-input w3-border" type="text" name="name" required>
-                <label class="w3-label w3-validate">Введите новое имя Хаба</label>
+                <input class="w3-input w3-border" type="text" name="name"
+                       required>
+                <label class="w3-label w3-validate">Введите новое имя
+                    Хаба</label>
             </div>
             <div class="w3-group">
-                <a class="w3-btn w3-theme w3-large" onclick="renameHub();" type="submit">Переименовать</a>
-                <a class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-rename-hub').hide();">Отмена
+                <a class="w3-btn w3-theme w3-large" onclick="renameHub();"
+                   type="submit">Переименовать</a>
+                <a class="w3-btn w3-right w3-light-grey w3-large"
+                   onclick="$('#modal-rename-hub').hide();">Отмена
                 </a>
             </div>
         </form>
@@ -268,18 +367,23 @@
 <div id="modal-rename-group" class="w3-modal">
     <div class="w3-modal-content w3-card-2">
         <header class="w3-container w3-theme">
-            <span onclick="$('#modal-rename-group').hide();" class="w3-closebtn">&times;</span>
+            <span onclick="$('#modal-rename-group').hide();"
+                  class="w3-closebtn">&times;</span>
             <h2>Новое имя Группы</h2>
         </header>
 
         <form id="rename-form-group" class="w3-container">
             <div class="w3-group">
-                <input class="w3-input w3-border" type="text" name="name" required>
-                <label class="w3-label w3-validate">Введите новое имя Группы</label>
+                <input class="w3-input w3-border" type="text" name="name"
+                       required>
+                <label class="w3-label w3-validate">Введите новое имя
+                    Группы</label>
             </div>
             <div class="w3-group">
-                <a class="w3-btn w3-theme w3-large" onclick="renameGroup();" type="submit">Переименовать</a>
-                <a class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-rename-group').hide();">Отмена
+                <a class="w3-btn w3-theme w3-large" onclick="renameGroup();"
+                   type="submit">Переименовать</a>
+                <a class="w3-btn w3-right w3-light-grey w3-large"
+                   onclick="$('#modal-rename-group').hide();">Отмена
                 </a>
             </div>
         </form>
@@ -289,7 +393,8 @@
 <div id="modal-delete-group" class="w3-modal">
     <div class="w3-modal-content w3-card-2">
         <header class="w3-container w3-theme">
-            <span onclick="$('#modal-delete-group').hide();" class="w3-closebtn">&times;</span>
+            <span onclick="$('#modal-delete-group').hide();"
+                  class="w3-closebtn">&times;</span>
             <h2>Удаление Группы</h2>
         </header>
 
@@ -301,7 +406,8 @@
         <footer class="w3-container">
             <div class="w3-group">
                 <a class="w3-btn w3-theme w3-large" onclick="deleteGroup();">Удалить</a>
-                <a class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-delete-group').hide();">Отмена</a>
+                <a class="w3-btn w3-right w3-light-grey w3-large"
+                   onclick="$('#modal-delete-group').hide();">Отмена</a>
             </div>
         </footer>
     </div>
@@ -310,7 +416,8 @@
 <div id="modal-delete-hub" class="w3-modal">
     <div class="w3-modal-content w3-card-2">
         <header class="w3-container w3-theme">
-            <span onclick="$('#modal-delete-hub').hide();" class="w3-closebtn">&times;</span>
+            <span onclick="$('#modal-delete-hub').hide();"
+                  class="w3-closebtn">&times;</span>
             <h2>Удаление Хаба</h2>
         </header>
 
@@ -321,7 +428,8 @@
         <footer class="w3-container">
             <div class="w3-group">
                 <a class="w3-btn w3-theme w3-large" onclick="deleteHub();">Удалить</a>
-                <a class="w3-btn w3-right w3-light-grey w3-large" onclick="$('#modal-delete-hub').hide();">Отмена</a>
+                <a class="w3-btn w3-right w3-light-grey w3-large"
+                   onclick="$('#modal-delete-hub').hide();">Отмена</a>
             </div>
         </footer>
     </div>
@@ -329,8 +437,8 @@
 
 <div id="modal-wait" class="w3-modal" style="background-color:rgba(0,0,0,0)">
     <div class="w3-container w3-center w3-xlarge w3-text-dark-grey">
-       <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-        </div>
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+    </div>
 </div>
 
 
@@ -429,6 +537,111 @@ $(document).mouseup(function(e){
 //$("#main").mouseleave(function(){
 //       $(document).unbind('mousemove')
 //});
+
+
+
+
+////////////////CHARTS
+
+var ctx = document.getElementById("myChart");
+var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ["10.09.16", "11.09.16", "12.09.16", "13.09.16", "14.09.16", "15.09.16"],
+        datasets: [{
+            label: 'УТМ включен',
+            steppedLine: true,
+            data: [1, 1, 0, 0, 1, 1],
+            backgroundColor:
+                'rgba(0, 255, 0, 0.2)'
+
+            ,
+            borderColor:
+                'rgba(0, 255, 0, 1)'
+
+            ,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                display: false
+            }]
+        }
+    }
+});
+
+
+var ctx = document.getElementById("myChart1");
+var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ["10.09.16", "11.09.16", "12.09.16", "13.09.16", "14.09.16", "15.09.16"],
+        datasets: [{
+            label: 'Количество неотправленных документов',
+            data: [1, 11, 0, 0, 10, 5],
+            backgroundColor:
+                'rgba(0, 255, 0, 0.2)'
+
+            ,
+            borderColor:
+                'rgba(0, 255, 0, 1)'
+
+            ,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+
+            }]
+        }
+    }
+});
+
+
+
+var ctx = document.getElementById("myChart2");
+var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ["10.09.16", "11.09.16", "12.09.16", "13.09.16", "14.09.16", "15.09.16"],
+        datasets: [{
+            label: 'Размер буффера чеков',
+            data: [11, 2, 0, 10, 21, 11],
+            backgroundColor:
+                'rgba(255, 0, 0, 0.2)'
+
+            ,
+            borderColor:
+                'rgba(255, 0, 0, 1)'
+
+            ,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+
+            }]
+        }
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </script>

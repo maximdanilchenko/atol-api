@@ -10,6 +10,12 @@ li {
     list-style-type: none;
 }
 
+li:not(.wrap) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .sortable {
 left: -10px;
 }
@@ -19,7 +25,6 @@ left: -10px;
     padding-top: 1px;
     padding-bottom: 2px;
     left: -20px;
-    white-space: nowrap;
 }
 
 li:not(.hub) > ul > .ui-state-highlight { background-color: #fff; border:1px solid #ccc; height: 1.5em; line-height: 1.2em; }
@@ -47,14 +52,14 @@ font-weight: 600;
 
 
 
-#scroll::-webkit-scrollbar
+.scroll::-webkit-scrollbar
 {
 	width: 6px;
 	height: 0px;
 	background-color: #F7F7F7;
 }
 
-#scroll::-webkit-scrollbar-thumb
+.scroll::-webkit-scrollbar-thumb
 {
 	background-color: #ccc;
 }
@@ -64,8 +69,22 @@ font-weight: 600;
     top: 6px;
     right: 6px;
 }
+
+.my-span {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+}
+.my-spaned {
+    position: relative;
+}
+
 .my-labeled {
     position: relative;
+}
+
+.my-in-shadow {
+box-shadow: inset 0 2px 4px 0 rgba(0,0,0,0.16);
 }
 
 .active-elem {

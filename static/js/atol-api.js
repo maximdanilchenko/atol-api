@@ -82,7 +82,7 @@ $("#modal-wait").show();
 
 function getTree() {
 $("#modal-wait").show();
-    $.post( "/api/get_tree", {access_token: localStorage.getItem("atol_access_token")},
+    $.get( "/api/get_tree", {access_token: localStorage.getItem("atol_access_token")},
         function(response){
             if (response.success == true){
                     data = response.tree;
@@ -311,8 +311,7 @@ function renameHub(){
     $("#modal-wait").show();
     $.post( "/api/rename_hub", {access_token: localStorage.getItem("atol_access_token"),
                                 hub_id: $('.active-elem').attr('id'),
-                                name: $("#rename-form-hub input[name='name']").val(),
-                                group_id: $('.active-elem').closest('ul').parent().children('div').attr('id')
+                                name: $("#rename-form-hub input[name='name']").val()
                                 },
         function(response){
             if (response.success == true){
@@ -332,3 +331,25 @@ function renameHub(){
             });
 
 }
+
+function getStatistics(){
+    $("#modal-wait").show();
+    $.get( "/api/hub_statistics", {access_token: localStorage.getItem("atol_access_token"),
+                                hub_id: $('.active-elem').attr('id')
+                                },
+        function(response){
+            if (response.success == true){
+
+                //response.type
+            }
+            else {
+
+            };
+            $("#modal-wait").hide();
+        },
+    'json' ).fail(function() {
+            $("#modal-wait").hide();
+            });
+
+}
+

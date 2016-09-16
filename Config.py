@@ -27,7 +27,7 @@ with open('key.secret') as key:
 # время, через которое удаляется кэш запись, если она не обновляется
 MAX_CACHE_TIME = 24 * 60 * 60
 
-# # почта
+# # почта (если сервер - не Google App Engine)
 # MAIL_SERVER = 'smtp.gmail.com'
 # MAIL_PORT = 587
 # MAIL_USE_SSL = True
@@ -35,6 +35,8 @@ MAX_CACHE_TIME = 24 * 60 * 60
 # MAIL_USERNAME = 'dmax.dev@gmail.com'
 # MAIL_PASSWORD = 'password'
 
-# время, в течение которого ссылка для подтверждения почты является действующей (confirmation token is valid)
+# время, в течение которого ссылка для подтверждения почты
+# является действующей (confirmation token is valid)
 CONFIRM_TIME = 24 * 60 * 60
 
+PROJECT_ID = 'atol-test'

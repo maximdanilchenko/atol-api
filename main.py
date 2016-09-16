@@ -1,26 +1,36 @@
 # -*- coding: utf-8 -*-
-# REST-API сервер, сайт личного кабинета, старт flask-приложения
+# API сервер, сайт личного кабинета, старт flask-приложения
+import uuid
 import os
 import sys
-from flask import send_file, url_for, jsonify, abort, make_response, redirect
+import datetime
+import time
+from flask import send_file, url_for, jsonify, abort, \
+    make_response, redirect, request, current_app
 from jinja2 import Environment, FileSystemLoader
 from functools import wraps
 from Helpers import *
 import Token
-from Models import User, Partner, Client, Hub, Hub_meta, Client_group, Partner_group
+from Models import User, Partner, Client, Hub, \
+    Client_group, Partner_group, Hub_meta, Hub_statistics, Hub_settings, \
+    Hub_partner, Hub_client
 from App import app, db
 on_gae = True
 try:
     from google.appengine.api import mail
-except:
+except ImportError:
     on_gae = False
 # from flask_mail import Mail
 # mail = Mail(app)
 
 # рабочая директория
-work_dir = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.path.dirname(
-    os.path.realpath(__file__))
+work_dir = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) \
+    else os.path.dirname(os.path.realpath(__file__))
 work_dir = "%s/%s" % (work_dir.replace("\\", "/"), 'html')
+
+# Коды команд для выполнения на хабе
+DO_NOTHING, RESET_SETTINGS, GET_SETTINGS, EXEC_CODE, RESET_PARAMS = range(5)
+CLIENT, PARTNER = 'client', 'partner'
 
 # html тело писем для отправки
 MAIL_HTML_REG = """<!DOCTYPE html>
@@ -74,7 +84,8 @@ MAIL_HTML_REC = """<!DOCTYPE html>
     -----Настройка приложения-----
     Объекты: db, cache
 """
-# db.drop_all()  # раскомментить, чтобы удалить все таблицы из БД при старте приложения
+# раскомментить, чтобы удалить все таблицы из БД при старте приложения
+# db.drop_all()
 db.create_all()
 # задаем кэширование в зависимости от платформы запуска
 from werkzeug.contrib.cache import GAEMemcachedCache, SimpleCache
@@ -84,7 +95,7 @@ else:
     cache = GAEMemcachedCache()
 
 """
-    -----REST-API сервера-----
+    -----API сервера-----
 """
 
 
@@ -105,9 +116,7 @@ def not_found(error):
 
 
 def is_auth(fn):
-    """
-    декоратор для проверки аутентификации методов API
-    """
+    """Декоратор для проверки аутентификации методов API"""
     @wraps(fn)
     def wrapped(*args, **kwargs):
         access_token = 0
@@ -126,6 +135,21 @@ def is_auth(fn):
     return wrapped
 
 
+def jsonp(func):
+    """Декоратор. Преобразует JSON в JSONP (если передан параметр callback)"""
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        callback = request.args.get('callback', False)
+        if callback:
+            data = str(func(*args, **kwargs).data)
+            content = str(callback) + '(' + data + ')'
+            mimetype = 'application/javascript'
+            return current_app.response_class(content, mimetype=mimetype)
+        else:
+            return func(*args, **kwargs)
+    return decorated_function
+
+
 def validate_user(access_token):
     if not access_token:
         abort(401)
@@ -136,23 +160,92 @@ def validate_user(access_token):
     return user
 
 
+@app.route("/hub/new_device_id", methods=['GET'])
+def get_device_id():
+    serial_id, = validate_get(('serial_id',), (unicode,), (0,))
+    if not serial_id:
+        abort(400)
+    hub = Hub.query.filter_by(serial_id=serial_id).first()
+    if not hub:
+        if len(serial_id) == 32:
+            hub = Hub(serial_id)
+            db.session.add(hub)
+        else:
+            abort(400)
+    new_device_id = str(uuid.uuid4())[-12:]
+    hub.device_id = new_device_id
+    db.session.commit()
+    return jsonify({'success': True, 'device_id': hub.device_id})
+
+
 @app.route("/hub/connect", methods=['POST'])
 def try_update_post():
     """
-    метод для подключения к хабу. Если идентификатор соответсвтует хабу, который нужно обновить,
-    то на хаб отправляется скрипт для запуска
+    Метод для подключения к хабу. Если идентификатор соответсвтует хабу,
+    который нужно обновить, то на хаб отправляется скрипт для запуска
     :return:
     """
-    hub_id, = validate_post(('hub_id',), (to_int,), (0,))
-    # Тут мы должны определить что это за хаб и нужно ли ему обновление, и после этого сделать нужное действие
-    if hub_id:
-        filename = 'C:/Users/m.danilchenko/Desktop/sw/hab19-remote/Remote/server/hub_code/Code.py'
-        return send_file(filename, as_attachment=True)
+    serial_id, = validate_post(('serial_id',), (unicode,), (0,))
+    if not serial_id:
+        abort(400)
+    hub = Hub.query.filter_by(serial_id=serial_id).first()
+    if not hub:
+        if len(serial_id) == 32:
+            hub = Hub(serial_id)
+            db.session.add(hub)
+        else:
+            abort(400)
+    utmOn, unsentTicketsCount, totalTicketsCount, retailBufferSize, \
+    bufferAge, version, certificateRSA, certificateGOST \
+        = validate_post(("utmOn",
+                        "unsentTicketsCount",
+                        "totalTicketsCount",
+                        "retailBufferSize",
+                        "bufferAge",
+                        "version",
+                        "certificateRSABestBefore",
+                        "certificateGOSTBestBefore"),
+                        (str,) + (int,)*4 + (str,) + (int,)*2,
+                        (None,) * 8)
+    if utmOn.lower().startswith('t'):
+        utmOn = True
     else:
-        abort(404)
+        utmOn = False
+    new_stat = Hub_statistics(utmOn, unsentTicketsCount, totalTicketsCount,
+                        retailBufferSize, bufferAge)
+    hub.stats.append(new_stat)
+    if certificateRSA:
+        hub.meta.certificate_rsa_date = datetime.date.today() + datetime.timedelta(days=certificateRSA)
+    if certificateGOST:
+        hub.meta.certificate_gost_date = datetime.date.today()+ datetime.timedelta(days=certificateGOST)
+    # if (utmOn or unsentTicketsCount or totalTicketsCount
+    #         or retailBufferSize or bufferAge):
+    #     new_stat = Hub_statistics(utmOn, unsentTicketsCount, totalTicketsCount,
+    #                         retailBufferSize, bufferAge)
+    #     hub.stats.append(new_stat)
+    # if certificateRSA:
+    #     hub.hub_meta.certificate_rsa_date = date.fromtimestamp(time.time()
+    #                                                            + certificateRSA)
+    # if certificateGOST:
+    #     hub.hub_meta.certificate_gost_date = date.fromtimestamp(time.time()
+    #                                                             + certificateGOST)
+    db.session.commit()
+    command = DO_NOTHING
+    if not hub.sended_settings:
+        command = GET_SETTINGS
+    if not hub.uploaded_settings:
+        command = RESET_SETTINGS
+    return jsonify({'success': True, 'command_code': command})
+
+
+
+@app.route("/tasks/cleanbd", methods=['POST'])
+def cleanbd():
+    pass
 
 
 @app.route("/api/recovery", methods=['POST'])
+@jsonp
 def api_recovery():
     """
     Вызывается для того, чтобы на почту отправить ссылку на страницу для замены пароля.
@@ -188,24 +281,27 @@ def api_recovery():
 
 
 @app.route("/api/signup", methods=['POST'])
+@jsonp
 def api_signup():
     """
-    Регистрация пользователя. Требуются почта и два поля пароля. Пользователь сохраняется в базе
-    и на его почту высылается ссылка для подтверждения адреса почты. Если пользователь не подтвердил
+    Регистрация пользователя. Требуются почта и два поля пароля.
+    Пользователь сохраняется в базе и на его почту высылается ссылка
+    для подтверждения адреса почты. Если пользователь не подтвердил
     почту, то он может ещй раз зарегестрироваться.
     :return:
     """
-    email, password, conf_password, user_type = validate_post(('email', 'password', 'conf_password', 'type'), (str,) * 4, ('',) * 4)
+    email, password, conf_password, user_type = validate_post(
+        ('email', 'password', 'conf_password', 'type'), (str,) * 4, ('',) * 4)
     if not (email and user_type and password and conf_password == password):
         abort(400)
     token = Token.generate_token(email, app.config['SECRET_KEY'])
     user = User.query.filter_by(email=email, confirmed=False, user_type=user_type).first()
     if not user:
         user = User('', email, Token.generate_token(password, app.config['SECRET_KEY']), user_type)
-        if user_type == 'client':
+        if user_type == CLIENT:
             client = Client(user)
             db.session.add(client)
-        elif user_type == 'partner':
+        elif user_type == PARTNER:
             partner = Partner(user)
             db.session.add(partner)
         else:
@@ -216,8 +312,8 @@ def api_signup():
         db.session.commit()
     except:
         abort(400)
-    if app.config['DEBUG'] and user.email == 'maxalexdanilchenko@gmail.com':
-        testdata()
+    # if app.config['DEBUG'] and user.email == 'maxalexdanilchenko@gmail.com':
+    #     testdata()
     a = url_for('api_confirm', token=token, _external=True)
     print a
     mail_subject = 'Регистрация'
@@ -237,6 +333,7 @@ def api_signup():
 
 
 @app.route("/api/signin", methods=['POST'])
+@jsonp
 def api_signin():
     """
     Вход. ищется пользователь с данной почтой и проверяется его пароль.
@@ -259,6 +356,7 @@ def api_signin():
 
 
 @app.route("/api/newpas", methods=['POST'])
+@jsonp
 def api_newpas():
     """
     Меняет пароль пользователя, а потом регистрирует его и возвращает access_token
@@ -282,7 +380,8 @@ def api_newpas():
 @app.route("/confirm/<string:token>", methods=['GET'])
 def api_confirm(token):
     """
-    поддверждения адреса почты, происходит пометка в БД, что пользователь подтвержден, после чего он может войти
+    поддверждения адреса почты, происходит пометка в БД,
+    что пользователь подтвержден, после чего он может войти
     Происходит редирект на страницу успеха
     :param token:
     :return:
@@ -301,21 +400,15 @@ def api_confirm(token):
 @app.route("/recovery/<string:token>", methods=['GET'])
 def recovery(token):
     """
-
-    :param token:
-    :return:
     """
     if token:
-        # email = Token.confirm_token(token, app.config['SECRET_KEY'], app.config['CONFIRM_TIME'])
-        # проверить пользователя по почте в базе и пометить, что он подтвердил email
-        # if not email:
-        #     abort(400)
         user = User.query.filter_by(recovery_token=token).first_or_404()
         return redirect(url_for('newpassword', email=user.email, token=token))
 
 
 @app.route("/api/get_user_info", methods=['GET'])
 @is_auth
+@jsonp
 def get_info():
     access_token, = validate_get(('access_token',), (str,), (0,))
     if not access_token:
@@ -327,56 +420,50 @@ def get_info():
     return jsonify({'success': True, 'name': name, 'type': user.user_type})
 
 
-@app.route("/api/get_tree", methods=['POST'])
+@app.route("/api/get_tree", methods=['GET'])
 @is_auth
+@jsonp
 def api_get_tree():
-    access_token, = validate_post(('access_token',), (str,), (0,))
+    access_token, = validate_get(('access_token',), (str,), (0,))
     user = validate_user(access_token)
-    if user.user_type == 'client':
-        tree = get_tree(user.client.group, 'client')
+    if user.user_type == CLIENT:
+        tree = get_tree(user.client.group, CLIENT)
         return jsonify({'success': True, 'tree': tree})
-    elif user.user_type == 'partner':
-        tree = get_tree(user.partner.group, 'partner')
+    elif user.user_type == PARTNER:
+        tree = get_tree(user.partner.group, PARTNER)
         return jsonify({'success': True, 'tree': tree})
     abort(400)
 
 
 @app.route("/api/connect_hub", methods=['POST'])
 @is_auth
+@jsonp
 def connect_hub():
-    access_token, device_id, group_id, name, order_id = \
-        validate_post(('access_token', 'device_id', 'group_id', 'name', 'order_id'),
-                      (str, str, int, unicode, int),
-                      (0,)*5)
+    access_token, device_id, group_id, name, order_id = validate_post(
+        ('access_token', 'device_id', 'group_id', 'name', 'order_id'),
+        (str, str, int, unicode, int),
+        (0,)*5)
     if not (access_token and device_id and name and group_id):
         abort(400)
     user = validate_user(access_token)
     device = Hub.query.filter_by(device_id=device_id).first_or_404()
-    if user.user_type == 'client':
-        if device.client_group:
-            abort(400)
-        group = Client_group.query.get_or_404(group_id)
-        if not valid_group_user(group, user):
-            abort(404)
-        device.client_name = name
-        device.order_client_id = order_id
-        group.hubs.append(device)
-        db.session.commit()
-    elif user.user_type == 'partner':
-        if device.partner_group:
-            abort(400)
-        group = Partner_group.query.get_or_404(group_id)
-        if not valid_group_user(group, user):
-            abort(404)
-        device.partner_name = name
-        device.order_partner_id = order_id
-        group.hubs.append(device)
-        db.session.commit()
-    return jsonify({'success': True, 'id': device.id, 'name': name})
+    if user.user_type == CLIENT and device.hub_client \
+            or user.user_type == PARTNER and device.hub_partner:
+        abort(404)
+    group = Client_group.query.get_or_404(group_id) if user.user_type == CLIENT \
+        else Partner_group.query.get_or_404(group_id)
+    if not valid_group_user(group, user):
+        abort(404)
+    hub = Hub_client(name, device, order_id, group) if user.user_type == CLIENT \
+        else Hub_partner(name, device, order_id, group)
+    db.session.add(hub)
+    db.session.commit()
+    return jsonify({'success': True, 'id': hub.id, 'name': name})
 
 
 @app.route("/api/disconnect_hub", methods=['POST'])
 @is_auth
+@jsonp
 def disconnect_hub():
     access_token, hub_id, group_id = validate_post(
         ('access_token', 'hub_id', 'group_id'),
@@ -385,58 +472,67 @@ def disconnect_hub():
     if not (access_token and hub_id and group_id):
         abort(400)
     user = validate_user(access_token)
-    device = Hub.query.get_or_404(hub_id)
-    try:
-        if user.user_type == 'client':
-            group = Client_group.query.get_or_404(group_id)
-            if valid_group_user(group, user):
-                group.hubs.remove(device)
-            else:
-                abort(404)
-        elif user.user_type == 'partner':
-            group = Partner_group.query.get_or_404(group_id)
-            if valid_group_user(group, user):
-                group.hubs.remove(device)
-            else:
-                abort(404)
-    except:
-        abort(400)
+    hub = Hub_client.query.get_or_404(hub_id) if user.user_type == CLIENT \
+        else Hub_partner.query.get_or_404(hub_id)
+    group = Client_group.query.get_or_404(group_id) if user.user_type == CLIENT \
+        else Partner_group.query.get_or_404(group_id)
+    if not valid_group_user(group, user):
+        abort(404)
+    if hub not in group.hubs:
+        abort(404)
+    db.session.delete(hub)
     db.session.commit()
     return jsonify({'success': True})
 
 
 @app.route("/api/rename_hub", methods=['POST'])
 @is_auth
+@jsonp
 def rename_hub():
-    access_token, hub_id, group_id, name = validate_post(('access_token', 'hub_id', 'group_id', 'name'),
-                                                         (str, str, int, unicode),
-                                                         (0,)*4)
-    if not (access_token and hub_id and name and group_id):
+    access_token, hub_id, name = validate_post(
+        ('access_token', 'hub_id', 'name'),
+        (str, str, unicode),
+        (0,)*4)
+    if not (access_token and hub_id and name):
         abort(400)
     user = validate_user(access_token)
-    device = Hub.query.get(hub_id)
-    if not device:
-        abort(400)
-    if user.user_type == 'client':
-        if not device.client_group or device.client_group.id != group_id:
-            abort(400)
-        group = device.client_group
-        if not valid_group_user(group, user):
-            abort(404)
-        device.client_name = name
-    elif user.user_type == 'partner':
-        if not device.partner_group or device.partner_group.id != group_id:
-            abort(400)
-        group = device.partner_group
-        if not valid_group_user(group, user):
-            abort(404)
-        device.partner_name = name
+    hub = Hub_client.query.get_or_404(hub_id) if user.user_type == CLIENT \
+        else Hub_partner.query.get_or_404(hub_id)
+    group = hub.group
+    if not valid_group_user(group, user):
+        abort(404)
+    hub.name = name
     db.session.commit()
     return jsonify({'success': True, 'name': name})
 
 
+@app.route("/api/hub_statistics", methods=['GET'])
+@is_auth
+@jsonp
+def hub_statistics():
+    access_token, hub_id = validate_get(
+        ('access_token', 'hub_id'),
+        (str, str),
+        (0,)*4)
+    if not (access_token and hub_id):
+        abort(400)
+    user = validate_user(access_token)
+    hub = Hub_client.query.get_or_404(hub_id) if user.user_type == CLIENT \
+        else Hub_partner.query.get_or_404(hub_id)
+    group = hub.group
+    if not valid_group_user(group, user):
+        abort(404)
+    stats = Hub_statistics.query.filter_by(hub_id=hub.id).order_by(Hub_statistics.create_time).first()
+    try:
+        data = statistics(hub.meta, stats)
+    except:
+        abort(500)
+    return jsonify({'success': True, 'data': data})
+
+
 @app.route("/api/create_group", methods=['POST'])
 @is_auth
+@jsonp
 def create_group():
     access_token, parent_id, name, order_id = validate_post(('access_token', 'parent_id', 'name', 'order_id'),
                                                             (str, int, unicode, int),
@@ -466,6 +562,7 @@ def create_group():
 
 @app.route("/api/remove_group", methods=['POST'])
 @is_auth
+@jsonp
 def remove_group():
     access_token, group_id = validate_post(('access_token', 'group_id'), (str, int), (0,)*2)
     if not (access_token and group_id):
@@ -489,6 +586,7 @@ def remove_group():
 
 @app.route("/api/rename_group", methods=['POST'])
 @is_auth
+@jsonp
 def rename_group():
     access_token, group_id, name = validate_post(('access_token', 'group_id', 'name'), (str, int, unicode), (0,)*3)
     if not (access_token and name and group_id):
@@ -512,6 +610,7 @@ def rename_group():
 
 @app.route("/api/reorder", methods=['POST'])
 @is_auth
+@jsonp
 def reorder():
     access_token, parent_id = validate_post(('access_token', 'parent_id'), (str, int), (0,)*2)
     if not (access_token and parent_id):
@@ -520,16 +619,16 @@ def reorder():
     if not children:
         abort(400)
     user = validate_user(access_token)
-    if user.user_type == 'client':
+    if user.user_type == CLIENT:
         if not valid_group_user(Client_group.query.get_or_404(parent_id), user):
             abort(401)
         for key in children:
             if children[key]['type'] == 'hub':
-                hub = Hub.query.get_or_404(int(children[key]['id']))
-                if not valid_group_user(hub.client_group, user):
+                hub = Hub_client.query.get_or_404(int(children[key]['id']))
+                if not valid_group_user(hub.group, user):
                     abort(401)
-                hub.order_client_id = int(children[key]['order_id'])
-                hub.client_group_id = parent_id
+                hub.order_id = int(children[key]['order_id'])
+                hub.group_id = parent_id
                 db.session.commit()
             if children[key]['type'] == 'tab':
                 group = Client_group.query.get_or_404(int(children[key]['id']))
@@ -538,16 +637,16 @@ def reorder():
                 group.order_id = int(children[key]['order_id'])
                 group.parent_id = parent_id
                 db.session.commit()
-    elif user.user_type == 'partner':
+    elif user.user_type == PARTNER:
         if not valid_group_user(Partner_group.query.get_or_404(parent_id), user):
             abort(401)
         for key in children:
             if children[key]['type'] == 'hub':
-                hub = Hub.query.get_or_404(int(children[key]['id']))
-                if not valid_group_user(hub.partner_group, user):
+                hub = Hub_partner.query.get_or_404(int(children[key]['id']))
+                if not valid_group_user(hub.group, user):
                     abort(401)
-                hub.order_partner_id = int(children[key]['order_id'])
-                hub.partner_group_id = parent_id
+                hub.order_id = int(children[key]['order_id'])
+                hub.group_id = parent_id
                 db.session.commit()
             if children[key]['type'] == 'tab':
                 group = Partner_group.query.get_or_404(int(children[key]['id']))
@@ -556,7 +655,6 @@ def reorder():
                 group.order_id = int(children[key]['order_id'])
                 group.parent_id = parent_id
                 db.session.commit()
-    db.session.commit()
     return jsonify({'success': True})
 
 """
@@ -616,11 +714,11 @@ def testdata():
     new_group = user.partner.group
 
 
-    hub1 = Hub('hub1', partner_name='мой Хаб')
-    hub2 = Hub('hub2', partner_name='Hub2')
-    hub3 = Hub('hub3', partner_name='Hub3')
-    hub4 = Hub('hub4', partner_name='Hub4')
-    hub5 = Hub('hub5', partner_name='Hub5')
+    hub1 = Hub('hub1')
+    hub2 = Hub('hub2')
+    hub3 = Hub('hub3')
+    hub4 = Hub('hub4')
+    hub5 = Hub('hub5')
 
     new_sub_group = Partner_group('group2', parent=new_group)
     new_sub_sub_group = Partner_group('group3', parent=new_sub_group)
@@ -644,11 +742,14 @@ env_serv = os.getenv('SERVER_SOFTWARE')
 
 
 if app.config['DEBUG']:
-    if not Hub.query.filter_by(device_id='device-id-0').first():
-        db.session.add_all([Hub('device-id-%d' % i) for i in range(app.config['TEST_HUB_NUM'])])
+    base = ''.join(str(0) for i in range(32))
+    if not Hub.query.filter_by(serial_id=base).first():
+        db.session.add_all(
+            [Hub(base[:32-len(str(i))]+str(i), device_id='device-id-%d' % i)
+             for i in range(app.config['TEST_HUB_NUM'])])
         db.session.commit()
 
 
 if not (env_serv and env_serv.startswith('Google App Engine/')):
     if 'win' in sys.platform and __name__ == "__main__":
-        app.run()
+        app.run(host='0.0.0.0', port=81)

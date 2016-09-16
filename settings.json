@@ -1,0 +1,81 @@
+{
+  "supervisor": {
+    "max_timer_transport_restart": "182", 
+    "restart_if_no_cert": false, 
+    "logging": "release", 
+    "max_force_restart_count": "4", 
+    "max_timer_transport_reboot": "420", 
+    "restart_allow_reboot": false, 
+    "scan_period": "30", 
+    "max_timer_transport_force_restart": "15", 
+    "supervisor_enabled": true
+  }, 
+  "scanner": {
+    "sens": "30", 
+    "port": "/dev/input/scanner", 
+    "suffix": "0D"
+  }, 
+  "proxy": {
+    "proxy_port": "80", 
+    "proxy_type": "direct"
+  }, 
+  "mail": {
+    "mail": ""
+  }, 
+  "vpn": {
+    "tls": "disable", 
+    "zip": "disable", 
+    "vpn_type": "off", 
+    "proto": "udp", 
+    "cipher": "BF-CBC", 
+    "hosts": "", 
+    "interface": "tun"
+  }, 
+  "transport": {
+    "access_control_allow_origin": "", 
+    "key_pincode": "0987654321", 
+    "user_pincode": "11111111", 
+    "rolling_log": "off"
+  }, 
+  "hostapd": {
+    "ap_name": "kristina-pos3", 
+    "ap_channel": "1", 
+    "ap_pass": "12345678"
+  }, 
+  "wifi": {
+    "network": "", 
+    "ap_pass": "12345678", 
+    "ip": "10.0.0.1", 
+    "mask": "255.255.255.0", 
+    "ap_channel": "1", 
+    "ap_list": "", 
+    "broadcast": "", 
+    "ap_name": "kristina-pos3", 
+    "mode": "source", 
+    "dns": "", 
+    "address_type": "static", 
+    "gateway": ""
+  }, 
+  "internet": {
+    "gateway": ""
+  }, 
+  "ethernet": {
+    "network": "", 
+    "ip": "", 
+    "mask": "", 
+    "broadcast": "", 
+    "dns": "", 
+    "address_type": "dhcp", 
+    "gateway": ""
+  }, 
+  "modem": {
+    "modem_phone": "*99#", 
+    "modem_password": "beeline", 
+    "modem_user": "beeline", 
+    "modem_apn": "home.beeline.ru"
+  }, 
+  "ttn": {
+    "logging": "debug", 
+    "auth": false
+  }
+}
