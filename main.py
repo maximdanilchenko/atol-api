@@ -85,7 +85,7 @@ MAIL_HTML_REC = """<!DOCTYPE html>
     Объекты: db, cache
 """
 # раскомментить, чтобы удалить все таблицы из БД при старте приложения
-# db.drop_all()
+db.drop_all()
 db.create_all()
 # задаем кэширование в зависимости от платформы запуска
 from werkzeug.contrib.cache import GAEMemcachedCache, SimpleCache
@@ -752,4 +752,4 @@ if app.config['DEBUG']:
 
 if not (env_serv and env_serv.startswith('Google App Engine/')):
     if 'win' in sys.platform and __name__ == "__main__":
-        app.run(host='0.0.0.0', port=81)
+        app.run()
