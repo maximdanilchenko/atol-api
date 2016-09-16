@@ -11,7 +11,7 @@ env = os.getenv('SERVER_SOFTWARE')
 
 if env and env.startswith('Google App Engine/'):
     # Connecting from App Engine
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root@/atol_hab?unix_socket=/cloudsql/atol-test:us-east1:cloudbd1'
+    SQLALCHEMY_DATABASE_URI = 'mysql+mysqldb://root@/atol_hab?unix_socket=/cloudsql/atol-test:us-central1:cloudbd1'
 else:
     # Connecting from an external network.
     # Make sure your network is whitelisted
