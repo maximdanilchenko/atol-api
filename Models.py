@@ -158,19 +158,19 @@ class Hub_statistics(db.Model):
     retail_buffer_size = db.Column(db.Integer)
     buffer_age = db.Column(db.BigInteger)
 
-    create_time = db.Column(db.DateTime)
+    create_time = db.Column(db.DateTime, unique=True)
 
     hub_id = db.Column(db.Integer, db.ForeignKey('hub.id'))
 
     def __init__(self, utm_status, unset_tickets_count, total_tickets_count,
-                 retail_buffer_size, buffer_age):
+                 retail_buffer_size, buffer_age, create_time=datetime.utcnow()):
         self.utm_status = utm_status
         self.unset_tickets_count = unset_tickets_count
         self.total_tickets_count = total_tickets_count
         self.retail_buffer_size = retail_buffer_size
         self.buffer_age = buffer_age
 
-        self.create_time = datetime.utcnow()
+        self.create_time = create_time
 
 
 # Здоровеееенная (но простая) часть БД, отвечающая за хранение настроек - - - -

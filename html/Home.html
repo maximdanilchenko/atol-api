@@ -11,10 +11,12 @@
     <script src="static/js/jquery-ui.min.js"></script>
     <script src="static/js/jquery.ui.touch-punch.js"></script>
     <script src="static/js/jquery.mjs.nestedSortable.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.min.js"></script>
+
     <script src="static/js/sign.js"></script>
     <script src="static/js/atol-api.js"></script>
-
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.js"></script>
 
     <link rel="stylesheet" href="static/css/w3.css">
     <link rel="stylesheet" href="static/css/w3-theme-red.css">
@@ -161,25 +163,25 @@
                     <h5 class="w3-margin-left w3-margin-right"><i class="fa fa-fw fa-sliders"></i>&nbsp;
                         <span id="dashboard-group"></span>
                         <span style="display:none" id="dashboard-hub"></span>
-                        <!--<a class="w3-right w3-hover-none w3-hover-text-dark-grey" href="#">-->
-                        <!--<i id="reload" class="fa fa-fw fa-repeat"></i></a>-->
+                        <a class="w3-right w3-hover-none w3-hover-text-dark-grey" href="#">
+                        <i id="reload" class="fa fa-fw fa-repeat"></i></a>
                     </h5>
                 </header>
 
                 <div class="my-in-shadow w3-light-grey w3-text-dark-grey scroll"
                      style="height:70vh; overflow-y:scroll; overflow-x:hidden;">
-                    <ul id="group_stats" class=" w3-center w3-container" style="display:none">
+                    <ul id="group_stats" class=" w3-center w3-container">
                         <li class="w3-col w3-hide-small m3 l4">&nbsp;</li>
                         <li class="w3-col s12 m6 l3">
                             <ul class="w3-ul">
                                 <li class="w3-border-0">
                                     <h4>Подгрупп:
-                                    <span id="group_stats1" class="w3-light-grey w3-right w3-text-dark-grey"><b>0</b></span>
+                                    <span id="group_stats1" class="w3-light-grey w3-right w3-text-dark-grey"><b></b></span>
                                     </h4>
                                 </li>
                                 <li class="w3-border-0">
                                     <h4>Хабов:
-                                    <span id="group_stats2" class="w3-light-grey w3-right w3-text-dark-grey"><b>3</b></span>
+                                    <span id="group_stats2" class="w3-light-grey w3-right w3-text-dark-grey"><b></b></span>
                                     </h4>
                                 </li>
                             </ul>
@@ -191,7 +193,7 @@
                             </h4>
                         </li>
                     </ul>
-                    <ul id="hub_stats" class="w3-ul">
+                    <ul id="hub_stats" class="w3-ul" style="display:none">
                         <li class="w3-ul w3-margin-right w3-container">
                             <header><h4>Текущее состояние</h4></header>
                             <ul class="w3-ul w3-col s12 m12 l6 w3-container">
@@ -236,7 +238,7 @@
                         <li class="w3-container w3-margin-right">
                             <header><h4>История</h4></header>
                             <div class="w3-col s12 m12 l12 w3-margin-right">
-                                <canvas id="myChart" height="35px"></canvas>
+                                <canvas id="myChart" height="40px"></canvas>
                             </div>
                             <hr width="100%">
                             <div class="w3-col s12 m12 l12 w3-margin-right">
@@ -480,6 +482,12 @@ $('.sortable').on('click', '.tab-root > a', function() {
     $('#dashboard-group').html($(this).parent().children("a").html());
     $('#dashboard-hub').hide();
     $('#dashboard-group').show();
+
+    $('#hub_stats').hide();
+    $('#group_stats').show();
+
+    $('#group_stats1 > b').text($('.active-elem').attr("data-group_num"));
+    $('#group_stats2 > b').text($('.active-elem').attr("data-hub_num"));
 });
 
 //Папка
@@ -497,6 +505,12 @@ $('.sortable').on('click', '.tab > div > a', function() {
     $('#dashboard-group').html($(this).parent().children("a").html());
     $('#dashboard-hub').hide();
     $('#dashboard-group').show();
+
+    $('#hub_stats').hide();
+    $('#group_stats').show();
+
+    $('#group_stats1 > b').text($('.active-elem').attr("data-group_num"));
+    $('#group_stats2 > b').text($('.active-elem').attr("data-hub_num"));
 });
 
 //Хаб
@@ -514,6 +528,11 @@ $('.sortable').on('click', '.hub > div > a', function() {
     $('#dashboard-hub').html($(this).parent().children("a").html());
     $('#dashboard-group').hide();
     $('#dashboard-hub').show();
+
+    $('#group_stats').hide();
+    getSmallHubStatistics();
+    reloadCharts();
+    $('#hub_stats').show();
 });
 
 
@@ -539,110 +558,7 @@ $(document).mouseup(function(e){
 //});
 
 
-
-
 ////////////////CHARTS
-
-var ctx = document.getElementById("myChart");
-var myChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ["10.09.16", "11.09.16", "12.09.16", "13.09.16", "14.09.16", "15.09.16"],
-        datasets: [{
-            label: 'УТМ включен',
-            steppedLine: true,
-            data: [1, 1, 0, 0, 1, 1],
-            backgroundColor:
-                'rgba(0, 255, 0, 0.2)'
-
-            ,
-            borderColor:
-                'rgba(0, 255, 0, 1)'
-
-            ,
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                display: false
-            }]
-        }
-    }
-});
-
-
-var ctx = document.getElementById("myChart1");
-var myChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ["10.09.16", "11.09.16", "12.09.16", "13.09.16", "14.09.16", "15.09.16"],
-        datasets: [{
-            label: 'Количество неотправленных документов',
-            data: [1, 11, 0, 0, 10, 5],
-            backgroundColor:
-                'rgba(0, 255, 0, 0.2)'
-
-            ,
-            borderColor:
-                'rgba(0, 255, 0, 1)'
-
-            ,
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-
-            }]
-        }
-    }
-});
-
-
-
-var ctx = document.getElementById("myChart2");
-var myChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ["10.09.16", "11.09.16", "12.09.16", "13.09.16", "14.09.16", "15.09.16"],
-        datasets: [{
-            label: 'Размер буффера чеков',
-            data: [11, 2, 0, 10, 21, 11],
-            backgroundColor:
-                'rgba(255, 0, 0, 0.2)'
-
-            ,
-            borderColor:
-                'rgba(255, 0, 0, 1)'
-
-            ,
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-
-            }]
-        }
-    }
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 </script>
 </body>

@@ -69,41 +69,47 @@ def get_tree(node, user_type):
                   "name": hub.name,
                   "order_id": hub.order_id}
                  for hub in node.hubs]
-    return dict({"id": node.id,
-                 "type": "group",
-                 "name": node.name,
-                 "order_id": node.order_id,
-                 "children": groups_list + hubs_list})
+    return {"id": node.id,
+            "type": "group",
+            "name": node.name,
+            "order_id": node.order_id,
+            "hub_num": len(hubs_list),
+            "group_num": len(groups_list),
+            "children": groups_list + hubs_list}
 
 
 def statistics(meta, stats):
     info = {}
     limit = datetime.date.today() + datetime.timedelta(days=60)
-    info['utm_version'] = [meta.utm_version, default_color] if meta.utm_version else ['-', default_color]
+    info['utm_version'] = [meta.utm_version, default_color] if meta.utm_version is not None else ['-', default_color]
 
-    if meta.certificate_rsa_date:
+    if meta.certificate_rsa_date is not None:
+        d = (meta.certificate_rsa_date - datetime.date.today()).days
         rsa_color = 'red' if meta.certificate_rsa_date < limit else 'green'
-        info['certificate_rsa_date'] = [meta.certificate_rsa_date, rsa_color]
+        info['certificate_rsa_date'] = [d, rsa_color]
     else:
         info['certificate_rsa_date'] = ['-', default_color]
 
-    if meta.certificate_gost_date:
+    if meta.certificate_gost_date is not None:
+        d = (meta.certificate_gost_date - datetime.date.today()).days
         gost_color = 'red' if meta.certificate_gost_date < limit else 'green'
-        info['certificate_gost_date'] = [meta.certificate_gost_date, gost_color]
+        info['certificate_gost_date'] = [d, gost_color]
     else:
         info['certificate_gost_date'] = ['-', default_color]
 
-    if stats.utm_status:
+    if stats.utm_status is not None:
+        t = u'Включен' if stats.utm_status else u'Выключен'
+        z = 1 if stats.utm_status else 0
         utm_color = 'green' if stats.utm_status else default_color
-        info['utm_status'] = [stats.utm_status, utm_color]
+        info['utm_status'] = [t, utm_color, z]
     else:
-        info['utm_status'] = ['-', default_color]
+        info['utm_status'] = ['-', default_color, None]
 
-    info['unset_tickets_count'] = [stats.unset_tickets_count, default_color] if meta.unset_tickets_count else ['-', default_color]
-    info['total_tickets_count'] = [stats.total_tickets_count, default_color] if meta.total_tickets_count else ['-', default_color]
-    info['retail_buffer_size'] = [stats.retail_buffer_size, default_color] if meta.retail_buffer_size else ['-', default_color]
+    info['unset_tickets_count'] = [stats.unset_tickets_count, default_color] if stats.unset_tickets_count is not None else ['-', default_color]
+    info['total_tickets_count'] = [stats.total_tickets_count, default_color] if stats.total_tickets_count is not None else ['-', default_color]
+    info['retail_buffer_size'] = [stats.retail_buffer_size, default_color] if stats.retail_buffer_size is not None else ['-', default_color]
 
-    if stats.buffer_age:
+    if stats.buffer_age is not None:
         buffer_color = 'green' if stats.buffer_age < yellow_border else \
             'yellow' if stats.buffer_age < red_border else 'red'
         t = stats.buffer_age
@@ -111,11 +117,50 @@ def statistics(meta, stats):
             t // 86400, t % 86400 // 3600, t % 3600 // 60), buffer_color]
     else:
         info['buffer_age'] = ['-', default_color]
-    print info
+
+    info['time'] = stats.create_time.strftime("%Y-%m-%d %H:%M:%S+00:00")
     return info
 
 
+def chart_statistics(stats):
+    total_tickets_count_chart = {'times': [], 'values': []}
+    unset_tickets_checks_count_chart = {'times': [], 'tickets': [], 'checks': []}
+    utm_status_chart = {'times': [], 'values': []}
 
+    total_tickets_count_chart['values'].append(stats[0].total_tickets_count)
+    total_tickets_count_chart['times'].append(stats[0].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+    unset_tickets_checks_count_chart['checks'].append(stats[0].retail_buffer_size)
+    unset_tickets_checks_count_chart['tickets'].append(stats[0].unset_tickets_count)
+    unset_tickets_checks_count_chart['times'].append(stats[0].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+    utm_status_chart['values'].append(stats[0].utm_status)
+    utm_status_chart['times'].append(stats[0].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+
+    for n, stat in enumerate(stats[1:-1]):
+        if not (stats[n - 1].total_tickets_count == stats[n].total_tickets_count == stats[n + 1].total_tickets_count):
+            total_tickets_count_chart['values'].append(stats[n].total_tickets_count)
+            total_tickets_count_chart['times'].append(stats[n].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+        if not (stats[n - 1].unset_tickets_count == stats[n].unset_tickets_count == stats[n + 1].unset_tickets_count) or \
+                not (stats[n - 1].retail_buffer_size == stats[n].retail_buffer_size == stats[n + 1].retail_buffer_size):
+            unset_tickets_checks_count_chart['checks'].append(stats[n].retail_buffer_size)
+            unset_tickets_checks_count_chart['tickets'].append(stats[n].unset_tickets_count)
+            unset_tickets_checks_count_chart['times'].append(stats[n].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+        if not (stats[n - 1].utm_status == stats[n].utm_status == stats[n + 1].utm_status):
+            utm_status_chart['values'].append(stats[n].utm_status)
+            utm_status_chart['times'].append(stats[n].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+
+    total_tickets_count_chart['values'].append(stats[-1].total_tickets_count)
+    total_tickets_count_chart['times'].append(stats[-1].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+    unset_tickets_checks_count_chart['checks'].append(stats[-1].retail_buffer_size)
+    unset_tickets_checks_count_chart['tickets'].append(stats[-1].unset_tickets_count)
+    unset_tickets_checks_count_chart['times'].append(stats[-1].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+    utm_status_chart['values'].append(stats[-1].utm_status)
+    utm_status_chart['times'].append(stats[-1].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+
+    return {
+        "total_tickets_count": total_tickets_count_chart,
+        "unset_tickets_checks_count": unset_tickets_checks_count_chart,
+        "utm_status": utm_status_chart,
+    }
 
 # --проверка на пренадлежность группы пользователю
 def valid_group_user(group, user):

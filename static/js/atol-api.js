@@ -88,13 +88,14 @@ $("#modal-wait").show();
                     data = response.tree;
                     $("#rootHub > div > a").html(data.name);
                     $("#rootHub > div").attr("id",data.id);
+                    $("#rootHub > div").attr("data-hub_num",data.hub_num);
+                    $("#rootHub > div").attr("data-group_num",data.group_num);
                     $('#dashboard-group').html(data.name);
                     localStorage.setItem("rootId", data.id);
                     var children = data.children.sort(function(a, b) {
                       return a.order_id - b.order_id  ||  a.name.localeCompare(b.name);
                     });
                     for (var i = 0; i < children.length; i++) {
-                        console.log(children[i].id);
                             if (children[i].type == "hub")
                                 $("#rootHub > ul").append(
                                     "<li class='hub'><div id='"+children[i].id+"' data-order_id='"+children[i].order_id+"'><i class='fa fa-laptop fa-fw'></i>&nbsp;<a>"+children[i].name+"</a></div></li>"
@@ -112,7 +113,7 @@ $("#modal-wait").show();
                 var children = elem.children.sort(function(a, b) {
                 return a.order_id - b.order_id  ||  a.name.localeCompare(b.name);
                 });
-                var s = "<li class='tab'><div id = '"+elem.id+"' data-order_id='"+elem.order_id+"'><i class='fa fa-fw fa-folder' style='display:none;'></i><i class='fa fa-fw fa-folder-open'></i>&nbsp;<a>";
+                var s = "<li class='tab'><div id = '"+elem.id+"' data-hub_num='"+elem.hub_num+"' data-group_num='"+elem.group_num+"' data-order_id='"+elem.order_id+"'><i class='fa fa-fw fa-folder' style='display:none;'></i><i class='fa fa-fw fa-folder-open'></i>&nbsp;<a>";
                 s = s + elem.name + "</a></div><ul>";
                 for (var i = 0; i < children.length; i++) {
                     console.log(children[i].id);
@@ -128,6 +129,9 @@ $("#modal-wait").show();
         },
     dataType='JSON' ).fail(function() {
         $("#modal-wait").hide();
+  }).done(function(){
+    $('#group_stats1 > b').text($('.active-elem').attr("data-group_num"));
+    $('#group_stats2 > b').text($('.active-elem').attr("data-hub_num"));
   });
 }
 
@@ -332,24 +336,307 @@ function renameHub(){
 
 }
 
-function getStatistics(){
-    $("#modal-wait").show();
-    $.get( "/api/hub_statistics", {access_token: localStorage.getItem("atol_access_token"),
-                                hub_id: $('.active-elem').attr('id')
-                                },
-        function(response){
-            if (response.success == true){
+var TimeoutId = 1;
 
-                //response.type
-            }
-            else {
+if (!Array.prototype.last){
+    Array.prototype.last = function(){
+        return this[this.length - 1];
+    };
+};
 
-            };
-            $("#modal-wait").hide();
-        },
-    'json' ).fail(function() {
-            $("#modal-wait").hide();
-            });
+function getSmallHubStatistics(){
+    clearTimeout(TimeoutId);
+    if ($('.active-elem').parent().hasClass("hub")){
+        $.get( "/api/hub_statistics", {access_token: localStorage.getItem("atol_access_token"),
+                                    hub_id: $('.active-elem').attr('id')
+                                    },
+            function(response){
+                if (response.success == true){
+                    $('span[id^=hub_stats]').removeClass('w3-text-green w3-text-red w3-text-dark-grey');
+
+                    $('#hub_stats1 > b').text(response.data.utm_version[0]);
+                    $('#hub_stats1').addClass('w3-text-'+response.data.utm_version[1]);
+
+                    $('#hub_stats2 > b').text(response.data.utm_status[0]);
+                    $('#hub_stats2').addClass('w3-text-'+response.data.utm_status[1]);
+
+                    $('#hub_stats3 > b').text(response.data.certificate_gost_date[0]);
+                    $('#hub_stats3').addClass('w3-text-'+response.data.certificate_gost_date[1]);
+
+                    $('#hub_stats4 > b').text(response.data.certificate_rsa_date[0]);
+                    $('#hub_stats4').addClass('w3-text-'+response.data.certificate_rsa_date[1]);
+
+                    $('#hub_stats5 > b').text(response.data.total_tickets_count[0]);
+                    $('#hub_stats5').addClass('w3-text-'+response.data.total_tickets_count[1]);
+
+                    $('#hub_stats6 > b').text(response.data.unset_tickets_count[0]);
+                    $('#hub_stats6').addClass('w3-text-'+response.data.unset_tickets_count[1]);
+
+                    $('#hub_stats7 > b').text(response.data.buffer_age[0]);
+                    $('#hub_stats7').addClass('w3-text-'+response.data.buffer_age[1]);
+
+                    $('#hub_stats8 > b').text(response.data.retail_buffer_size[0]);
+                    $('#hub_stats8').addClass('w3-text-'+response.data.retail_buffer_size[1]);
+                    //response.type
+
+                    if (myChart !== undefined && myChart.data.labels.last() !== moment(response.data.time)){
+                        myChart.data.labels.push(moment(response.data.time));
+                        myChart.data.datasets[0].data.push(response.data.utm_status[2]);
+                        }
+
+                    if (myChart1 !== undefined && myChart1.data.labels.last() !== moment(response.data.time)){
+                        myChart1.data.labels.push(moment(response.data.time));
+                        myChart1.data.datasets[0].data.push(response.data.total_tickets_count[0]);
+                        myChart1.update();
+                        }
+
+                    if (myChart2 !== undefined && myChart2.data.labels.last() !== moment(response.data.time)){
+                        myChart2.data.labels.push(moment(response.data.time));
+                        myChart2.data.datasets[1].data.push(response.data.unset_tickets_count[0]);//документы
+                        myChart2.data.datasets[0].data.push(response.data.retail_buffer_size[0]);//чеки
+                        myChart2.update();
+                    }
+                    ChartsColors();
+                    TimeoutId = setTimeout(function(){getSmallHubStatistics();}, 10000);
+                }
+                else {
+
+                };
+            },
+        'json' ).fail(function() {
+                });
+    }
 
 }
 
+function ChartsColors() {
+    if (myChart !== undefined){
+        if (myChart.data.datasets[0].data.last() == 1){
+            myChart.data.datasets[0].backgroundColor = 'rgba(50, 100, 0, 0.2)';
+            myChart.data.datasets[0].borderColor = 'rgba(50, 100, 0, 1)';
+        }
+        else if (myChart.data.datasets[0].data.last() == 0){
+            myChart.data.datasets[0].backgroundColor = 'rgba(255, 0, 0, 0.2)';
+            myChart.data.datasets[0].borderColor = 'rgba(255, 0, 0, 1)';
+        }
+        else {
+            myChart.data.datasets[0].backgroundColor = 'rgba(99, 99, 99, 0.2)';
+            myChart.data.datasets[0].borderColor = 'rgba(99, 99, 99, 1)';
+        }
+        myChart.update();
+
+        if (isNaN(myChart1.data.datasets[0].data.last())){
+            myChart1.data.datasets[0].backgroundColor = 'rgba(99, 99, 99, 0.2)';
+            myChart1.data.datasets[0].borderColor = 'rgba(99, 99, 99, 1)';
+        }
+        else {
+            myChart1.data.datasets[0].backgroundColor = 'rgba(50, 100, 0, 0.2)';
+            myChart1.data.datasets[0].borderColor = 'rgba(50, 100, 0, 1)';
+        }
+        myChart1.update();
+
+        if ($('#hub_stats7').hasClass('w3-text-green')){
+            myChart2.data.datasets[0].backgroundColor = 'rgba(50, 100, 0, 0.2)';
+            myChart2.data.datasets[0].borderColor = 'rgba(50, 100, 0, 1)';
+        }
+        else if ($('#hub_stats7').hasClass('w3-text-red')){
+            myChart2.data.datasets[0].backgroundColor = 'rgba(255, 0, 0, 0.2)';
+            myChart2.data.datasets[0].borderColor = 'rgba(255, 0, 0, 1)';
+        }
+        else {
+            myChart2.data.datasets[0].backgroundColor = 'rgba(99, 99, 99, 0.2)';
+            myChart2.data.datasets[0].borderColor = 'rgba(99, 99, 99, 1)';
+        }
+        myChart2.update();
+    }
+}
+
+var myChart; //Статус УТМ
+var myChart1; //Количество отправленных документов
+var myChart2; //Размер буффера чеков/неотправленных документов
+
+function reloadCharts(){
+    if ($('.active-elem').parent().hasClass("hub")){
+        $.get( "/api/charts_statistics", {access_token: localStorage.getItem("atol_access_token"),
+                                    hub_id: $('.active-elem').attr('id')
+                                    },
+            function(response){
+                if (response.success == true){
+
+                    if (myChart !== undefined){
+                        myChart.destroy();
+                        myChart1.destroy();
+                        myChart2.destroy();
+                    }
+                    var lbls = Array.from(response.data.total_tickets_count.times, x => moment(x));
+                    var vls = response.data.total_tickets_count.values;
+                    var ctx = document.getElementById("myChart1");
+                    myChart1 = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: lbls,
+                            datasets: [{
+                                lineTension: 0.1,
+                                label: 'Количество отправленных документов',
+                                pointRadius: 0,
+                                pointHitRadius: 10,
+
+                                data: vls,
+                                backgroundColor:
+                                    'rgba(0, 0, 0, 0.2)'
+
+                                ,
+                                borderColor:
+                                    'rgba(0, 0, 0, 1)'
+
+                                ,
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+
+                                }],
+                                xAxes: [{
+                                    type: 'time',
+                                    time: {
+                                      displayFormats: {
+                                       second: 'DD.MM.YY kk:mm:ss',
+                                        minute: 'DD.MM.YY kk:mm',
+                                        hour: 'DD.MM.YY kk:mm',
+                                        day: 'DD.MM.YY',
+                                        month: 'DD.MM.YY',
+                                        year: 'YYYY'
+                                      }
+                                        }
+                                    }]
+                            }
+                        }
+                    });
+
+                    var lbls = Array.from(response.data.utm_status.times, x => moment(x));
+                    var vls = response.data.utm_status.values;
+                    var ctx = document.getElementById("myChart");
+                    myChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: lbls,
+                            datasets: [{
+                                steppedLine: true,
+                                label: 'Статус УТМ',
+                                pointRadius: 0,
+                                pointHitRadius: 10,
+                                data: vls,
+                                backgroundColor:
+                                    'rgba(0, 255, 0, 0.2)'
+
+                                ,
+                                borderColor:
+                                    'rgba(0, 255, 0, 1)'
+
+                                ,
+                                borderWidth: 1
+                            },
+                            ]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                       stacked: true
+                                }],
+                                xAxes: [{
+                                    type: 'time',
+                                    time: {
+                                      displayFormats: {
+                                        second: 'DD.MM.YY kk:mm:ss',
+                                        minute: 'DD.MM.YY kk:mm',
+                                        hour: 'DD.MM.YY kk:mm',
+                                        day: 'DD.MM.YY',
+                                        month: 'DD.MM.YY',
+                                        year: 'YYYY'
+                                      }
+                                        }
+                                    }]
+                            }
+                        }
+                    });
+
+
+                    var lbls = Array.from(response.data.unset_tickets_checks_count.times, x => moment(x));
+                    var vls1 = response.data.unset_tickets_checks_count.tickets;
+                    var vls2 = response.data.unset_tickets_checks_count.checks;
+                    var ctx = document.getElementById("myChart2");
+                    myChart2 = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: lbls,
+                            datasets: [
+                            {
+                                lineTension: 0.1,
+                                label: 'Размер буффера чеков',
+                                pointRadius: 0,
+                                pointHitRadius: 10,
+                                data: vls2,
+                                backgroundColor:
+                                    'rgba(255, 0, 0, 0.2)'
+
+                                ,
+                                borderColor:
+                                    'rgba(255, 0, 0, 1)'
+
+                                ,
+                                borderWidth: 1
+                            },
+                            {
+                                lineTension: 0.1,
+                                label: 'Количество неотправленных документов',
+                                pointRadius: 0,
+                                pointHitRadius: 10,
+                                data: vls1,
+                                backgroundColor:
+                                    'rgba(50, 100, 0, 0.2)'
+
+                                ,
+                                borderColor:
+                                    'rgba(50, 200, 0, 1)'
+
+                                ,
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+
+                                }],
+                                xAxes: [{
+                                    type: 'time',
+                                    time: {
+                                      displayFormats: {
+                                        second: 'DD.MM.YY kk:mm:ss',
+                                        minute: 'DD.MM.YY kk:mm',
+                                        hour: 'DD.MM.YY kk:mm',
+                                        day: 'DD.MM.YY',
+                                        month: 'DD.MM.YY',
+                                        year: 'YYYY'
+                                      }
+                                        }
+                                    }]
+                            }
+                        }
+                    });
+
+                ChartsColors();
+
+                    //response.type
+                }
+                else {
+
+                };
+            },
+        'json' ).fail(function() {
+                });
+    }
+
+}

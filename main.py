@@ -15,6 +15,7 @@ from Models import User, Partner, Client, Hub, \
     Client_group, Partner_group, Hub_meta, Hub_statistics, Hub_settings, \
     Hub_partner, Hub_client
 from App import app, db
+from sqlalchemy import desc, asc
 on_gae = True
 try:
     from google.appengine.api import mail
@@ -85,7 +86,7 @@ MAIL_HTML_REC = """<!DOCTYPE html>
     Объекты: db, cache
 """
 # раскомментить, чтобы удалить все таблицы из БД при старте приложения
-db.drop_all()
+# db.drop_all()
 db.create_all()
 # задаем кэширование в зависимости от платформы запуска
 from werkzeug.contrib.cache import GAEMemcachedCache, SimpleCache
@@ -196,7 +197,7 @@ def try_update_post():
         else:
             abort(400)
     utmOn, unsentTicketsCount, totalTicketsCount, retailBufferSize, \
-    bufferAge, version, certificateRSA, certificateGOST \
+    bufferAge, version, certificateRSA, certificateGOST, utime \
         = validate_post(("utmOn",
                         "unsentTicketsCount",
                         "totalTicketsCount",
@@ -204,20 +205,30 @@ def try_update_post():
                         "bufferAge",
                         "version",
                         "certificateRSABestBefore",
-                        "certificateGOSTBestBefore"),
-                        (str,) + (int,)*4 + (str,) + (int,)*2,
-                        (None,) * 8)
+                        "certificateGOSTBestBefore",
+                         "utc_time"),
+                        (str,) + (int,)*4 + (str,) + (int,)*2 + (str,),
+                        (None,) * 9)
     if utmOn.lower().startswith('t'):
         utmOn = True
     else:
         utmOn = False
-    new_stat = Hub_statistics(utmOn, unsentTicketsCount, totalTicketsCount,
-                        retailBufferSize, bufferAge)
-    hub.stats.append(new_stat)
+    hub_st = Hub_statistics.query.filter_by(create_time=utime).first()
+    if hub_st:
+        hub_st.utm_status = utmOn
+        hub_st.unset_tickets_count = unsentTicketsCount
+        hub_st.total_tickets_count = totalTicketsCount
+        hub_st.retail_buffer_size = retailBufferSize
+        hub_st.buffer_age = bufferAge
+    else:
+        hub.stats.append(Hub_statistics(utmOn, unsentTicketsCount, totalTicketsCount,
+                                        retailBufferSize, bufferAge, utime))
     if certificateRSA:
         hub.meta.certificate_rsa_date = datetime.date.today() + datetime.timedelta(days=certificateRSA)
     if certificateGOST:
         hub.meta.certificate_gost_date = datetime.date.today()+ datetime.timedelta(days=certificateGOST)
+    if version:
+        hub.meta.utm_version = version
     # if (utmOn or unsentTicketsCount or totalTicketsCount
     #         or retailBufferSize or bufferAge):
     #     new_stat = Hub_statistics(utmOn, unsentTicketsCount, totalTicketsCount,
@@ -513,7 +524,7 @@ def hub_statistics():
     access_token, hub_id = validate_get(
         ('access_token', 'hub_id'),
         (str, str),
-        (0,)*4)
+        (0,)*2)
     if not (access_token and hub_id):
         abort(400)
     user = validate_user(access_token)
@@ -522,11 +533,36 @@ def hub_statistics():
     group = hub.group
     if not valid_group_user(group, user):
         abort(404)
-    stats = Hub_statistics.query.filter_by(hub_id=hub.id).order_by(Hub_statistics.create_time).first()
+    stats = Hub_statistics.query.filter_by(hub_id=hub.hub.id).order_by(desc(Hub_statistics.create_time)).first()
     try:
-        data = statistics(hub.meta, stats)
-    except:
+        data = statistics(hub.hub.meta, stats)
+    except Exception as e:
         abort(500)
+    return jsonify({'success': True, 'data': data})
+
+
+@app.route("/api/charts_statistics", methods=['GET'])
+@is_auth
+@jsonp
+def charts_statistics():
+    access_token, hub_id = validate_get(
+        ('access_token', 'hub_id'),
+        (str, str),
+        (0,)*2)
+    if not (access_token and hub_id):
+        abort(400)
+    user = validate_user(access_token)
+    hub = Hub_client.query.get_or_404(hub_id) if user.user_type == CLIENT \
+        else Hub_partner.query.get_or_404(hub_id)
+    group = hub.group
+    if not valid_group_user(group, user):
+        abort(404)
+    # try:
+    data = chart_statistics(Hub_statistics.query.filter_by(hub_id=hub.hub.id)\
+        .filter(Hub_statistics.create_time > datetime.datetime.utcnow() - datetime.timedelta(days=7))\
+        .order_by(asc(Hub_statistics.create_time)).all())
+    # except Exception as e:
+    #     abort(500)
     return jsonify({'success': True, 'data': data})
 
 
@@ -752,4 +788,4 @@ if app.config['DEBUG']:
 
 if not (env_serv and env_serv.startswith('Google App Engine/')):
     if 'win' in sys.platform and __name__ == "__main__":
-        app.run()
+        app.run(host='0.0.0.0', port=81)
