@@ -547,6 +547,8 @@ $('.sortable').on('click', '.hub > div > a', function() {
     getSmallHubStatistics();
     reloadCharts('day');
     $('#hub_stats').show();
+    $("#week").removeClass("my-active");
+    $("#day").addClass("my-active");
 });
 
 
