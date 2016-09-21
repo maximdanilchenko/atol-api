@@ -427,7 +427,7 @@ function getSmallHubStatistics(){
                         myChart2.update();
                     }
                     ChartsColors();
-                    TimeoutId = setTimeout(function(){getSmallHubStatistics();}, 10000);
+                    TimeoutId = setTimeout(function(){getSmallHubStatistics();}, 270000);
                 }
                 else {
                     $("#hub_stats").hide();
