@@ -576,7 +576,7 @@ $(document).mouseup(function(e){
 ////////////////CHARTS
 
 $("#day").click(function(){
-    if ($("#week").hasClass(my-active)){
+    if ($("#week").hasClass("my-active")){
         getSmallHubStatistics();
         reloadCharts('day');
         $("#day").toggleClass("my-active");
@@ -585,7 +585,7 @@ $("#day").click(function(){
 });
 
 $("#week").click(function(){
-    if ($("#day").hasClass(my-active)){
+    if ($("#day").hasClass("my-active")){
         getSmallHubStatistics();
         reloadCharts('week');
         $("#week").toggleClass("my-active");

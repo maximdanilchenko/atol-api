@@ -186,6 +186,7 @@ def try_update_post():
     который нужно обновить, то на хаб отправляется скрипт для запуска
     :return:
     """
+    print request.form.items()
     serial_id, = validate_post(('serial_id',), (unicode,), (0,))
     if not serial_id:
         abort(400)
