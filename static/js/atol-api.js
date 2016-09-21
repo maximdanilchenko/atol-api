@@ -125,7 +125,6 @@ $("#modal-wait").show();
                 var s = "<li class='tab'><div id = '"+elem.id+"' data-hub_num='"+elem.hub_num+"' data-group_num='"+elem.group_num+"' data-order_id='"+elem.order_id+"'><i class='fa fa-fw fa-folder' style='display:none;'></i><i class='fa fa-fw fa-folder-open'></i>&nbsp;<a>";
                 s = s + elem.name + "</a></div><ul>";
                 for (var i = 0; i < children.length; i++) {
-                    console.log(children[i].id);
                         if (children[i].type == "hub")
                             s = s + "<li class='hub'><div id='"+children[i].id+"' data-order_id='"+children[i].order_id+"'><i class='fa fa-laptop fa-fw'></i>&nbsp;<a>"+children[i].name+"</a></div></li>";
                         else
@@ -429,7 +428,9 @@ function getSmallHubStatistics(){
                         myChart2.update();
                     }
                     ChartsColors();
-                    TimeoutId = setTimeout(function(){getSmallHubStatistics();}, 270000);
+                    TimeoutId = setTimeout(function(){getSmallHubStatistics();}, 150000);
+                    console.log(TimeoutId);
+                    console.log(moment());
                 }
                 else {
                     $("#hub_stats").hide();
