@@ -123,6 +123,8 @@ def statistics(meta, stats):
 
 
 def chart_statistics(stats):
+    if not len(stats):
+        return None
     total_tickets_count_chart = {'times': [], 'values': []}
     unset_tickets_checks_count_chart = {'times': [], 'tickets': [], 'checks': []}
     utm_status_chart = {'times': [], 'values': []}

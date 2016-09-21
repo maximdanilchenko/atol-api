@@ -533,6 +533,8 @@ def hub_statistics():
     group = hub.group
     if not valid_group_user(group, user):
         abort(404)
+    if hub.hub is None:
+        abort(404)
     stats = Hub_statistics.query.filter_by(hub_id=hub.hub.id).order_by(desc(Hub_statistics.create_time)).first()
     try:
         data = statistics(hub.hub.meta, stats)
@@ -556,6 +558,8 @@ def charts_statistics():
         else Hub_partner.query.get_or_404(hub_id)
     group = hub.group
     if not valid_group_user(group, user):
+        abort(404)
+    if hub.hub is None:
         abort(404)
     # try:
     data = chart_statistics(Hub_statistics.query.filter_by(hub_id=hub.hub.id)\

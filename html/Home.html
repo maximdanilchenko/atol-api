@@ -169,6 +169,14 @@
 
                 <div class="my-in-shadow w3-light-grey w3-text-dark-grey scroll"
                      style="height:70vh; overflow-y:scroll; overflow-x:hidden;">
+                    <ul id="no_stats" class=" w3-center w3-container" style="display:none">
+                        <li class="w3-col w3-hide-small m3 l4">&nbsp;</li>
+                        <li class="wrap w3-col s12 m12 l12">
+                            <h4>
+                                Статистика отсутствует
+                            </h4>
+                        </li>
+                    </ul>
                     <ul id="group_stats" class=" w3-center w3-container">
                         <li class="w3-col w3-hide-small m3 l4">&nbsp;</li>
                         <li class="w3-col s12 m6 l3">
@@ -482,6 +490,7 @@ $('.sortable').on('click', '.tab-root > a', function() {
     $('#dashboard-hub').hide();
     $('#dashboard-group').show();
 
+    $("#no_stats").hide();
     $('#hub_stats').hide();
     $('#group_stats').show();
 
@@ -505,6 +514,7 @@ $('.sortable').on('click', '.tab > div > a', function() {
     $('#dashboard-hub').hide();
     $('#dashboard-group').show();
 
+    $("#no_stats").hide();
     $('#hub_stats').hide();
     $('#group_stats').show();
 
@@ -528,6 +538,7 @@ $('.sortable').on('click', '.hub > div > a', function() {
     $('#dashboard-group').hide();
     $('#dashboard-hub').show();
 
+    $("#no_stats").hide();
     $('#group_stats').hide();
     getSmallHubStatistics();
     reloadCharts();

@@ -32,7 +32,10 @@ $('.sortable').nestedSortable({
                                 parent_id: group_id,
                                 children: children_arr,
                                 },
-                    function(response){
+                    function(response,textStatus,xhr){
+                        if (xhr.status == 401){
+                            signOut();
+                        }
                         if (response.success == true){
                         console.log("success");
                         }
@@ -61,7 +64,10 @@ function getUserInfo() {
 $("#modal-wait").show();
 // getUserInfo
     $.get( "/api/get_user_info", {access_token: localStorage.getItem("atol_access_token")},
-        function(response){
+        function(response,textStatus,xhr){
+                if (xhr.status == 401){
+                    signOut();
+                }
             if (response.success == true){
                 $('.body-title').append(response.name);
                 //response.type
@@ -83,7 +89,10 @@ $("#modal-wait").show();
 function getTree() {
 $("#modal-wait").show();
     $.get( "/api/get_tree", {access_token: localStorage.getItem("atol_access_token")},
-        function(response){
+        function(response,textStatus,xhr){
+                if (xhr.status == 401){
+                    signOut();
+                }
             if (response.success == true){
                     data = response.tree;
                     $("#rootHub > div > a").html(data.name);
@@ -147,7 +156,10 @@ function addGroup(){
                                 parent_id: $('.active-elem').attr('id'),
                                 order_id: order
                                 },
-        function(response){
+        function(response,textStatus,xhr){
+                if (xhr.status == 401){
+                    signOut();
+                }
             if (response.success == true){
                 $('.active-elem').parent().children("ul").append(
                 "<li class='tab'><div id = '"+response.id+"' data-order_id='"+order+"'><i class='fa fa-fw fa-folder' style='display:none;'></i><i class='fa fa-fw fa-folder-open'></i>&nbsp;<a>"+response.name+"</a></div><ul></ul></li>"
@@ -181,7 +193,10 @@ function addHub(){
                                 group_id: $('.active-elem').attr('id'),
                                 order_id: order
                                 },
-        function(response){
+        function(response,textStatus,xhr){
+                if (xhr.status == 401){
+                    signOut();
+                }
             if (response.success == true){
                 $('.active-elem').parent().children("ul").append(
                 "<li class='hub'><div id='"+response.id+"' data-order_id='"+order+"'><i class='fa fa-laptop fa-fw'></i>&nbsp;<a>"+response.name+"</a></div></li>"
@@ -212,7 +227,10 @@ $("#modal-wait").show();
     $.post( "/api/remove_group", {access_token: localStorage.getItem("atol_access_token"),
                                 group_id: $('.active-elem').attr('id')
                                 },
-        function(response){
+        function(response,textStatus,xhr){
+                if (xhr.status == 401){
+                    signOut();
+                }
             if (response.success == true){
                 el = $('.active-elem').closest('ul').parent().children('div');
                 $('.active-elem').closest('li').remove();
@@ -256,7 +274,10 @@ function deleteHub(){
                                 hub_id: $('.active-elem').attr('id'),
                                 group_id: $('.active-elem').closest('ul').parent().children('div').attr('id')
                                 },
-        function(response){
+        function(response,textStatus,xhr){
+                if (xhr.status == 401){
+                    signOut();
+                }
             if (response.success == true){
                 el = $('.active-elem').closest('ul').parent().children('div');
                 $('.active-elem').closest('li').remove();
@@ -291,7 +312,10 @@ function renameGroup(){
                                 group_id: $('.active-elem').attr('id'),
                                 name: $("#rename-form-group input[name='name']").val(),
                                 },
-        function(response){
+        function(response,textStatus,xhr){
+                if (xhr.status == 401){
+                    signOut();
+                }
             if (response.success == true){
                 $('.active-elem > a').html(response.name);
                 $("#rename-form-group input[name='name']").val('');
@@ -317,7 +341,10 @@ function renameHub(){
                                 hub_id: $('.active-elem').attr('id'),
                                 name: $("#rename-form-hub input[name='name']").val()
                                 },
-        function(response){
+        function(response,textStatus,xhr){
+                if (xhr.status == 401){
+                    signOut();
+                }
             if (response.success == true){
                 $('.active-elem > a').html(response.name);
                 $("#rename-form-hub input[name='name']").val('');
@@ -350,7 +377,10 @@ function getSmallHubStatistics(){
         $.get( "/api/hub_statistics", {access_token: localStorage.getItem("atol_access_token"),
                                     hub_id: $('.active-elem').attr('id')
                                     },
-            function(response){
+            function(response,textStatus,xhr){
+                if (xhr.status == 401){
+                    signOut();
+                }
                 if (response.success == true){
                     $('span[id^=hub_stats]').removeClass('w3-text-green w3-text-red w3-text-dark-grey');
 
@@ -400,10 +430,13 @@ function getSmallHubStatistics(){
                     TimeoutId = setTimeout(function(){getSmallHubStatistics();}, 10000);
                 }
                 else {
-
+                    $("#hub_stats").hide();
+                    $("#no_stats").show();
                 };
             },
         'json' ).fail(function() {
+                    $("#hub_stats").hide();
+                    $("#no_stats").show();
                 });
     }
 
