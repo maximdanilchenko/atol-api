@@ -547,12 +547,15 @@ def hub_statistics():
 @is_auth
 @jsonp
 def charts_statistics():
-    access_token, hub_id = validate_get(
-        ('access_token', 'hub_id'),
-        (str, str),
-        (0,)*2)
+    access_token, hub_id, period = validate_get(
+        ('access_token', 'hub_id', 'period'),
+        (str, str, str),
+        (0,)*3)
     if not (access_token and hub_id):
         abort(400)
+    days = 1
+    if period == 'week':
+        days = 7
     user = validate_user(access_token)
     hub = Hub_client.query.get_or_404(hub_id) if user.user_type == CLIENT \
         else Hub_partner.query.get_or_404(hub_id)
@@ -563,7 +566,7 @@ def charts_statistics():
         abort(404)
     # try:
     data = chart_statistics(Hub_statistics.query.filter_by(hub_id=hub.hub.id)\
-        .filter(Hub_statistics.create_time > datetime.datetime.utcnow() - datetime.timedelta(days=7))\
+        .filter(Hub_statistics.create_time > datetime.datetime.utcnow() - datetime.timedelta(days=days))\
         .order_by(asc(Hub_statistics.create_time)).all())
     # except Exception as e:
     #     abort(500)

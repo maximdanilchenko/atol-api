@@ -488,10 +488,11 @@ var myChart; //Статус УТМ
 var myChart1; //Количество отправленных документов
 var myChart2; //Размер буффера чеков/неотправленных документов
 
-function reloadCharts(){
+function reloadCharts(period){
     if ($('.active-elem').parent().hasClass("hub")){
         $.get( "/api/charts_statistics", {access_token: localStorage.getItem("atol_access_token"),
-                                    hub_id: $('.active-elem').attr('id')
+                                    hub_id: $('.active-elem').attr('id'),
+                                    period: period
                                     },
             function(response){
                 if (response.success == true){

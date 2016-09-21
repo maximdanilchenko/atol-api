@@ -243,7 +243,11 @@
                             </ul>
                         </li>
                         <li class="w3-container w3-margin-right">
-                            <header><h4>История</h4></header>
+                            <header><h4 class="w3-row-padding">
+                                История
+                            <a id="week" class="w3-right w3-row w3-hover-none w3-hover-text-dark-grey">Неделя</a>
+                            <a id="day" class="w3-right w3-row w3-text-theme w3-margin-right w3-hover-none w3-hover-text-dark-grey">День</a>
+                            </h4></header>
                             <div class="w3-col s12 m12 l12 w3-margin-right">
                                 <canvas id="myChart" height="40px"></canvas>
                             </div>
@@ -541,9 +545,10 @@ $('.sortable').on('click', '.hub > div > a', function() {
     $("#no_stats").hide();
     $('#group_stats').hide();
     getSmallHubStatistics();
-    reloadCharts();
+    reloadCharts('day');
     $('#hub_stats').show();
 });
+
 
 
 //////Изменение ширины окон
@@ -569,6 +574,20 @@ $(document).mouseup(function(e){
 
 
 ////////////////CHARTS
+
+$("#day").click(function(){
+    getSmallHubStatistics();
+    reloadCharts('day');
+    $("#day").removeClass("w3-text-theme");
+    $("#week").addClass("w3-text-theme");
+});
+
+$("#week").click(function(){
+    getSmallHubStatistics();
+    reloadCharts('week');
+    $("#week").removeClass("w3-text-theme");
+    $("#day").addClass("w3-text-theme");
+});
 
 </script>
 </body>
