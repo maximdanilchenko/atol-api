@@ -496,7 +496,10 @@ function reloadCharts(period){
                                     hub_id: $('.active-elem').attr('id'),
                                     period: period
                                     },
-            function(response){
+            function(response,textStatus,xhr){
+                if (xhr.status == 401){
+                    signOut();
+                }
                 if (response.success == true){
 
                     if (myChart !== undefined){
