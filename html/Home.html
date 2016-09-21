@@ -576,17 +576,21 @@ $(document).mouseup(function(e){
 ////////////////CHARTS
 
 $("#day").click(function(){
-    getSmallHubStatistics();
-    reloadCharts('day');
-    $("#day").toggleClass("my-active");
-    $("#week").toggleClass("my-active");
+    if ($("#week").hasClass(my-active)){
+        getSmallHubStatistics();
+        reloadCharts('day');
+        $("#day").toggleClass("my-active");
+        $("#week").toggleClass("my-active");
+    }
 });
 
 $("#week").click(function(){
-    getSmallHubStatistics();
-    reloadCharts('week');
-    $("#week").toggleClass("my-active");
-    $("#day").toggleClass("my-active");
+    if ($("#day").hasClass(my-active)){
+        getSmallHubStatistics();
+        reloadCharts('week');
+        $("#week").toggleClass("my-active");
+        $("#day").toggleClass("my-active");
+    }
 });
 
 </script>
