@@ -550,7 +550,10 @@ function reloadCharts(period){
                                         month: 'DD.MM.YY',
                                         year: 'YYYY'
                                       }
-                                        }
+                                        },
+                                    ticks: {
+                                    maxRotation: 0
+                                    }
                                     }]
                             }
                         }
@@ -596,7 +599,10 @@ function reloadCharts(period){
                                         month: 'DD.MM.YY',
                                         year: 'YYYY'
                                       }
-                                        }
+                                        },
+                                    ticks: {
+                                    maxRotation: 0
+                                    }
                                     }]
                             }
                         }
@@ -658,7 +664,10 @@ function reloadCharts(period){
                                         month: 'DD.MM.YY',
                                         year: 'YYYY'
                                       }
-                                        }
+                                        },
+                                    ticks: {
+                                    maxRotation: 0
+                                    }
                                     }]
                             }
                         }
