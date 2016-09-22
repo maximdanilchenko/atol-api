@@ -244,7 +244,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <li id="history" class="w3-container w3-margin-right">
+                        <li class="w3-container w3-margin-right">
                             <header><h4 class="w3-row-padding">
                                 История
                             <a id="month" class="w3-right w3-row w3-hover-none w3-hover-text-theme w3-tooltip">Месяц
@@ -254,6 +254,7 @@
                             <a id="day" class="w3-right w3-row my-active w3-margin-right w3-hover-none w3-hover-text-theme w3-tooltip">День
                             <span class="my-tooltip w3-text w3-text-theme">С частотой час</span></a>
                             </h4></header>
+                            <div id="history">
                             <div class="w3-col s12 m12 l12 w3-margin-right">
                                 <canvas id="myChart" height="40px"></canvas>
                             </div>
@@ -265,6 +266,7 @@
                             <div class="w3-col s12 m12 l12 w3-margin-right">
                                 <canvas id="myChart2" height="80px"></canvas>
                             </div>
+                                </div>
                         </li>
                     </ul>
                 </div>
@@ -586,7 +588,7 @@ $(document).mouseup(function(e){
 
 $("#day").click(function(){
     if (!$("#day").hasClass("my-active")){
-        getSmallHubStatistics();
+        $("#history").animate({ opacity: 0 });
         reloadCharts('day');
         $("#day").addClass("my-active");
         $("#week").removeClass("my-active");
@@ -596,7 +598,7 @@ $("#day").click(function(){
 
 $("#week").click(function(){
     if (!$("#week").hasClass("my-active")){
-        getSmallHubStatistics();
+        $("#history").animate({ opacity: 0 });
         reloadCharts('week');
         $("#week").addClass("my-active");
         $("#day").removeClass("my-active");
@@ -606,7 +608,7 @@ $("#week").click(function(){
 
 $("#month").click(function(){
     if (!$("#month").hasClass("my-active")){
-        getSmallHubStatistics();
+        $("#history").animate({ opacity: 0 });
         reloadCharts('month');
         $("#month").addClass("my-active");
         $("#day").removeClass("my-active");
