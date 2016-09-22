@@ -24,7 +24,9 @@
     <link rel="stylesheet" href="static/css/style.css">
 
 </head>
-
+<script>
+    $('body').fadeOut("fast");
+</script>
 <body class="w3-white">
 
 <a href="http://www.atol.ru/">
@@ -201,7 +203,7 @@
                         </li>
                     </ul>
                     <ul id="hub_stats" class="w3-ul" style="display:none">
-                        <li class="w3-ul w3-margin-right w3-container">
+                        <li id="current_state" class="w3-ul w3-margin-right w3-container">
                             <header><h4>Текущее состояние (<i id="status"></i>)</h4></header>
                             <ul class="w3-ul w3-col s12 m12 l6 w3-container">
                                 <li class="my-spaned w3-col s12 m12 l12 w3-border-0">
@@ -242,7 +244,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="w3-container w3-margin-right">
+                        <li id="history" class="w3-container w3-margin-right">
                             <header><h4 class="w3-row-padding">
                                 История
                             <a id="month" class="w3-right w3-row w3-hover-none w3-hover-text-theme w3-tooltip">Месяц
@@ -496,11 +498,11 @@ $('.sortable').on('click', '.tab-root > a', function() {
 
     $('#dashboard-group').html($(this).parent().children("a").html());
     $('#dashboard-hub').hide();
-    $('#dashboard-group').show();
+    $('#dashboard-group').fadeIn('fast');
 
-    $("#no_stats").hide();
-    $('#hub_stats').hide();
-    $('#group_stats').show();
+    $("#no_stats").fadeOut('fast');
+    $('#hub_stats').fadeOut('fast');
+    $('#group_stats').fadeIn('fast');
 
     $('#group_stats1 > b').text($('.active-elem').attr("data-group_num"));
     $('#group_stats2 > b').text($('.active-elem').attr("data-hub_num"));
@@ -520,11 +522,11 @@ $('.sortable').on('click', '.tab > div > a', function() {
 
     $('#dashboard-group').html($(this).parent().children("a").html());
     $('#dashboard-hub').hide();
-    $('#dashboard-group').show();
+    $('#dashboard-group').fadeIn('fast');
 
-    $("#no_stats").hide();
-    $('#hub_stats').hide();
-    $('#group_stats').show();
+    $("#no_stats").fadeOut('fast');
+    $('#hub_stats').fadeOut('fast');
+    $('#group_stats').fadeIn('fast');
 
     $('#group_stats1 > b').text($('.active-elem').attr("data-group_num"));
     $('#group_stats2 > b').text($('.active-elem').attr("data-hub_num"));
@@ -544,13 +546,13 @@ $('.sortable').on('click', '.hub > div > a', function() {
 
     $('#dashboard-hub').html($(this).parent().children("a").html());
     $('#dashboard-group').hide();
-    $('#dashboard-hub').show();
+    $('#dashboard-hub').fadeIn('fast');
 
-    $("#no_stats").hide();
-    $('#group_stats').hide();
+    $("#no_stats").fadeOut('fast');
+    $('#group_stats').fadeOut('fast');
     getSmallHubStatistics();
     reloadCharts('day');
-    $('#hub_stats').show();
+    $('#hub_stats').fadeIn('fast');
     $("#week").removeClass("my-active");
     $("#month").removeClass("my-active");
     $("#day").addClass("my-active");
@@ -611,6 +613,9 @@ $("#month").click(function(){
         $("#week").removeClass("my-active");
     }
 });
+
+
+$('body').fadeIn("fast");
 
 </script>
 </body>
