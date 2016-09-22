@@ -244,7 +244,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="w3-container w3-margin-right">
+                        <li id="history_full" class="w3-container w3-margin-right">
                             <header><h4 class="w3-row-padding">
                                 История
                             <a id="month" class="w3-right w3-row w3-hover-none w3-hover-text-theme w3-tooltip">Месяц
@@ -552,8 +552,13 @@ $('.sortable').on('click', '.hub > div > a', function() {
 
     $("#no_stats").hide();
     $('#group_stats').hide();
+
+    $("#current_state").animate({ opacity: 0 }, 50);
     getSmallHubStatistics();
+
+    $("#history_full").animate({ opacity: 0 }, 50);
     reloadCharts('day');
+
     $('#hub_stats').fadeIn('fast');
     $("#week").removeClass("my-active");
     $("#month").removeClass("my-active");

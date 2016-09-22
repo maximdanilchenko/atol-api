@@ -371,7 +371,6 @@ if (!Array.prototype.last){
 };
 
 function getSmallHubStatistics(){
-    $("#current_state").fadeOut("fast");
     clearTimeout(TimeoutId);
     if ($('.active-elem').parent().hasClass("hub")){
         $.get( "/api/hub_statistics", {access_token: localStorage.getItem("atol_access_token"),
@@ -439,7 +438,9 @@ function getSmallHubStatistics(){
                     $("#hub_stats").hide();
                     $("#no_stats").show();
                 }).done(function(){
-                    $("#current_state").fadeIn("fast");
+                    $("#current_state").animate({ opacity: 1 }, 50);
+
+
                 });
     }
 TimeoutId = setTimeout(function(){getSmallHubStatistics();}, 150000);
@@ -494,7 +495,6 @@ var TimeoutIdCh = 1;
 
 function reloadCharts(period){
     clearTimeout(TimeoutIdCh);
-    $("#history").animate({ opacity: 0 }, 50);
     if ($('.active-elem').parent().hasClass("hub")){
         $.get( "/api/charts_statistics", {access_token: localStorage.getItem("atol_access_token"),
                                     hub_id: $('.active-elem').attr('id'),
@@ -676,6 +676,7 @@ function reloadCharts(period){
         'json' ).fail(function() {
                 }).done(function(){
                 $("#history").animate({ opacity: 1 }, 50);
+                $("#history_full").animate({ opacity: 1 }, 50);
                 });
     }
 TimeoutIdCh = setTimeout(function(){reloadCharts(period);}, 1000000);
