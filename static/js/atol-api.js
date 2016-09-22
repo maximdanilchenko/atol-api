@@ -686,5 +686,6 @@ function reloadCharts(period){
                 $("#history_full").animate({ opacity: 1 }, 50);
                 });
     }
+    
 TimeoutIdCh = setTimeout(function(){reloadCharts(period);}, 1000000);
 }
