@@ -588,7 +588,7 @@ $(document).mouseup(function(e){
 
 $("#day").click(function(){
     if (!$("#day").hasClass("my-active")){
-        $("#history").animate({ opacity: 0 });
+        $("#history").animate({ opacity: 0 }, 50);
         reloadCharts('day');
         $("#day").addClass("my-active");
         $("#week").removeClass("my-active");
@@ -598,7 +598,7 @@ $("#day").click(function(){
 
 $("#week").click(function(){
     if (!$("#week").hasClass("my-active")){
-        $("#history").animate({ opacity: 0 });
+        $("#history").animate({ opacity: 0 }, 50);
         reloadCharts('week');
         $("#week").addClass("my-active");
         $("#day").removeClass("my-active");
@@ -608,7 +608,7 @@ $("#week").click(function(){
 
 $("#month").click(function(){
     if (!$("#month").hasClass("my-active")){
-        $("#history").animate({ opacity: 0 });
+        $("#history").animate({ opacity: 0 }, 50);
         reloadCharts('month');
         $("#month").addClass("my-active");
         $("#day").removeClass("my-active");

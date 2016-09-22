@@ -494,7 +494,7 @@ var TimeoutIdCh = 1;
 
 function reloadCharts(period){
     clearTimeout(TimeoutIdCh);
-    $("#history").animate({ opacity: 0 });
+    $("#history").animate({ opacity: 0 }, 50);
     if ($('.active-elem').parent().hasClass("hub")){
         $.get( "/api/charts_statistics", {access_token: localStorage.getItem("atol_access_token"),
                                     hub_id: $('.active-elem').attr('id'),
@@ -675,7 +675,7 @@ function reloadCharts(period){
             },
         'json' ).fail(function() {
                 }).done(function(){
-                $("#history").animate({ opacity: 1 });
+                $("#history").animate({ opacity: 1 }, 50);
                 });
     }
 TimeoutIdCh = setTimeout(function(){reloadCharts(period);}, 300000);
