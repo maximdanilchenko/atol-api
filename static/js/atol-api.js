@@ -320,7 +320,6 @@ function renameGroup(){
                 $("#rename-form-group input[name='name']").val('');
                 $("#modal-rename-group").hide();
                 reloadTree();
-                //response.type
             }
             else {
 
@@ -330,9 +329,7 @@ function renameGroup(){
     'json' ).fail(function() {
             $("#modal-wait").hide();
             });
-
 }
-
 
 function renameHub(){
     $("#modal-wait").show();
@@ -408,7 +405,6 @@ function getSmallHubStatistics(){
                     $('#hub_stats8').addClass('w3-text-'+response.data.retail_buffer_size[1]);
 
                     $('#status').text(moment(response.data.time).format('DD.MM.YY kk:mm:ss'));
-                    //response.type
 
 //                    if (myChart !== undefined && myChart.data.labels.last() !== moment(response.data.time)){
 //                        myChart.data.labels.push(moment(response.data.time));
@@ -602,7 +598,6 @@ function reloadCharts(period){
                             }
                         }
                     });
-
 
                     var lbls = Array.from(response.data.unset_tickets_checks_count.times, x => moment(x));
                     var vls1 = response.data.unset_tickets_checks_count.tickets;
