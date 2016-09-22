@@ -428,7 +428,6 @@ function getSmallHubStatistics(){
 //                        myChart2.update();
 //                    }
 //                    ChartsColors();
-                    TimeoutId = setTimeout(function(){getSmallHubStatistics();}, 150000);
                 }
                 else {
                     $("#hub_stats").hide();
@@ -440,7 +439,7 @@ function getSmallHubStatistics(){
                     $("#no_stats").show();
                 });
     }
-
+TimeoutId = setTimeout(function(){getSmallHubStatistics();}, 150000);
 }
 
 function ChartsColors() {
@@ -664,7 +663,6 @@ function reloadCharts(period){
                     });
 
                 ChartsColors();
-                TimeoutIdCh = setTimeout(function(){reloadCharts(period);}, 150000);
                     //response.type
                 }
                 else {
@@ -674,5 +672,5 @@ function reloadCharts(period){
         'json' ).fail(function() {
                 });
     }
-
+TimeoutIdCh = setTimeout(function(){reloadCharts(period);}, 300000);
 }
