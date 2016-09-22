@@ -36,7 +36,7 @@
 
 <!--HEADER (NAV)-->
 
-<nav id="open-menu" class="w3-sidenav w3-theme w3-card-2 w3-large w3-left-align" style="display:none; width:100%">
+<nav id="open-menu" class="w3-sidenav w3-light-grey w3-card-2 w3-large w3-left-align" style="display:none; width:100%">
     <a class="w3-hover-none w3-hover-text-theme" onclick="openMenu();"><i class="fa fa-fw fa-times"></i></a>
     <a class="my-active w3-hover-none w3-hover-text-theme">
         <i class="fa fa-fw fa-cogs"></i>&nbsp;Панель управления</a>
@@ -500,8 +500,8 @@ $('.sortable').on('click', '.tab-root > a', function() {
     $('#dashboard-hub').hide();
     $('#dashboard-group').fadeIn('fast');
 
-    $("#no_stats").fadeOut('fast');
-    $('#hub_stats').fadeOut('fast');
+    $("#no_stats").hide();
+    $('#hub_stats').hide();
     $('#group_stats').fadeIn('fast');
 
     $('#group_stats1 > b').text($('.active-elem').attr("data-group_num"));
@@ -524,8 +524,8 @@ $('.sortable').on('click', '.tab > div > a', function() {
     $('#dashboard-hub').hide();
     $('#dashboard-group').fadeIn('fast');
 
-    $("#no_stats").fadeOut('fast');
-    $('#hub_stats').fadeOut('fast');
+    $("#no_stats").hide();
+    $('#hub_stats').hide();
     $('#group_stats').fadeIn('fast');
 
     $('#group_stats1 > b').text($('.active-elem').attr("data-group_num"));
@@ -548,8 +548,8 @@ $('.sortable').on('click', '.hub > div > a', function() {
     $('#dashboard-group').hide();
     $('#dashboard-hub').fadeIn('fast');
 
-    $("#no_stats").fadeOut('fast');
-    $('#group_stats').fadeOut('fast');
+    $("#no_stats").hide();
+    $('#group_stats').hide();
     getSmallHubStatistics();
     reloadCharts('day');
     $('#hub_stats').fadeIn('fast');
