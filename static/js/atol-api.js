@@ -552,7 +552,7 @@ function reloadCharts(period){
                                       }
                                         },
                                     ticks: {
-                                    maxRotation: 0
+//                                    maxRotation: 0
                                     }
                                     }]
                             }
@@ -601,7 +601,7 @@ function reloadCharts(period){
                                       }
                                         },
                                     ticks: {
-                                    maxRotation: 0
+//                                    maxRotation: 0
                                     }
                                     }]
                             }
@@ -666,7 +666,7 @@ function reloadCharts(period){
                                       }
                                         },
                                     ticks: {
-                                    maxRotation: 0
+//                                    maxRotation: 0
                                     }
                                     }]
                             }
