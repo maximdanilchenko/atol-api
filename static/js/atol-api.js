@@ -430,7 +430,10 @@ function getSmallHubStatistics(){
                     $("#no_stats").show();
                 };
             },
-        'json' ).fail(function() {
+        'json' ).fail(function(response,textStatus,xhr){
+                if (xhr.status == 401){
+                    signOut();
+                }
                     $("#hub_stats").hide();
                     $("#no_stats").show();
                 }).done(function(){
