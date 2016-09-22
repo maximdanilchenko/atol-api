@@ -410,27 +410,25 @@ function getSmallHubStatistics(){
                     $('#status').text(moment(response.data.time).format('DD.MM.YY kk:mm:ss'));
                     //response.type
 
-                    if (myChart !== undefined && myChart.data.labels.last() !== moment(response.data.time)){
-                        myChart.data.labels.push(moment(response.data.time));
-                        myChart.data.datasets[0].data.push(response.data.utm_status[2]);
-                        }
-
-                    if (myChart1 !== undefined && myChart1.data.labels.last() !== moment(response.data.time)){
-                        myChart1.data.labels.push(moment(response.data.time));
-                        myChart1.data.datasets[0].data.push(response.data.total_tickets_count[0]);
-                        myChart1.update();
-                        }
-
-                    if (myChart2 !== undefined && myChart2.data.labels.last() !== moment(response.data.time)){
-                        myChart2.data.labels.push(moment(response.data.time));
-                        myChart2.data.datasets[1].data.push(response.data.unset_tickets_count[0]);//документы
-                        myChart2.data.datasets[0].data.push(response.data.retail_buffer_size[0]);//чеки
-                        myChart2.update();
-                    }
-                    ChartsColors();
+//                    if (myChart !== undefined && myChart.data.labels.last() !== moment(response.data.time)){
+//                        myChart.data.labels.push(moment(response.data.time));
+//                        myChart.data.datasets[0].data.push(response.data.utm_status[2]);
+//                        }
+//
+//                    if (myChart1 !== undefined && myChart1.data.labels.last() !== moment(response.data.time)){
+//                        myChart1.data.labels.push(moment(response.data.time));
+//                        myChart1.data.datasets[0].data.push(response.data.total_tickets_count[0]);
+//                        myChart1.update();
+//                        }
+//
+//                    if (myChart2 !== undefined && myChart2.data.labels.last() !== moment(response.data.time)){
+//                        myChart2.data.labels.push(moment(response.data.time));
+//                        myChart2.data.datasets[1].data.push(response.data.unset_tickets_count[0]);//документы
+//                        myChart2.data.datasets[0].data.push(response.data.retail_buffer_size[0]);//чеки
+//                        myChart2.update();
+//                    }
+//                    ChartsColors();
                     TimeoutId = setTimeout(function(){getSmallHubStatistics();}, 150000);
-                    console.log(TimeoutId);
-                    console.log(moment());
                 }
                 else {
                     $("#hub_stats").hide();
@@ -490,8 +488,10 @@ function ChartsColors() {
 var myChart; //Статус УТМ
 var myChart1; //Количество отправленных документов
 var myChart2; //Размер буффера чеков/неотправленных документов
+var TimeoutIdCh = 1;
 
 function reloadCharts(period){
+    clearTimeout(TimeoutIdCh);
     if ($('.active-elem').parent().hasClass("hub")){
         $.get( "/api/charts_statistics", {access_token: localStorage.getItem("atol_access_token"),
                                     hub_id: $('.active-elem').attr('id'),
@@ -664,7 +664,7 @@ function reloadCharts(period){
                     });
 
                 ChartsColors();
-
+                TimeoutIdCh = setTimeout(function(){reloadCharts(period);}, 150000);
                     //response.type
                 }
                 else {
