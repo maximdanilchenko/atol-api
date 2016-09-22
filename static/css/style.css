@@ -52,7 +52,7 @@ font-weight: 600;
 
 .my-tooltip {
     position:absolute;
-    right:18px;
+    right:0px;
     bottom:18px;
     opacity: 0.5;
     font-weight: 600;
