@@ -129,34 +129,35 @@ def chart_statistics(stats):
     unset_tickets_checks_count_chart = {'times': [], 'tickets': [], 'checks': []}
     utm_status_chart = {'times': [], 'values': []}
 
-    total_tickets_count_chart['values'].append(stats[0].total_tickets_count)
-    total_tickets_count_chart['times'].append(stats[0].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
-    unset_tickets_checks_count_chart['checks'].append(stats[0].retail_buffer_size)
-    unset_tickets_checks_count_chart['tickets'].append(stats[0].unset_tickets_count)
-    unset_tickets_checks_count_chart['times'].append(stats[0].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
-    utm_status_chart['values'].append(stats[0].utm_status)
-    utm_status_chart['times'].append(stats[0].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+    for n in range(len(stats)):
+        total_tickets_count_chart['values'].append(stats[n].total_tickets_count)
+        total_tickets_count_chart['times'].append(stats[n].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+        unset_tickets_checks_count_chart['checks'].append(stats[n].retail_buffer_size)
+        unset_tickets_checks_count_chart['tickets'].append(stats[n].unset_tickets_count)
+        unset_tickets_checks_count_chart['times'].append(stats[n].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+        utm_status_chart['values'].append(stats[n].utm_status)
+        utm_status_chart['times'].append(stats[n].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
 
-    for n, stat in enumerate(stats[1:-1]):
-        if not (stats[n - 1].total_tickets_count == stats[n].total_tickets_count == stats[n + 1].total_tickets_count):
-            total_tickets_count_chart['values'].append(stats[n].total_tickets_count)
-            total_tickets_count_chart['times'].append(stats[n].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
-        if not (stats[n - 1].unset_tickets_count == stats[n].unset_tickets_count == stats[n + 1].unset_tickets_count) or \
-                not (stats[n - 1].retail_buffer_size == stats[n].retail_buffer_size == stats[n + 1].retail_buffer_size):
-            unset_tickets_checks_count_chart['checks'].append(stats[n].retail_buffer_size)
-            unset_tickets_checks_count_chart['tickets'].append(stats[n].unset_tickets_count)
-            unset_tickets_checks_count_chart['times'].append(stats[n].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
-        if not (stats[n - 1].utm_status == stats[n].utm_status == stats[n + 1].utm_status):
-            utm_status_chart['values'].append(stats[n].utm_status)
-            utm_status_chart['times'].append(stats[n].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
-
-    total_tickets_count_chart['values'].append(stats[-1].total_tickets_count)
-    total_tickets_count_chart['times'].append(stats[-1].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
-    unset_tickets_checks_count_chart['checks'].append(stats[-1].retail_buffer_size)
-    unset_tickets_checks_count_chart['tickets'].append(stats[-1].unset_tickets_count)
-    unset_tickets_checks_count_chart['times'].append(stats[-1].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
-    utm_status_chart['values'].append(stats[-1].utm_status)
-    utm_status_chart['times'].append(stats[-1].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+    # for n, stat in enumerate(stats[1:-1]):
+    #     if not (stats[n - 1].total_tickets_count == stats[n].total_tickets_count == stats[n + 1].total_tickets_count):
+    #         total_tickets_count_chart['values'].append(stats[n].total_tickets_count)
+    #         total_tickets_count_chart['times'].append(stats[n].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+    #     if not (stats[n - 1].unset_tickets_count == stats[n].unset_tickets_count == stats[n + 1].unset_tickets_count) or \
+    #             not (stats[n - 1].retail_buffer_size == stats[n].retail_buffer_size == stats[n + 1].retail_buffer_size):
+    #         unset_tickets_checks_count_chart['checks'].append(stats[n].retail_buffer_size)
+    #         unset_tickets_checks_count_chart['tickets'].append(stats[n].unset_tickets_count)
+    #         unset_tickets_checks_count_chart['times'].append(stats[n].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+    #     if not (stats[n - 1].utm_status == stats[n].utm_status == stats[n + 1].utm_status):
+    #         utm_status_chart['values'].append(stats[n].utm_status)
+    #         utm_status_chart['times'].append(stats[n].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+    #
+    # total_tickets_count_chart['values'].append(stats[-1].total_tickets_count)
+    # total_tickets_count_chart['times'].append(stats[-1].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+    # unset_tickets_checks_count_chart['checks'].append(stats[-1].retail_buffer_size)
+    # unset_tickets_checks_count_chart['tickets'].append(stats[-1].unset_tickets_count)
+    # unset_tickets_checks_count_chart['times'].append(stats[-1].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
+    # utm_status_chart['values'].append(stats[-1].utm_status)
+    # utm_status_chart['times'].append(stats[-1].create_time.strftime("%Y-%m-%d %H:%M:%S+00:00"))
 
     return {
         "total_tickets_count": total_tickets_count_chart,

@@ -518,7 +518,6 @@ function reloadCharts(period){
                             datasets: [{
                                 lineTension: 0.1,
                                 label: 'Количество отправленных документов',
-                                pointRadius: 0,
                                 pointHitRadius: 10,
 
                                 data: vls,
@@ -565,7 +564,6 @@ function reloadCharts(period){
                             datasets: [{
                                 steppedLine: true,
                                 label: 'Статус УТМ',
-                                pointRadius: 0,
                                 pointHitRadius: 10,
                                 data: vls,
                                 backgroundColor:
@@ -615,7 +613,6 @@ function reloadCharts(period){
                             {
                                 lineTension: 0.1,
                                 label: 'Размер буффера чеков',
-                                pointRadius: 0,
                                 pointHitRadius: 10,
                                 data: vls2,
                                 backgroundColor:
@@ -631,7 +628,6 @@ function reloadCharts(period){
                             {
                                 lineTension: 0.1,
                                 label: 'Количество неотправленных документов',
-                                pointRadius: 0,
                                 pointHitRadius: 10,
                                 data: vls1,
                                 backgroundColor:

@@ -245,8 +245,12 @@
                         <li class="w3-container w3-margin-right">
                             <header><h4 class="w3-row-padding">
                                 История
-                            <a id="week" class="w3-right w3-row w3-hover-none w3-hover-text-theme">Неделя</a>
-                            <a id="day" class="w3-right w3-row my-active w3-margin-right w3-hover-none w3-hover-text-theme">День</a>
+                            <a id="month" class="w3-right w3-row w3-hover-none w3-hover-text-theme w3-tooltip">Месяц
+                            <span class="my-tooltip w3-text w3-text-theme">С частотой день</span></a>
+                            <a id="week" class="w3-right w3-row w3-margin-right w3-hover-none w3-hover-text-theme w3-tooltip">Неделя
+                            <span class="my-tooltip w3-text w3-text-theme">С частотой 8 часов</span></a>
+                            <a id="day" class="w3-right w3-row my-active w3-margin-right w3-hover-none w3-hover-text-theme w3-tooltip">День
+                            <span class="my-tooltip w3-text w3-text-theme">С частотой час</span></a>
                             </h4></header>
                             <div class="w3-col s12 m12 l12 w3-margin-right">
                                 <canvas id="myChart" height="40px"></canvas>
@@ -578,20 +582,32 @@ $(document).mouseup(function(e){
 ////////////////CHARTS
 
 $("#day").click(function(){
-    if ($("#week").hasClass("my-active")){
+    if (!$("#day").hasClass("my-active")){
         getSmallHubStatistics();
         reloadCharts('day');
-        $("#day").toggleClass("my-active");
-        $("#week").toggleClass("my-active");
+        $("#day").addClass("my-active");
+        $("#week").removeClass("my-active");
+        $("#month").removeClass("my-active");
     }
 });
 
 $("#week").click(function(){
-    if ($("#day").hasClass("my-active")){
+    if (!$("#week").hasClass("my-active")){
         getSmallHubStatistics();
         reloadCharts('week');
-        $("#week").toggleClass("my-active");
-        $("#day").toggleClass("my-active");
+        $("#week").addClass("my-active");
+        $("#day").removeClass("my-active");
+        $("#month").removeClass("my-active");
+    }
+});
+
+$("#month").click(function(){
+    if (!$("#month").hasClass("my-active")){
+        getSmallHubStatistics();
+        reloadCharts('month');
+        $("#month").addClass("my-active");
+        $("#day").removeClass("my-active");
+        $("#week").removeClass("my-active");
     }
 });
 

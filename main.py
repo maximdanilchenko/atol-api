@@ -16,6 +16,7 @@ from Models import User, Partner, Client, Hub, \
     Hub_partner, Hub_client
 from App import app, db
 from sqlalchemy import desc, asc
+from sqlalchemy.sql.expression import func
 on_gae = True
 try:
     from google.appengine.api import mail
@@ -554,9 +555,6 @@ def charts_statistics():
         (0,)*3)
     if not (access_token and hub_id):
         abort(400)
-    days = 1
-    if period == 'week':
-        days = 7
     user = validate_user(access_token)
     hub = Hub_client.query.get_or_404(hub_id) if user.user_type == CLIENT \
         else Hub_partner.query.get_or_404(hub_id)
@@ -566,12 +564,25 @@ def charts_statistics():
     if hub.hub is None:
         abort(404)
     # try:
-    data = chart_statistics(Hub_statistics.query.filter_by(hub_id=hub.hub.id)\
-        .filter(Hub_statistics.create_time > datetime.datetime.utcnow() - datetime.timedelta(days=days))\
-        .order_by(asc(Hub_statistics.create_time)).all())
+    if period == 'week':
+        q = Hub_statistics.query.filter_by(hub_id=hub.hub.id)\
+            .filter(Hub_statistics.create_time > datetime.datetime.utcnow() - datetime.timedelta(days=7))\
+            .order_by(asc(Hub_statistics.create_time))\
+            .distinct(Hub_statistics.create_time).group_by(func.date(Hub_statistics.create_time))\
+            .group_by(func.hour(Hub_statistics.create_time).op('div')(8)*8)
+    elif period == 'month':
+        q = Hub_statistics.query.filter_by(hub_id=hub.hub.id) \
+            .filter(Hub_statistics.create_time > datetime.datetime.utcnow() - datetime.timedelta(days=30)) \
+            .order_by(asc(Hub_statistics.create_time)) \
+            .distinct(Hub_statistics.create_time).group_by(func.date(Hub_statistics.create_time))
+    else:
+        q = Hub_statistics.query.filter_by(hub_id=hub.hub.id) \
+            .filter(Hub_statistics.create_time > datetime.datetime.utcnow() - datetime.timedelta(days=1)) \
+            .order_by(asc(Hub_statistics.create_time)) \
+            .distinct(Hub_statistics.create_time).group_by(func.hour(Hub_statistics.create_time))
     # except Exception as e:
     #     abort(500)
-    return jsonify({'success': True, 'data': data})
+    return jsonify({'success': True, 'data': chart_statistics(q.all())})
 
 
 @app.route("/api/create_group", methods=['POST'])
