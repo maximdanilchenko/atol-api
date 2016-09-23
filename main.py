@@ -180,6 +180,17 @@ def get_device_id():
     return jsonify({'success': True, 'device_id': hub.device_id})
 
 
+@app.route("/hub/device_id", methods=['GET'])
+def get_device_id():
+    serial_id, = validate_get(('serial_id',), (unicode,), (0,))
+    if not serial_id:
+        abort(400)
+    hub = Hub.query.filter_by(serial_id=serial_id).first()
+    if not hub or not hub.device_id:
+        return jsonify({'success': False, 'device_id': None})
+    return jsonify({'success': True, 'device_id': hub.device_id})
+
+
 @app.route("/hub/connect", methods=['POST'])
 def try_update_post():
     """
@@ -249,7 +260,6 @@ def try_update_post():
     if not hub.uploaded_settings:
         command = RESET_SETTINGS
     return jsonify({'success': True, 'command_code': command})
-
 
 
 @app.route("/tasks/cleanbd", methods=['POST'])
