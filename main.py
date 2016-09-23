@@ -264,7 +264,7 @@ def try_update_post():
 
 @app.route("/tasks/cleanbd", methods=['GET'])
 def cleanbd():
-    pass
+    return jsonify({'success': True})
 
 
 @app.route("/api/recovery", methods=['POST'])
