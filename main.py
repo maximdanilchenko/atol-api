@@ -163,7 +163,7 @@ def validate_user(access_token):
 
 
 @app.route("/hub/new_device_id", methods=['GET'])
-def get_device_id():
+def new_device_id():
     serial_id, = validate_get(('serial_id',), (unicode,), (0,))
     if not serial_id:
         abort(400)
