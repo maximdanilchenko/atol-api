@@ -119,6 +119,7 @@ def statistics(meta, stats):
         info['buffer_age'] = ['-', default_color]
 
     info['time'] = stats.create_time.strftime("%Y-%m-%d %H:%M:%S+00:00")
+    print info
     return info
 
 

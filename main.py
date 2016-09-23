@@ -262,7 +262,7 @@ def try_update_post():
     return jsonify({'success': True, 'command_code': command})
 
 
-@app.route("/tasks/cleanbd", methods=['POST'])
+@app.route("/tasks/cleanbd", methods=['GET'])
 def cleanbd():
     pass
 
