@@ -1,4 +1,4 @@
 cron:
 - description: daily summary job
   url: /tasks/cleanbd
-  schedule: every day 00:00
+  schedule: every 12 hours
