@@ -6,6 +6,7 @@ handlers:
 - url: .*
   script: main.app
 - url: /tasks/cleanbd
+  script: main.app
   login: admin
 
 libraries:
