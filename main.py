@@ -264,6 +264,34 @@ def try_update_post():
 
 @app.route("/tasks/cleanbd", methods=['GET'])
 def cleanbd():
+    for hub in Hub.query.yield_per(100):
+        last_time = datetime.datetime.utcnow()
+        for stata in Hub_statistics.query.filter_by(hub_id=hub.id).order_by(desc(Hub_statistics.create_time)).yield_per(100):
+            if last_time - stata.create_time < datetime.timedelta(hours=1):
+                db.session.delete(stata)
+            else:
+                last_time = stata.create_time
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+@app.route("/test/cleaning", methods=['GET'])
+def cleaning():
+    for hub in Hub.query.yield_per(100):
+        max_utc = db.session.query(func.max(Hub_statistics.unset_tickets_count)).filter_by(hub_id=hub.id).first()[0]
+        max_utc = float(max_utc) if max_utc else None
+        max_ttc = db.session.query(func.max(Hub_statistics.total_tickets_count)).filter_by(hub_id=hub.id).first()[0]
+        max_ttc = float(max_ttc) if max_ttc else None
+        max_rbs = db.session.query(func.max(Hub_statistics.retail_buffer_size)).filter_by(hub_id=hub.id).first()[0]
+        max_rbs = float(max_rbs) if max_rbs else None
+        for stata in Hub_statistics.query.filter_by(hub_id=hub.id).order_by(desc(Hub_statistics.create_time)).yield_per(100):
+            if max_utc and stata.unset_tickets_count > 150:
+                stata.unset_tickets_count = int(stata.unset_tickets_count / max_utc * 100)
+            if max_ttc and stata.total_tickets_count > 150:
+                stata.total_tickets_count = int(stata.total_tickets_count / max_ttc * 100)
+            if max_rbs and stata.retail_buffer_size > 150:
+                stata.retail_buffer_size = int(stata.retail_buffer_size / max_rbs * 100)
+        db.session.commit()
     return jsonify({'success': True})
 
 
@@ -544,7 +572,7 @@ def hub_statistics():
         else Hub_partner.query.get_or_404(hub_id)
     group = hub.group
     if not valid_group_user(group, user):
-        abort(404)
+        abort(401)
     if hub.hub is None:
         abort(404)
     stats = Hub_statistics.query.filter_by(hub_id=hub.hub.id).order_by(desc(Hub_statistics.create_time)).first()
